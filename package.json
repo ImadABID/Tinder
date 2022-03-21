@@ -1,0 +1,28 @@
+{
+  "name": "projet-2022-rastazulu",
+  "version": "1.0.0",
+  "description": "développer une application de",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EnseirbTelecom/projet-2022-rastazulu.git"
+  },
+  "keywords": [
+    "tinder"
+  ],
+  "author": "RastaZulu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EnseirbTelecom/projet-2022-rastazulu/issues"
+  },
+  "homepage": "https://github.com/EnseirbTelecom/projet-2022-rastazulu#readme",
+  "dependencies": {
+    "body-parser": "^1.19.2",
+    "express": "^4.17.3",
+    "mongodb": "^4.4.1",
+    "nodemon": "^2.0.15"
+  }
+}
