@@ -7,6 +7,14 @@ const bcrypt = require('bcryptjs');
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
 
+const cors=require("cors");
+const corsOptions ={
+   origin:'*', 
+   credentials:true,            //access-control-allow-credentials:true
+   optionSuccessStatus:200,
+}
+app.use(cors(corsOptions)) // Use this after the variable declaration
+
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const url = 'mongodb://localhost:27017';
@@ -23,7 +31,7 @@ MongoClient.connect(url)
 
   // just for test in dev mode
   app.get('/welcome', (req, res)=>{
-      res.send("Hello_World");
+      res.json({respond:"Hello_World"});
   });
 
   app.post('/users/register', (req, res)=>{
