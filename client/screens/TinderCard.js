@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import TinderCard from 'react-tinder-card';
 import "./TinderCards.css"
+import { FontAwesome } from '@expo/vector-icons'
+import { View, StyleSheet, TouchableOpacity } from 'react-native'
+
 function TinderCards() {
     const [people,setPeople]=useState([
         {
@@ -41,9 +44,46 @@ const outOfFrame=(name)=>{
                     </div>
                     </TinderCard>
                 ))}
+
             </div>
+            <View style={styles.container}  >
+            <TouchableOpacity  style={styles.button}
+            onPress={(dir) =>swiped(dir)}
+            >
+                <FontAwesome name="times" size={27} color="#F06795"></FontAwesome>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} 
+            onPress={(dir) =>swiped(dir)}
+            >
+                <FontAwesome name="heart" size={27} color="#64EDCC" ></FontAwesome>
+            </TouchableOpacity>
+            </View>
       </div>
     );
 }
 export default TinderCards; 
 
+const styles = StyleSheet.create({
+    container: {
+      top : 450,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+    },
+    button: {
+      width: 50,
+      height: 50,
+      backgroundColor: 'white',
+      borderRadius: 25,
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 0,
+      },
+      shadowOpacity: 0.15,
+      shadowRadius: 6.46,
+      elevation: 9,
+    },
+  })
