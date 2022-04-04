@@ -3,11 +3,13 @@ import {View, Text, TouchableOpacity, Platform, StyleSheet} from 'react-native';
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
+import { useNavigation } from '@react-navigation/native';
 
-const SignupScreen = ({navigation}) => {
+const SignupScreen = ({}) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
+  const navigation = useNavigation();
 
 
   return (
@@ -41,7 +43,7 @@ const SignupScreen = ({navigation}) => {
       />
 
       <FormButton
-        buttonTitle="Sign Up"
+        buttonTitle="Sign Up" 
       />
 
       <View style={styles.textPrivate}>
@@ -81,7 +83,7 @@ const SignupScreen = ({navigation}) => {
 
       <TouchableOpacity
         style={styles.navButton}
-        onPress={() => navigation.navigate('Login')}>
+        onPress={() => navigation.navigate('LoginScreen')}>
         <Text style={styles.navButtonText}>Have an account? Sign In</Text>
       </TouchableOpacity>
     </View>
