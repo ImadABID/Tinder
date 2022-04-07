@@ -13,7 +13,7 @@ const AppSignUp = () => {
   return (
     <View>
       
-      <SendReqToServerExample/>
+      <SingipScreen/>
 
     </View>
   );

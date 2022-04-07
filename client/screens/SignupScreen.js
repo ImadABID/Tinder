@@ -9,6 +9,8 @@ const SignupScreen = ({navigation}) => {
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
 
+  // for test
+  const [signUpButtonTitle, setSignUpButtonTitle] = useState("Sign up");
 
   return (
     <View style={styles.container}>
@@ -41,7 +43,68 @@ const SignupScreen = ({navigation}) => {
       />
 
       <FormButton
-        buttonTitle="Sign Up"
+        buttonTitle={signUpButtonTitle}
+        onPress={() => {
+          let link = 'http://localhost:3000/users/register';
+
+          //let myHeaders = new Headers();
+          //myHeaders.append("Accept", "application/json, text/plain, */*");
+          //myHeaders.append("Content-Type", "application/json");
+          /*
+            curl
+              -X POST 
+              -d 'username=lora'
+              -d 'email=lora17@yml.fr'
+              -d 'password=kona75mi:-)'
+              http://localhost:3000/users/register
+          */
+
+          let data = {
+            username : "imad",
+            email : "imad.abid@nok.ts",
+            password : "kona75mi:-)"
+          }
+          //let form_data = new FormData();
+          //form_data.append("json", JSON.stringify(data));
+
+
+          // let myInit = {
+          //   method: 'POST',
+          //   headers: myHeaders,
+          //   body : form_data,
+          //   mode: 'cors',
+          //   cache: 'default'
+          // };
+
+          // let myInit = {
+          //   method: 'POST',
+          //   headers: {
+          //     'Accept': 'application/json, text/plain, */*',
+          //     'Content-Type': 'application/json'
+          //   },
+          //   body : JSON.stringify(data)
+          // };
+
+          let myInit = {
+            method: 'POST',
+            headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+            body: 'username=imad&email=imad.abid@nok.ts&password=kona75mi:-)'
+          };
+
+          fetch(link, myInit)
+          .then((res)=>{return res.json();})
+          .then(res =>{
+
+            setSignUpButtonTitle(res.respond);
+
+          })
+          .catch(err =>{
+              console.log(err);
+          })
+          .finally(()=>{
+
+          });
+        }}
       />
 
       <View style={styles.textPrivate}>

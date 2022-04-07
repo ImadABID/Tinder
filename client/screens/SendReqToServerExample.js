@@ -5,12 +5,12 @@ import { Button } from 'react-native';
 import { useState } from 'react';
 
 const SendReqToServerExample = () => {
-  const [text, setText] = useState('');
+  const [text, setText] = useState("send req");
   return (
     <View>
 
       <Button
-        title="Send request to server"
+        title={text}
         onPress = { () =>{
 
           let link = 'http://localhost:3000/welcome'
@@ -40,10 +40,6 @@ const SendReqToServerExample = () => {
 
         }}
       />
-
-      <Text style={{padding: 10, fontSize: 42}}>
-        {text}
-      </Text>
       
 
     </View>
