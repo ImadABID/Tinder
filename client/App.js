@@ -1,27 +1,17 @@
 import React from 'react';
-// import  LoginScreen from './screens/LoginScreen';
-// import { NavigationContainer } from '@react-navigation/native'; 
-// import StackNavigator from './screens/StackNavigator';
+import  LoginScreen from './screens/LoginScreen';
+import { NavigationContainer } from '@react-navigation/native'; 
+import StackNavigator from './screens/StackNavigator';
 
 
-import SignupScreen from './screens/SignupScreen';
-import { View } from 'react-native';
-const app1 = () => {
+const App = () => {
   return (
-    <View>
-      <SignupScreen/>
-    </View>
-  )
+    <NavigationContainer>
+      <StackNavigator/>
+    </NavigationContainer>
+  );
 }
 
-// const app2 = () => {
-//   return (
-//     <NavigationContainer>
-//       <StackNavigator/>
-//     </NavigationContainer>
-//   );
-// }
-
-export default app1;
+export default App;
 
  
