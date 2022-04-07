@@ -11,10 +11,12 @@ import {
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
+import { useNavigation } from '@react-navigation/native';
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({}) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const navigation = useNavigation();
 
 //  const {login, googleLogin, fbLogin} = useContext(AuthContext);
 
@@ -76,7 +78,9 @@ const LoginScreen = ({navigation}) => {
       <TouchableOpacity
         style={styles.forgotButton}
         >
-        <Text style={styles.navButtonText}>
+        <Text style={styles.navButtonText}
+         onPress={() => navigation.navigate('SignupScreen')}
+         >
           Don't have an acount? Create here
         </Text>
       </TouchableOpacity>

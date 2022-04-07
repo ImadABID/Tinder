@@ -1,23 +1,27 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import ProfilScreen from './screens/ProfilScreen';
-import LoginScreen from './screens/LoginScreen';
-import SingipScreen from './screens/SignupScreen';
-import SendReqToServerExample from './screens/SendReqToServerExample';
+// import  LoginScreen from './screens/LoginScreen';
+// import { NavigationContainer } from '@react-navigation/native'; 
+// import StackNavigator from './screens/StackNavigator';
 
-import { Button, Alert } from 'react-native';
-import { useState } from 'react';
 
-const AppSignUp = () => {
-  const [text, setText] = useState('');
+import SignupScreen from './screens/SignupScreen';
+import { View } from 'react-native';
+const app1 = () => {
   return (
     <View>
-      
-      <SingipScreen/>
-
+      <SignupScreen/>
     </View>
-  );
+  )
 }
 
+// const app2 = () => {
+//   return (
+//     <NavigationContainer>
+//       <StackNavigator/>
+//     </NavigationContainer>
+//   );
+// }
 
-export default AppSignUp;
+export default app1;
+
+ 
