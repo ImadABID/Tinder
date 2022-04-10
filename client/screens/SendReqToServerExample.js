@@ -11,7 +11,7 @@ const SendReqToServerExample = () => {
 
       <Button
         title={text}
-        onPress = { () =>{
+        onPress={() => {
 
           let link = 'http://localhost:3000/welcome'
 
@@ -25,22 +25,22 @@ const SendReqToServerExample = () => {
           };
 
           fetch(link, myInit)
-          .then((res)=>{return res.json();})
-          .then(res =>{
+            .then((res) => { return res.json(); })
+            .then(res => {
 
-            setText(res.respond);
+              setText(res.respond);
 
-          })
-          .catch(err =>{
+            })
+            .catch(err => {
               console.log(err);
-          })
-          .finally(()=>{
+            })
+            .finally(() => {
 
-          });
+            });
 
         }}
       />
-      
+
 
     </View>
   );

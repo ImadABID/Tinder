@@ -6,6 +6,7 @@ import SocialButton from '../components/SocialButton';
 import { useNavigation } from '@react-navigation/native';
 
 const SignupScreen = ({}) => {
+  const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
@@ -17,7 +18,15 @@ const SignupScreen = ({}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Create an account</Text>
-
+      <FormInput
+        labelValue={name}
+        onChangeText={(userName) => setName(userName)}
+        placeholderText="Name"
+        iconType="user"
+        keyboardType="name"
+        autoCapitalize="none"
+        autoCorrect={false}
+      />
       <FormInput
         labelValue={email}
         onChangeText={(userEmail) => setEmail(userEmail)}
@@ -98,6 +107,7 @@ const SignupScreen = ({}) => {
           .then(res =>{
 
             setSignUpButtonTitle(res.respond);
+            console.log("done");
 
           })
           .catch(err =>{
@@ -109,40 +119,9 @@ const SignupScreen = ({}) => {
         }}
       />
 
-      <View style={styles.textPrivate}>
-        <Text style={styles.color_textPrivate}>
-          By registering, you confirm that you accept our{' '}
-        </Text>
-        <TouchableOpacity onPress={() => alert('Terms Clicked!')}>
-          <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>
-            Terms of service
-          </Text>
-        </TouchableOpacity>
-        <Text style={styles.color_textPrivate}> and </Text>
-        <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>
-          Privacy Policy
-        </Text>
-      </View>
 
-      {Platform.OS === 'android' ? (
-        <View>
-          <SocialButton
-            buttonTitle="Sign Up with Facebook"
-            btnType="facebook"
-            color="#4867aa"
-            backgroundColor="#e6eaf4"
-            onPress={() => {}}
-          />
-    
-          <SocialButton
-            buttonTitle="Sign Up with Google"
-            btnType="google"
-            color="#de4d41"
-            backgroundColor="#f5e7ea"
-            onPress={() => {}}
-          />
-        </View>
-      ) : null}
+
+
 
       <TouchableOpacity
         style={styles.navButton}

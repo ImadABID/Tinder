@@ -1,15 +1,15 @@
 import React from 'react';
-import  TinderCard from './TinderCard';
-import  Header from './Header';
+import TinderCard from './TinderCard';
+import Header from './Header';
 
 function TinderMain() {
   return (
     <div >
-      <Header/>
-      <TinderCard/>
+      <Header />
+      <TinderCard />
     </div>
   );
 }
-export default TinderMain; 
+export default TinderMain;
 
- 
+

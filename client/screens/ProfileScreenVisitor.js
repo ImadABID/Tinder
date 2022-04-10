@@ -1,26 +1,26 @@
 import React from "react";
 import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from '@react-navigation/native';
 
-const ProfilScreen = ({navigation}) => {
-  return (
+const ProfileScreen = ({ }) => {
+    const navigation = useNavigation();
+
+    return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.titleBar}>
-                    <Ionicons name="ios-arrow-back" size={24} color="#52575D"></Ionicons>
+                    <Ionicons name="ios-arrow-back" size={24} color="#52575D"
+                        onPress={() => navigation.goBack()}
+                    ></Ionicons>
 
                 </View>
-
                 <View style={{ alignSelf: "center" }}>
                     <View style={styles.profileImage}>
                         <Image source={require("../assets/profile-pic.jpg")} style={styles.image} resizeMode="center"></Image>
                     </View>
                     <View style={styles.dm}>
-                        <MaterialIcons name="chat" size={28} color="#DFD8C8"></MaterialIcons>
-                    </View>
-                    <View style={styles.active}></View>
-                    <View style={styles.add}>
-                        <Ionicons name="ios-add" size={48} color="#DFD8C8" style={{ marginTop: 6, marginLeft: 2 }}></Ionicons>
+                        <MaterialIcons name="chat" size={20} color="#DFD8C8" onPress={() => navigation.navigate('ChatScreen')} ></MaterialIcons>
                     </View>
                 </View>
 
@@ -30,17 +30,10 @@ const ProfilScreen = ({navigation}) => {
                 </View>
 
                 <View style={styles.statsContainer}>
-                    <View style={styles.statsBox}>
-                        <Text style={[styles.text, { fontSize: 24 }]}>483</Text>
-                        <Text style={[styles.text, styles.subText]}>Posts</Text>
-                    </View>
-                    <View style={[styles.statsBox, { borderColor: "#DFD8C8", borderLeftWidth: 1, borderRightWidth: 1 }]}>
-                        <Text style={[styles.text, { fontSize: 24 }]}>45,844</Text>
-                        <Text style={[styles.text, styles.subText]}>Followers</Text>
-                    </View>
-                    <View style={styles.statsBox}>
-                        <Text style={[styles.text, { fontSize: 24 }]}>302</Text>
-                        <Text style={[styles.text, styles.subText]}>Following</Text>
+
+                    <View style={[styles.statsBox]}>
+                        <Text style={[styles.text, { fontSize: 24 }]}>Age</Text>
+                        <Text style={[styles.text, styles.subText]}>22</Text>
                     </View>
                 </View>
 
@@ -57,35 +50,51 @@ const ProfilScreen = ({navigation}) => {
                         </View>
                     </ScrollView>
                     <View style={styles.mediaCount}>
-                        <Text style={[styles.text, { fontSize: 24, color: "#DFD8C8", fontWeight: "300" }]}>70</Text>
+                        <Text style={[styles.text, { fontSize: 24, color: "#DFD8C8", fontWeight: "300" }]}>5</Text>
                         <Text style={[styles.text, { fontSize: 12, color: "#DFD8C8", textTransform: "uppercase" }]}>Media</Text>
                     </View>
                 </View>
-                <Text style={[styles.subText, styles.recent]}>Recent Activity</Text>
+                <Text style={[styles.subText, styles.recent]}>Description</Text>
                 <View style={{ alignItems: "center" }}>
                     <View style={styles.recentItem}>
                         <View style={styles.activityIndicator}></View>
                         <View style={{ width: 250 }}>
                             <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
-                                Started following <Text style={{ fontWeight: "400" }}>Jake Challeahe</Text> and <Text style={{ fontWeight: "400" }}>Luis Poteer</Text>
+                            Text <Text style={{ fontWeight: "400" }}>Text</Text> Text <Text style={{ fontWeight: "400" }}>Text</Text>
                             </Text>
                         </View>
                     </View>
 
+                </View>
+                <Text style={[styles.subText, styles.recent]}>Passion   </Text>
+                <View style={{ alignItems: "center" }}>
                     <View style={styles.recentItem}>
                         <View style={styles.activityIndicator}></View>
                         <View style={{ width: 250 }}>
                             <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
-                                Started following <Text style={{ fontWeight: "400" }}>Luke Harper</Text>
+                            Text <Text style={{ fontWeight: "400" }}>Text</Text> Text <Text style={{ fontWeight: "400" }}>Text</Text>
                             </Text>
                         </View>
                     </View>
+
+                </View>
+                <Text style={[styles.subText, styles.recent]}>Orientation</Text>
+                <View style={{ alignItems: "center" }}>
+                    <View style={styles.recentItem}>
+                        <View style={styles.activityIndicator}></View>
+                        <View style={{ width: 250 }}>
+                            <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
+                            Text <Text style={{ fontWeight: "400" }}>Text</Text> Text <Text style={{ fontWeight: "400" }}>Text</Text>
+                            </Text>
+                        </View>
+                    </View>
+
                 </View>
             </ScrollView>
         </SafeAreaView>
     );
 }
-export default ProfilScreen;
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
     container: {
@@ -105,6 +114,12 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         marginTop: 24,
         marginHorizontal: 16
+    },
+    editBar: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 0,
+        marginHorizontal: 320
     },
     subText: {
         fontSize: 12,
@@ -128,6 +143,16 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center"
     },
+    edit: {
+        backgroundColor: "#41444B",
+        position: "absolute",
+        bottom: 28,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        alignItems: "center",
+        justifyContent: "center"
+    },
     active: {
         backgroundColor: "#34FFB9",
         position: "absolute",
@@ -141,10 +166,10 @@ const styles = StyleSheet.create({
     add: {
         backgroundColor: "#41444B",
         position: "absolute",
-        bottom: 0,
+        bottom: 20,
         right: 0,
-        width: 60,
-        height: 60,
+        width: 40,
+        height: 40,
         borderRadius: 30,
         alignItems: "center",
         justifyContent: "center"

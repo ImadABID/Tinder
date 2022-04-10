@@ -1,11 +1,14 @@
 import React from "react";
 import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView } from "react-native";
+import { useContext, useState } from 'react';
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
+import FormInput from '../components/FormInput';
+import FormButton from '../components/FormButton';
 
-const ProfileScreen = ({ }) => {
+const EditProfile = ({ }) => {
     const navigation = useNavigation();
-
+    const [name, setName] = useState();
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -13,95 +16,132 @@ const ProfileScreen = ({ }) => {
                     <Ionicons name="ios-arrow-back" size={24} color="#52575D"
                         onPress={() => navigation.goBack()}
                     ></Ionicons>
-
                 </View>
                 <View style={{ alignSelf: "center" }}>
                     <View style={styles.profileImage}>
                         <Image source={require("../assets/profile-pic.jpg")} style={styles.image} resizeMode="center"></Image>
                     </View>
                     <View style={styles.dm}>
-                        <MaterialIcons name="chat" size={20} color="#DFD8C8" onPress={() => navigation.navigate('ChatScreen')} ></MaterialIcons>
+                        <Ionicons name="pencil" size={20} color="#DFD8C8" onPress={() => navigation.navigate('EditProfile')} ></Ionicons>
                     </View>
-                    <View style={styles.edit}>
-                        <MaterialIcons name="build" size={20} color="#DFD8C8" onPress={() => navigation.navigate('EditProfile')}
-                        ></MaterialIcons>
+
+                </View>
+
+
+                <Text style={[styles.subText, styles.recent]}>NAme</Text>
+                <View style={{ alignItems: "center" }}>
+                    <View style={styles.infoContainer}>
+                        <FormInput
+                            labelValue={name}
+                            onChangeText={(userName) => setName(userName)}
+                            placeholderText="JUlie"
+                            iconType="user"
+                            keyboardType="name"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                        />
                     </View>
-                    <View style={styles.add}>
-                        <Ionicons name="ios-add" size={30} color="#DFD8C8" style={{ marginTop: 3, marginLeft: 2 }}></Ionicons>
+                </View>
+                <Text style={[styles.subText, styles.recent]}>Interet</Text>
+                <View style={{ alignItems: "center" }}>
+                    <View style={styles.infoContainer}>
+                        <FormInput
+                            labelValue={name}
+                            onChangeText={(userName) => setName(userName)}
+                            placeholderText="Photographer"
+                            iconType="user"
+                            keyboardType="name"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                        />
                     </View>
                 </View>
 
-                <View style={styles.infoContainer}>
-                    <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>Julie</Text>
-                    <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Photographer</Text>
-                </View>
-
-                <View style={styles.statsContainer}>
-
-                    <View style={[styles.statsBox]}>
-                        <Text style={[styles.text, { fontSize: 24 }]}>Age</Text>
-                        <Text style={[styles.text, styles.subText]}>22</Text>
-                    </View>
-                </View>
-
-                <View style={{ marginTop: 32 }}>
-                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                        <View style={styles.mediaImageContainer}>
-                            <Image source={require("../assets/media1.jpg")} style={styles.image} resizeMode="cover"></Image>
-                        </View>
-                        <View style={styles.mediaImageContainer}>
-                            <Image source={require("../assets/media2.jpg")} style={styles.image} resizeMode="cover"></Image>
-                        </View>
-                        <View style={styles.mediaImageContainer}>
-                            <Image source={require("../assets/media3.jpg")} style={styles.image} resizeMode="cover"></Image>
-                        </View>
-                    </ScrollView>
-                    <View style={styles.mediaCount}>
-                        <Text style={[styles.text, { fontSize: 24, color: "#DFD8C8", fontWeight: "300" }]}>5</Text>
-                        <Text style={[styles.text, { fontSize: 12, color: "#DFD8C8", textTransform: "uppercase" }]}>Media</Text>
+                <Text style={[styles.subText, styles.recent]}>Age</Text>
+                <View style={{ alignItems: "center" }}>
+                    <View style={styles.infoContainer}>
+                        <FormInput
+                            labelValue={name}
+                            onChangeText={(userName) => setName(userName)}
+                            placeholderText="22"
+                            iconType="user"
+                            keyboardType="name"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                        />
                     </View>
                 </View>
                 <Text style={[styles.subText, styles.recent]}>Description</Text>
                 <View style={{ alignItems: "center" }}>
-                    <View style={styles.recentItem}>
-                        <View style={styles.activityIndicator}></View>
-                        <View style={{ width: 250 }}>
-                            <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
-                            Text <Text style={{ fontWeight: "400" }}>Text</Text> Text <Text style={{ fontWeight: "400" }}>Text</Text>
-                            </Text>
-                        </View>
+                    <View style={styles.infoContainer}>
+                        <FormInput
+                            labelValue={name}
+                            onChangeText={(userName) => setName(userName)}
+                            placeholderText="TEXT"
+                            iconType="user"
+                            keyboardType="name"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                        />
                     </View>
-
                 </View>
-                <Text style={[styles.subText, styles.recent]}>Passion   </Text>
+                <Text style={[styles.subText, styles.recent]}>PAssion</Text>
                 <View style={{ alignItems: "center" }}>
-                    <View style={styles.recentItem}>
-                        <View style={styles.activityIndicator}></View>
-                        <View style={{ width: 250 }}>
-                            <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
-                            Text <Text style={{ fontWeight: "400" }}>Text</Text> Text <Text style={{ fontWeight: "400" }}>Text</Text>
-                            </Text>
-                        </View>
-                    </View>
+                    <View style={styles.infoContainer}>
+                        <FormInput
+                            labelValue={name}
+                            onChangeText={(userName) => setName(userName)}
+                            placeholderText="TEXT"
+                            iconType="user"
+                            keyboardType="name"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                        />
 
+                    </View>
                 </View>
                 <Text style={[styles.subText, styles.recent]}>Orientation</Text>
                 <View style={{ alignItems: "center" }}>
-                    <View style={styles.recentItem}>
-                        <View style={styles.activityIndicator}></View>
-                        <View style={{ width: 250 }}>
-                            <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
-                            Text <Text style={{ fontWeight: "400" }}>Text</Text> Text <Text style={{ fontWeight: "400" }}>Text</Text>
-                            </Text>
-                        </View>
-                    </View>
+                    <View style={styles.infoContainer}>
+                        <FormInput
+                            labelValue={name}
+                            onChangeText={(userName) => setName(userName)}
+                            placeholderText="TEXT"
+                            iconType="user"
+                            keyboardType="name"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                        />
 
+                    </View>
                 </View>
+                <View style={{ marginTop: 32 }}>
+                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                        <View style={styles.mediaImageContainer}>
+
+                            <Image source={require("../assets/media1.jpg")} style={styles.image} resizeMode="cover"></Image>
+                            <Ionicons name="trash" color="red" size={25} style={{ position: 'absolute', top: 10, left: 10 }} />
+
+                        </View>
+
+                        <View style={styles.mediaImageContainer}>
+                            <Image source={require("../assets/media2.jpg")} style={styles.image} resizeMode="cover"></Image>
+                            <Ionicons name="trash" color="red" size={25} style={{ position: 'absolute', top: 10, left: 10 }} />
+
+                        </View>
+                        <View style={styles.mediaImageContainer}>
+                            <Image source={require("../assets/media3.jpg")} style={styles.image} resizeMode="cover"></Image>
+                            <Ionicons name="trash" color="red" size={25} style={{ position: 'absolute', top: 10, left: 10 }} />
+
+                        </View>
+                    </ScrollView>
+                </View>
+
             </ScrollView>
         </SafeAreaView>
     );
 }
-export default ProfileScreen;
+export default EditProfile;
 
 const styles = StyleSheet.create({
     container: {
@@ -206,10 +246,10 @@ const styles = StyleSheet.create({
         backgroundColor: "#41444B",
         position: "absolute",
         top: "50%",
-        marginTop: -50,
-        marginLeft: 30,
-        width: 100,
-        height: 100,
+        marginTop: -100,
+        marginLeft: 150,
+        width: 40,
+        height: 40,
         alignItems: "center",
         justifyContent: "center",
         borderRadius: 12,
@@ -220,9 +260,9 @@ const styles = StyleSheet.create({
     },
     recent: {
         marginLeft: 78,
-        marginTop: 32,
-        marginBottom: 6,
-        fontSize: 10
+        marginTop: 10,
+        marginBottom: 0,
+        fontSize: 15
     },
     recentItem: {
         flexDirection: "row",
