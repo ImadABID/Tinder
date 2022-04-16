@@ -10,7 +10,6 @@ function Header() {
   return (
     <View style={styles.container}>
       <FontAwesome5 name="fire" size={27} color="#F06795" 
-      onPress={refreshPage}
       />
       <FontAwesome name="comments" size={27} color="#5c5c5c" 
       onPress={() => navigation.navigate('ChatScreen')}

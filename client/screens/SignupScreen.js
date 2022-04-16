@@ -107,7 +107,7 @@ const SignupScreen = ({}) => {
           .then(res =>{
 
             setSignUpButtonTitle(res.respond);
-            console.log("done");
+            navigation.navigate('LoginScreen');
 
           })
           .catch(err =>{

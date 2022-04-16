@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-
+import {
+  View,
+} from 'react-native';
 
 const ChatScreen = ({ }) => {
   const navigation = useNavigation();
   return (
-    <view>
+    <View>
       <Ionicons name="ios-arrow-back" size={24} color="#52575D"
         onPress={() => navigation.goBack()}
       ></Ionicons>
-      <h3>  ChatScreen   </h3>
-    </view>)
+      ChatScreen
+    </View>)
 }
 export default ChatScreen;
