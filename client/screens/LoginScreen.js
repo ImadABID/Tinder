@@ -15,14 +15,8 @@ import { useNavigation } from '@react-navigation/native';
 
 import * as SecureStore from 'expo-secure-store';
 
-const token_key = 'token';
-
 async function signup(value) {
-  await SecureStore.setItemAsync(token_key, value);
-}
-
-async function log_out(){
-  await SecureStore.deleteItemAsync(token_key);
+  await SecureStore.setItemAsync('token', value);
 }
 
 const LoginScreen = ({}) => {
@@ -34,7 +28,7 @@ const LoginScreen = ({}) => {
 
   useEffect(async ()=>{
 
-    let result = await SecureStore.getItemAsync(token_key);
+    let result = await SecureStore.getItemAsync('token');
     if (result) {
       navigation.navigate('ProfileScreen');
     }
@@ -71,6 +65,7 @@ const LoginScreen = ({}) => {
         buttonTitle="Sign In"
         onPress = {()=>{
           signup("1337");
+          navigation.navigate('ProfileScreen');
         }}
       />
 

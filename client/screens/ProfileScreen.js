@@ -3,6 +3,12 @@ import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView } from "react-n
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 
+import * as SecureStore from 'expo-secure-store';
+
+async function log_out(){
+    await SecureStore.deleteItemAsync('token');
+}
+
 const ProfileScreen = ({ }) => {
     const navigation = useNavigation();
 
@@ -28,6 +34,19 @@ const ProfileScreen = ({ }) => {
                     </View>
                     <View style={styles.add}>
                         <Ionicons name="ios-add" size={30} color="#DFD8C8" style={{ marginTop: 3, marginLeft: 2 }}></Ionicons>
+                    </View>
+                    <View style={styles.logout}>
+                        <Ionicons
+                            name="log-out-outline" size={30} color="#DFD8C8" style={{ marginTop: 3, marginLeft: 2 }}
+                            onPress = {
+                                ()=>{
+                                    log_out();
+                                    navigation.navigate('LoginScreen');
+                                }
+                            }
+                        >
+
+                        </Ionicons>
                     </View>
                 </View>
 
@@ -174,6 +193,17 @@ const styles = StyleSheet.create({
         backgroundColor: "#41444B",
         position: "absolute",
         bottom: 20,
+        right: 0,
+        width: 40,
+        height: 40,
+        borderRadius: 30,
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    logout: {
+        backgroundColor: "#41444B",
+        position: "absolute",
+        top: 20,
         right: 0,
         width: 40,
         height: 40,
