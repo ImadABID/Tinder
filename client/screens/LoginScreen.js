@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -13,12 +13,33 @@ import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
 import { useNavigation } from '@react-navigation/native';
 
+import * as SecureStore from 'expo-secure-store';
+
+const token_key = 'token';
+
+async function signup(value) {
+  await SecureStore.setItemAsync(token_key, value);
+}
+
+async function log_out(){
+  await SecureStore.deleteItemAsync(token_key);
+}
+
 const LoginScreen = ({}) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const navigation = useNavigation();
 
 //  const {login, googleLogin, fbLogin} = useContext(AuthContext);
+
+  useEffect(async ()=>{
+
+    let result = await SecureStore.getItemAsync(token_key);
+    if (result) {
+      navigation.navigate('ProfileScreen');
+    }
+
+  })
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -48,7 +69,9 @@ const LoginScreen = ({}) => {
 
       <FormButton
         buttonTitle="Sign In"
-        
+        onPress = {()=>{
+          signup("1337");
+        }}
       />
 
       <TouchableOpacity style={styles.forgotButton} onPress={() => {}}>

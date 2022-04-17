@@ -35,7 +35,8 @@
     "react-native-swipe-cards": "^0.1.1",
     "react-native-web": "0.17.1",
     "react-spring": "^8.0.27",
-    "react-tinder-card": "^1.4.5"
+    "react-tinder-card": "^1.4.5",
+    "expo-secure-store": "~11.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
