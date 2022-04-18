@@ -31,7 +31,8 @@ MongoClient.connect(url)
 
   // just for test in dev mode
   app.get('/welcome', (req, res)=>{
-      res.json({respond:"Hello_World"});
+    console.log('welcome')
+    res.json({respond:"Hello_World"});
   });
 
   app.post('/users/register', (req, res)=>{
