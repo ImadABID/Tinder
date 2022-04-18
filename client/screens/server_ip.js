@@ -1,16 +1,60 @@
+import * as SecureStore from 'expo-secure-store';
 
-export const verify = (popup_set_state, server_ip, server_port) => {
-    let ip = server_ip;
-    let port = server_port;
+async function save_ip(ip) {
+    await SecureStore.setItemAsync('ip', ip);
+}
+
+async function save_port(port) {
+    await SecureStore.setItemAsync('port', port);
+}
+
+
+async function delete_ip(){
+    await SecureStore.deleteItemAsync('ip');
+}
+async function delete_port(){
+    await SecureStore.deleteItemAsync('port');
+}
+
+export const verify = async (popup_set_state, ip, port) => {
+
+    let ip_db = await SecureStore.getItemAsync('ip');
+    let port_db = await SecureStore.getItemAsync('port');
+
+    if(ip ===''){
+        if(ip_db){
+            ip = ip_db;
+        }else{
+            ip = 'localhost';
+        }
+    }
+    if(port ===''){
+        if(port_db){
+            port = port_db;
+        }else{
+            port = '3000';
+        }
+    }
+
     fetch('http://'+ip+':'+port+'/welcome')
     .then(
         (res)=>{
             popup_set_state(false);
+            delete_ip();
+            delete_port();
+            save_ip(ip);
+            save_port(port);
         }
     ).catch(
         (err)=>{
-            
+            delete_ip();
+            delete_port();
             popup_set_state(true);
         }
     )
+}
+
+export const restart = ()=>{
+    delete_ip();
+    delete_port();
 }

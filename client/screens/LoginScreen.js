@@ -25,6 +25,11 @@ async function signup(value) {
   await SecureStore.setItemAsync('token', value);
 }
 
+var serverIp_txt = '';
+var serverPort_txt = '';
+
+var popup_first_time = true;
+
 const LoginScreen = ({}) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -33,17 +38,16 @@ const LoginScreen = ({}) => {
 //  const {login, googleLogin, fbLogin} = useContext(AuthContext);
 
   const [modalVisible, setModalVisible] = useState(false);
-  var serverIp = 'localhost';
-  var serverPort = '3000';
-  //const [serverIp, setServerIp] = useState('localhost');
-  //const [serverPort, setServerPort] = useState('3000');
+
 
   useEffect(async ()=>{
 
-    let ip = serverIp;
-    let port = serverPort;
-    ip_server.verify(setModalVisible, ip, port);
+    if(popup_first_time){
+      popup_first_time = false;
+      ip_server.verify(setModalVisible, serverIp_txt, serverPort_txt);
+    }
 
+    // if connected
     let result = await SecureStore.getItemAsync('token');
     if (result) {
       navigation.navigate('ProfileScreen');
@@ -121,21 +125,32 @@ const LoginScreen = ({}) => {
           <TextInput
             style={{height: 40}}
             placeholder="ip"
-            onChangeText={newText => serverIp = newText}
-            defaultValue={serverIp}
+            onChangeText={newText => serverIp_txt = newText}
+            defaultValue={serverIp_txt}
           />
           <TextInput
             style={{height: 40}}
             placeholder="port"
-            onChangeText={newText => serverPort = newText}
-            defaultValue={serverPort}
+            onChangeText={newText => serverPort_txt = newText}
+            defaultValue={serverPort_txt}
           />
           <Button
             title = 'Test connection'
             onPress={
               ()=>{
                 setModalVisible(false);
-                ip_server.verify(setModalVisible, serverIp, serverPort);
+                ip_server.verify(setModalVisible, serverIp_txt, serverPort_txt);
+              }
+            }
+          />
+          <Button
+            title = 'delete registred ip and port'
+            onPress={
+              ()=>{
+                ip_server.restart();
+                setModalVisible(false);
+                ip_server.verify(setModalVisible, serverIp_txt, serverPort_txt);
+
               }
             }
           />
