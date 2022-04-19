@@ -14,12 +14,12 @@ const StackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Group>
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="SignupScreen" component={SignupScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
         <Stack.Screen name="ProfileScreenVisitor" component={ProfileScreenVisitor} />
         <Stack.Screen name="ChatScreen" component={ChatScreen} />
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
       </Stack.Group>
     </Stack.Navigator>
   )
