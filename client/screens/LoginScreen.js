@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,6 @@ import {
   Button,
   TouchableOpacity,
   Image,
-  Platform,
   StyleSheet,
   ScrollView,
   Modal
@@ -15,6 +14,9 @@ import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
 import { useNavigation } from '@react-navigation/native';
+
+import { useFocusEffect } from '@react-navigation/native';
+
 
 import * as SecureStore from 'expo-secure-store';
 
@@ -39,21 +41,28 @@ const LoginScreen = ({}) => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-
-  useEffect(async ()=>{
-
+  const at_start_up = async () => {
     if(popup_first_time){
       popup_first_time = false;
       ip_server.verify(setModalVisible, serverIp_txt, serverPort_txt);
     }
-
+  
+    console.log('executing useEffect');
+  
     // if connected
     let result = await SecureStore.getItemAsync('token');
     if (result) {
       navigation.navigate('ProfileScreen');
     }
+  }
 
-  })
+  useFocusEffect(
+    React.useCallback(() => {
+      at_start_up();
+    })
+  );
+
+
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
