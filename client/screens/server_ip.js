@@ -54,6 +54,14 @@ export const verify = async (popup_set_state, ip, port) => {
     )
 }
 
+export const get_hostname = async () => {
+
+    let ip_db = await SecureStore.getItemAsync('ip');
+    let port_db = await SecureStore.getItemAsync('port');
+
+    return ip_db+':'+ port_db;
+}
+
 export const restart = ()=>{
     delete_ip();
     delete_port();
