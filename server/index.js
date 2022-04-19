@@ -53,11 +53,28 @@ MongoClient.connect(url)
     let salt = bcrypt.genSaltSync(10);
     client.hashed_password = bcrypt.hashSync(req.body.password, salt);
 
-    users.insertOne(client, (insertOne_err, insertOne_res)=>{
-        console.log(insertOne_err);
-        console.log(insertOne_res);
-        res.json({msg:'0'});
-    });
+    // verify email uniqueness
+    users.findOne(
+      {"email" : req.body.email},
+      (err, cl)=>{
+        if(cl){
+          res.json({msg:'email already used'});
+        }else{
+
+          users.insertOne(client, (insertOne_err, insertOne_res)=>{
+            if(insertOne_err){
+              console.log(insertOne_err);
+              res.json({msg:'Uknown problem'});
+            }else{
+              console.log(insertOne_res);
+              res.json({msg:'0'});
+            }
+          });
+
+        }
+      }
+    )
+  
   });
 
   // just for test in dev mode

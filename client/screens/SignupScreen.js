@@ -91,9 +91,6 @@ const SignupScreen = ({}) => {
 
           let data = 'username='+name+'&email='+email+'&password='+password;
 
-          console.log(link);
-
-
           let myInit = {
             method: 'POST',
             headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
@@ -104,8 +101,12 @@ const SignupScreen = ({}) => {
           .then((res)=>{return res.json();})
           .then(res =>{
 
-            setSignUpButtonTitle(res.msg);
-            navigation.navigate('LoginScreen');
+
+            if(res.msg === '0'){
+              navigation.navigate('LoginScreen');
+            }else{
+              setErrorMsg(res.msg);
+            }
 
           })
           .catch(err =>{
