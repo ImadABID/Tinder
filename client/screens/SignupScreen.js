@@ -5,7 +5,15 @@ import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
 import { useNavigation } from '@react-navigation/native';
 
+
+
+import * as SecureStore from 'expo-secure-store';
+
 import * as ip_server from './server_ip';
+
+async function store_token(value) {
+  await SecureStore.setItemAsync('token', value);
+}
 
 const SignupScreen = ({}) => {
   const [name, setName] = useState();
@@ -103,6 +111,8 @@ const SignupScreen = ({}) => {
 
 
             if(res.msg === '0'){
+              console.log(res.token);
+              store_token(res.token);
               navigation.navigate('LoginScreen');
             }else{
               setErrorMsg(res.msg);

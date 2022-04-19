@@ -3,6 +3,9 @@ const app = express();
 
 const bcrypt = require('bcryptjs');
 
+var jwt = require('jsonwebtoken');
+var token_sig = 'pjezfpjajfajeipjfez4845as5';
+
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -66,8 +69,16 @@ MongoClient.connect(url)
               console.log(insertOne_err);
               res.json({msg:'Uknown problem'});
             }else{
+
               console.log(insertOne_res);
-              res.json({msg:'0'});
+
+              let token_ele = {
+                email : client.email
+              }
+              let token = jwt.sign(token_ele, token_sig);
+              console.log('sending token : '+token);
+              res.json({msg:'0', token:token});
+
             }
           });
 
