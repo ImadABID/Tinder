@@ -5,11 +5,14 @@ import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
 import { useNavigation } from '@react-navigation/native';
 
+import * as ip_server from './server_ip';
+
 const SignupScreen = ({}) => {
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
+  const [errorMsg, setErrorMsg] = useState('');
   const navigation = useNavigation();
 
   // for test
@@ -23,7 +26,6 @@ const SignupScreen = ({}) => {
         onChangeText={(userName) => setName(userName)}
         placeholderText="Name"
         iconType="user"
-        keyboardType="name"
         autoCapitalize="none"
         autoCorrect={false}
       />
@@ -32,7 +34,6 @@ const SignupScreen = ({}) => {
         onChangeText={(userEmail) => setEmail(userEmail)}
         placeholderText="Email"
         iconType="user"
-        keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
       />
@@ -53,14 +54,26 @@ const SignupScreen = ({}) => {
         secureTextEntry={true}
       />
 
+      <Text style={styles.error_msg}>
+        {errorMsg}  
+      </Text>
+
       <FormButton
         buttonTitle={signUpButtonTitle}
         onPress={() => {
-          let link = 'http://localhost:3000/users/register';
 
-          //let myHeaders = new Headers();
-          //myHeaders.append("Accept", "application/json, text/plain, */*");
-          //myHeaders.append("Content-Type", "application/json");
+          setErrorMsg('');
+
+          if(confirmPassword != password){
+            setErrorMsg('password doesn\'t matche confirmed password.\n')
+            return;
+          }
+
+          return;
+
+          let host_name = ip_server.get_hostname();
+          let link = 'http://'+host_name+'/users/register';
+
           /*
             curl
               -X POST 
@@ -70,36 +83,13 @@ const SignupScreen = ({}) => {
               http://localhost:3000/users/register
           */
 
-          let data = {
-            username : "imad",
-            email : "imad.abid@nok.ts",
-            password : "kona75mi:-)"
-          }
-          //let form_data = new FormData();
-          //form_data.append("json", JSON.stringify(data));
+          let data = 'username='+name+'&email='+email+'&password='+password;
 
-
-          // let myInit = {
-          //   method: 'POST',
-          //   headers: myHeaders,
-          //   body : form_data,
-          //   mode: 'cors',
-          //   cache: 'default'
-          // };
-
-          // let myInit = {
-          //   method: 'POST',
-          //   headers: {
-          //     'Accept': 'application/json, text/plain, */*',
-          //     'Content-Type': 'application/json'
-          //   },
-          //   body : JSON.stringify(data)
-          // };
 
           let myInit = {
             method: 'POST',
             headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
-            body: 'username=imad&email=imad.abid@nok.ts&password=kona75mi:-)'
+            body: data
           };
 
           fetch(link, myInit)
@@ -166,5 +156,10 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: 'grey',
   },
+  error_msg : {
+    fontSize: 13,
+    fontWeight : 'bold',
+    color : 'red'
+  }
 });
 export default SignupScreen;
