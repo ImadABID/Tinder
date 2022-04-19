@@ -54,8 +54,9 @@ MongoClient.connect(url)
     client.hashed_password = bcrypt.hashSync(req.body.password, salt);
 
     users.insertOne(client, (insertOne_err, insertOne_res)=>{
-        //res.send("client_registerd");
-        res.json({respond:"client_registerd"});
+        console.log(insertOne_err);
+        console.log(insertOne_res);
+        res.json({msg:'0'});
     });
   });
 

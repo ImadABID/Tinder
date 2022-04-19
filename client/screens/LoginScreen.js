@@ -68,7 +68,6 @@ const LoginScreen = ({}) => {
         onChangeText={(userEmail) => setEmail(userEmail)}
         placeholderText="Email"
         iconType="user"
-        keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
       />

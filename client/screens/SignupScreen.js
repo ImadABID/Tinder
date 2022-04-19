@@ -60,7 +60,7 @@ const SignupScreen = ({}) => {
 
       <FormButton
         buttonTitle={signUpButtonTitle}
-        onPress={() => {
+        onPress={async () => {
 
           setErrorMsg('');
 
@@ -69,21 +69,29 @@ const SignupScreen = ({}) => {
             return;
           }
 
-          return;
-
-          let host_name = ip_server.get_hostname();
+          let host_name = await ip_server.get_hostname();
           let link = 'http://'+host_name+'/users/register';
 
           /*
-            curl
-              -X POST 
-              -d 'username=lora'
-              -d 'email=lora17@yml.fr'
-              -d 'password=kona75mi:-)'
-              http://localhost:3000/users/register
+          
+            * Req :
+              curl
+                -X POST 
+                -d 'username=lora'
+                -d 'email=lora17@yml.fr'
+                -d 'password=kona75mi:-)'
+                http://localhost:3000/users/register
+            
+            * Res :
+                {
+                  msg : '0' if no err,
+                  token : if no err
+                }
           */
 
           let data = 'username='+name+'&email='+email+'&password='+password;
+
+          console.log(link);
 
 
           let myInit = {
@@ -96,7 +104,7 @@ const SignupScreen = ({}) => {
           .then((res)=>{return res.json();})
           .then(res =>{
 
-            setSignUpButtonTitle(res.respond);
+            setSignUpButtonTitle(res.msg);
             navigation.navigate('LoginScreen');
 
           })
