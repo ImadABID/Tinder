@@ -5,7 +5,7 @@ import SignupScreen from './SignupScreen';
 import LoginScreen from './LoginScreen';
 import ProfileScreen from './ProfileScreen';
 import ProfileScreenVisitor from './ProfileScreenVisitor';
-
+import Chattwo from './Chattwo'
 import ChatScreen from './ChatScreen';
 import EditProfile from './EditProfile';
 ProfileScreenVisitor
@@ -20,6 +20,7 @@ const StackNavigator = () => {
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
         <Stack.Screen name="ProfileScreenVisitor" component={ProfileScreenVisitor} />
         <Stack.Screen name="ChatScreen" component={ChatScreen} />
+        <Stack.Screen name="Chattwo" component={Chattwo} />
       </Stack.Group>
     </Stack.Navigator>
   )

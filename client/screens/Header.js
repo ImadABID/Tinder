@@ -12,7 +12,7 @@ function Header() {
       <FontAwesome5 name="fire" size={27} color="#F06795" 
       />
       <FontAwesome name="comments" size={27} color="#5c5c5c" 
-      onPress={() => navigation.navigate('ChatScreen')}
+      onPress={() => navigation.navigate('Chattwo')}
       />
       <FontAwesome name="user" size={27} color="#5c5c5c"
         onPress={() => navigation.navigate('ProfileScreen')}>
