@@ -74,7 +74,6 @@ MongoClient.connect(url)
                 email : client.email
               }
               let token = jwt.sign(token_ele, token_sig);
-              console.log('sending token : '+token);
               res.json({msg:'0', token:token});
 
             }
@@ -112,7 +111,6 @@ MongoClient.connect(url)
               email : client.email
             }
             let token = jwt.sign(token_ele, token_sig);
-            console.log('sending token : '+token);
             res.json({msg:'0', token:token});
             
           }else{

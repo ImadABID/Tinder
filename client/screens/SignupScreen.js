@@ -111,7 +111,6 @@ const SignupScreen = ({}) => {
 
 
             if(res.msg === '0'){
-              console.log(res.token);
               store_token(res.token);
               navigation.navigate('LoginScreen');
             }else{

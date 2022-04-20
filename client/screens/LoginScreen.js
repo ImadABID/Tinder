@@ -101,7 +101,6 @@ const LoginScreen = ({}) => {
           let host_name = await ip_server.get_hostname();
           let link = 'http://'+host_name+'/users/login';
 
-          console.log(link);
 
           let data = 'email='+email+'&password='+password;
 
