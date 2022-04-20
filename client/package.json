@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@ilterugur/react-native-deck-swiper-renewed": "^2.1.7",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
@@ -27,9 +28,15 @@
     "npm": "^8.7.0",
     "pod-install": "^0.1.33",
     "r": "^0.0.5",
+=======
+    "@react-navigation/native": "^6.0.10",
+    "@react-navigation/native-stack": "^6.6.1",
+    "expo": "~44.0.2",
+    "expo-secure-store": "~11.1.0",
+>>>>>>> 81520e67087a6544fad9afc21e0fb79d162b0fe3
     "react": "17.0.1",
-    "react-dom": "17.0.1",
     "react-native": "0.64.3",
+<<<<<<< HEAD
     "react-native-animation-library": "^0.0.8",
     "react-native-card-stack-swiper": "^1.2.5",
     "react-native-css-transformer": "^1.2.4",
@@ -45,6 +52,11 @@
     "react-native-web": "0.17.1",
     "react-spring": "^8.0.27",
     "react-tinder-card": "^1.4.5"
+=======
+    "react-native-css-transformer": "^1.2.4",
+    "react-native-safe-area-context": "3.3.2",
+    "react-native-screens": "~3.10.1"
+>>>>>>> 81520e67087a6544fad9afc21e0fb79d162b0fe3
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

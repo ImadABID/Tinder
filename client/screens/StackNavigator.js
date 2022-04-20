@@ -7,7 +7,7 @@ import TinderMain from './TinderMain';
 import ProfileScreen from './ProfileScreen';
 import Matches from './Matches';
 import ProfileScreenVisitor from './ProfileScreenVisitor';
-
+import Chattwo from './Chattwo'
 import ChatScreen from './ChatScreen';
 import EditProfile from './EditProfile';
 ProfileScreenVisitor
@@ -16,16 +16,15 @@ const StackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Group>
+      <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="Matches" component={Matches} />
-
         <Stack.Screen name="TinderMain" component={TinderMain} />
-
         <Stack.Screen name="SignupScreen" component={SignupScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
         <Stack.Screen name="ProfileScreenVisitor" component={ProfileScreenVisitor} />
         <Stack.Screen name="ChatScreen" component={ChatScreen} />
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="Chattwo" component={Chattwo} />
       </Stack.Group>
     </Stack.Navigator>
   )

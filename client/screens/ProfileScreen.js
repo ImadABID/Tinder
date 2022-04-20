@@ -1,11 +1,56 @@
-import React from "react";
-import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView } from "react-native";
+import React, {useState} from "react";
+import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView} from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 import Header from './Header';
+import { useFocusEffect } from '@react-navigation/native';
+import * as SecureStore from 'expo-secure-store';
+
+import * as ip_server from './server_ip';
+
+async function log_out(){
+    await SecureStore.deleteItemAsync('token');
+}
 
 const ProfileScreen = ({ }) => {
     const navigation = useNavigation();
+
+    const [username, setUsername] = useState('');
+
+    const at_start_up = async () => {
+        
+        let token = await SecureStore.getItemAsync('token');
+        if (token) {
+            
+            let host_name = await ip_server.get_hostname();
+            let link = 'http://'+host_name+'/users/profile';
+
+            let data = 'token='+token;
+
+            let myInit = {
+                method: 'POST',
+                headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+                body: data
+            };
+
+            fetch(link, myInit)
+            .then((res)=>{return res.json();})
+            .then( res =>{
+                setUsername(res.username);
+            }).catch(err => {
+                navigation.navigate('LoginScreen');
+            });
+            
+        }else{
+            navigation.navigate('LoginScreen');
+        }
+    }
+
+    useFocusEffect(
+        React.useCallback(() => {
+            at_start_up();
+        })
+    );
 
     return (
         <SafeAreaView style={styles.container}>
@@ -32,10 +77,23 @@ const ProfileScreen = ({ }) => {
                     <View style={styles.add}>
                         <Ionicons name="ios-add" size={30} color="#DFD8C8" style={{ marginTop: 3, marginLeft: 2 }}></Ionicons>
                     </View>
+                    <View style={styles.logout}>
+                        <Ionicons
+                            name="log-out-outline" size={30} color="#DFD8C8" style={{ marginTop: 3, marginLeft: 2 }}
+                            onPress = {
+                                ()=>{
+                                    log_out();
+                                    navigation.navigate('LoginScreen');
+                                }
+                            }
+                        >
+
+                        </Ionicons>
+                    </View>
                 </View>
 
                 <View style={styles.infoContainer}>
-                    <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>Julie</Text>
+                    <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>{username}</Text>
                     <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Photographer</Text>
                 </View>
 
@@ -177,6 +235,17 @@ const styles = StyleSheet.create({
         backgroundColor: "#41444B",
         position: "absolute",
         bottom: 20,
+        right: 0,
+        width: 40,
+        height: 40,
+        borderRadius: 30,
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    logout: {
+        backgroundColor: "#41444B",
+        position: "absolute",
+        top: 20,
         right: 0,
         width: 40,
         height: 40,

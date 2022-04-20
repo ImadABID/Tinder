@@ -36,7 +36,6 @@ const EditProfile = ({ }) => {
                             onChangeText={(userName) => setName(userName)}
                             placeholderText="JUlie"
                             iconType="user"
-                            keyboardType="name"
                             autoCapitalize="none"
                             autoCorrect={false}
                         />
@@ -50,7 +49,6 @@ const EditProfile = ({ }) => {
                             onChangeText={(userName) => setName(userName)}
                             placeholderText="Photographer"
                             iconType="user"
-                            keyboardType="name"
                             autoCapitalize="none"
                             autoCorrect={false}
                         />
@@ -65,7 +63,6 @@ const EditProfile = ({ }) => {
                             onChangeText={(userName) => setName(userName)}
                             placeholderText="22"
                             iconType="user"
-                            keyboardType="name"
                             autoCapitalize="none"
                             autoCorrect={false}
                         />
@@ -79,7 +76,6 @@ const EditProfile = ({ }) => {
                             onChangeText={(userName) => setName(userName)}
                             placeholderText="TEXT"
                             iconType="user"
-                            keyboardType="name"
                             autoCapitalize="none"
                             autoCorrect={false}
                         />
@@ -93,7 +89,6 @@ const EditProfile = ({ }) => {
                             onChangeText={(userName) => setName(userName)}
                             placeholderText="TEXT"
                             iconType="user"
-                            keyboardType="name"
                             autoCapitalize="none"
                             autoCorrect={false}
                         />
@@ -108,7 +103,6 @@ const EditProfile = ({ }) => {
                             onChangeText={(userName) => setName(userName)}
                             placeholderText="TEXT"
                             iconType="user"
-                            keyboardType="name"
                             autoCapitalize="none"
                             autoCorrect={false}
                         />

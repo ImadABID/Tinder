@@ -3,6 +3,9 @@ const app = express();
 
 const bcrypt = require('bcryptjs');
 
+var jwt = require('jsonwebtoken');
+var token_sig = 'pjezfpjajfajeipjfez4845as5';
+
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -31,7 +34,8 @@ MongoClient.connect(url)
 
   // just for test in dev mode
   app.get('/welcome', (req, res)=>{
-      res.json({respond:"Hello_World"});
+    console.log('welcome')
+    res.json({respond:"Hello_World"});
   });
 
   app.post('/users/register', (req, res)=>{
@@ -52,10 +56,71 @@ MongoClient.connect(url)
     let salt = bcrypt.genSaltSync(10);
     client.hashed_password = bcrypt.hashSync(req.body.password, salt);
 
-    users.insertOne(client, (insertOne_err, insertOne_res)=>{
-        //res.send("client_registerd");
-        res.json({respond:"client_registerd"});
-    });
+    // verify email uniqueness
+    users.findOne(
+      {"email" : req.body.email},
+      (err, cl)=>{
+        if(cl){
+          res.json({msg:'email already used'});
+        }else{
+
+          users.insertOne(client, (insertOne_err, insertOne_res)=>{
+            if(insertOne_err){
+              console.log(insertOne_err);
+              res.json({msg:'Uknown problem'});
+            }else{
+
+              let token_ele = {
+                email : client.email
+              }
+              let token = jwt.sign(token_ele, token_sig);
+              res.json({msg:'0', token:token});
+
+            }
+          });
+
+        }
+      }
+    )
+  
+  });
+
+
+  app.post('/users/login', (req, res)=>{
+    
+    /*
+      curl
+        -X POST 
+        -d 'email=lora17@yml.fr'
+        -d 'password=kona75mi:-)'
+        http://localhost:3000/users/login
+    */
+
+    console.log('login');
+
+    users.findOne(
+      {"email" : req.body.email},
+      (err, client)=>{
+        if(client == null){
+          res.json({msg:'not registred'});
+        }else{
+
+          if(bcrypt.compareSync(req.body.password, client.hashed_password)){
+          
+            let token_ele = {
+              email : client.email
+            }
+            let token = jwt.sign(token_ele, token_sig);
+            res.json({msg:'0', token:token});
+            
+          }else{
+            res.json({msg:'wrong password'});
+          }
+
+        }
+      }
+    )
+
   });
 
   // just for test in dev mode
@@ -79,6 +144,29 @@ MongoClient.connect(url)
         }
       }
     )
+
+  });
+
+  app.post('/users/profile', (req, res)=>{
+    
+    /*
+      curl
+        -X POST 
+        -d 'token=lora17@yml.fr'
+        http://localhost:3000/users/profile
+    */
+
+    jwt.verify(req.body.token, token_sig, (err, user)=>{
+      
+      users.findOne(
+        {"email" : user.email},
+        (err, client)=>{
+          res.json({msg:'0', username : client.username});
+        }
+      )
+      
+    })
+
 
   });
 

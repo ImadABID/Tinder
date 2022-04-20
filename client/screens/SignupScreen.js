@@ -5,11 +5,22 @@ import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
 import { useNavigation } from '@react-navigation/native';
 
+
+
+import * as SecureStore from 'expo-secure-store';
+
+import * as ip_server from './server_ip';
+
+async function store_token(value) {
+  await SecureStore.setItemAsync('token', value);
+}
+
 const SignupScreen = ({}) => {
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
+  const [errorMsg, setErrorMsg] = useState('');
   const navigation = useNavigation();
 
   // for test
@@ -23,7 +34,6 @@ const SignupScreen = ({}) => {
         onChangeText={(userName) => setName(userName)}
         placeholderText="Name"
         iconType="user"
-        keyboardType="name"
         autoCapitalize="none"
         autoCorrect={false}
       />
@@ -32,7 +42,6 @@ const SignupScreen = ({}) => {
         onChangeText={(userEmail) => setEmail(userEmail)}
         placeholderText="Email"
         iconType="user"
-        keyboardType="email-address"
         autoCapitalize="none"
         autoCorrect={false}
       />
@@ -53,61 +62,60 @@ const SignupScreen = ({}) => {
         secureTextEntry={true}
       />
 
+      <Text style={styles.error_msg}>
+        {errorMsg}  
+      </Text>
+
       <FormButton
         buttonTitle={signUpButtonTitle}
-        onPress={() => {
-          let link = 'http://localhost:3000/users/register';
+        onPress={async () => {
 
-          //let myHeaders = new Headers();
-          //myHeaders.append("Accept", "application/json, text/plain, */*");
-          //myHeaders.append("Content-Type", "application/json");
+          setErrorMsg('');
+
+          if(confirmPassword != password){
+            setErrorMsg('password doesn\'t matche confirmed password.\n')
+            return;
+          }
+
+          let host_name = await ip_server.get_hostname();
+          let link = 'http://'+host_name+'/users/register';
+
           /*
-            curl
-              -X POST 
-              -d 'username=lora'
-              -d 'email=lora17@yml.fr'
-              -d 'password=kona75mi:-)'
-              http://localhost:3000/users/register
+          
+            * Req :
+              curl
+                -X POST 
+                -d 'username=lora'
+                -d 'email=lora17@yml.fr'
+                -d 'password=kona75mi:-)'
+                http://localhost:3000/users/register
+            
+            * Res :
+                {
+                  msg : '0' if no err,
+                  token : if no err
+                }
           */
 
-          let data = {
-            username : "imad",
-            email : "imad.abid@nok.ts",
-            password : "kona75mi:-)"
-          }
-          //let form_data = new FormData();
-          //form_data.append("json", JSON.stringify(data));
-
-
-          // let myInit = {
-          //   method: 'POST',
-          //   headers: myHeaders,
-          //   body : form_data,
-          //   mode: 'cors',
-          //   cache: 'default'
-          // };
-
-          // let myInit = {
-          //   method: 'POST',
-          //   headers: {
-          //     'Accept': 'application/json, text/plain, */*',
-          //     'Content-Type': 'application/json'
-          //   },
-          //   body : JSON.stringify(data)
-          // };
+          let data = 'username='+name+'&email='+email+'&password='+password;
 
           let myInit = {
             method: 'POST',
             headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
-            body: 'username=imad&email=imad.abid@nok.ts&password=kona75mi:-)'
+            body: data
           };
 
           fetch(link, myInit)
           .then((res)=>{return res.json();})
           .then(res =>{
 
-            setSignUpButtonTitle(res.respond);
-            navigation.navigate('LoginScreen');
+
+            if(res.msg === '0'){
+              store_token(res.token);
+              navigation.navigate('LoginScreen');
+            }else{
+              setErrorMsg(res.msg);
+            }
 
           })
           .catch(err =>{
@@ -143,7 +151,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   text: {
-    fontFamily: 'Kufam-SemiBoldItalic',
     fontSize: 28,
     marginBottom: 10,
     color: '#051d5f',
@@ -155,7 +162,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '500',
     color: '#2e64e5',
-    fontFamily: 'Lato-Regular',
   },
   textPrivate: {
     flexDirection: 'row',
@@ -166,8 +172,12 @@ const styles = StyleSheet.create({
   color_textPrivate: {
     fontSize: 13,
     fontWeight: '400',
-    fontFamily: 'Lato-Regular',
     color: 'grey',
   },
+  error_msg : {
+    fontSize: 13,
+    fontWeight : 'bold',
+    color : 'red'
+  }
 });
 export default SignupScreen;
