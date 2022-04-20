@@ -161,7 +161,12 @@ MongoClient.connect(url)
       users.findOne(
         {"email" : user.email},
         (err, client)=>{
-          res.json({msg:'0', username : client.username});
+          res.json(
+            {
+              msg:'0',
+              client : client
+            }
+          );
         }
       )
       

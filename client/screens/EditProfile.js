@@ -1,6 +1,7 @@
 import React from "react";
-import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView } from "react-native";
 import { useContext, useState } from 'react';
+import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView} from "react-native";
+import {Picker} from "@react-native-picker/picker";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 import FormInput from '../components/FormInput';
@@ -9,6 +10,7 @@ import FormButton from '../components/FormButton';
 const EditProfile = ({ }) => {
     const navigation = useNavigation();
     const [name, setName] = useState();
+    const [age, setAge] = useState();
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -28,7 +30,7 @@ const EditProfile = ({ }) => {
                 </View>
 
 
-                <Text style={[styles.subText, styles.recent]}>NAme</Text>
+                <Text style={[styles.subText, styles.recent]}>Name</Text>
                 <View style={{ alignItems: "center" }}>
                     <View style={styles.infoContainer}>
                         <FormInput
@@ -41,20 +43,6 @@ const EditProfile = ({ }) => {
                         />
                     </View>
                 </View>
-                <Text style={[styles.subText, styles.recent]}>Interet</Text>
-                <View style={{ alignItems: "center" }}>
-                    <View style={styles.infoContainer}>
-                        <FormInput
-                            labelValue={name}
-                            onChangeText={(userName) => setName(userName)}
-                            placeholderText="Photographer"
-                            iconType="user"
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                        />
-                    </View>
-                </View>
-
                 <Text style={[styles.subText, styles.recent]}>Age</Text>
                 <View style={{ alignItems: "center" }}>
                     <View style={styles.infoContainer}>
@@ -62,6 +50,68 @@ const EditProfile = ({ }) => {
                             labelValue={name}
                             onChangeText={(userName) => setName(userName)}
                             placeholderText="22"
+                            iconType="user"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                        />
+                    </View>
+                </View>
+                <Text style={[styles.subText, styles.recent]}>Orientation</Text>
+                <View style={{ alignItems: "center" }}>
+                    <View style={styles.infoContainer}>
+                        <Picker
+                            //selectedValue={selectedValue}
+                            style={{ height: 50, width: 150 }}
+                            onValueChange={
+                                (itemValue, itemIndex) => {
+                                    //setSelectedValue(itemValue)
+                                }
+                            }
+                        >
+                            <Picker.Item label="male" value="male"/>
+                            <Picker.Item label="female" value="female"/>
+                        </Picker>
+                    </View>
+                </View>
+                <Text style={[styles.subText, styles.recent]}>Interessed in</Text>
+                <View style={{ alignItems: "center" }}>
+                    <View style={styles.infoContainer}>
+                        <Picker
+                            //selectedValue={selectedValue}
+                            style={{ height: 50, width: 150 }}
+                            onValueChange={
+                                (itemValue, itemIndex) => {
+                                    //setSelectedValue(itemValue)
+                                }
+                            }
+                        >
+                            <Picker.Item label="men" value="men"/>
+                            <Picker.Item label="women" value="women"/>
+                            <Picker.Item label="I prefer not to say" value="na"/>
+                        </Picker>
+                    </View>
+                </View>
+                <Text style={[styles.subText, styles.recent]}>PAssion</Text>
+                <View style={{ alignItems: "center" }}>
+                    <View style={styles.infoContainer}>
+                        <FormInput
+                            labelValue={name}
+                            onChangeText={(userName) => setName(userName)}
+                            placeholderText="TEXT"
+                            iconType="user"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                        />
+
+                    </View>
+                </View>
+                <Text style={[styles.subText, styles.recent]}>Description</Text>
+                <View style={{ alignItems: "center" }}>
+                    <View style={styles.infoContainer}>
+                        <FormInput
+                            labelValue={name}
+                            onChangeText={(userName) => setName(userName)}
+                            placeholderText="TEXT"
                             iconType="user"
                             autoCapitalize="none"
                             autoCorrect={false}
@@ -79,34 +129,6 @@ const EditProfile = ({ }) => {
                             autoCapitalize="none"
                             autoCorrect={false}
                         />
-                    </View>
-                </View>
-                <Text style={[styles.subText, styles.recent]}>PAssion</Text>
-                <View style={{ alignItems: "center" }}>
-                    <View style={styles.infoContainer}>
-                        <FormInput
-                            labelValue={name}
-                            onChangeText={(userName) => setName(userName)}
-                            placeholderText="TEXT"
-                            iconType="user"
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                        />
-
-                    </View>
-                </View>
-                <Text style={[styles.subText, styles.recent]}>Orientation</Text>
-                <View style={{ alignItems: "center" }}>
-                    <View style={styles.infoContainer}>
-                        <FormInput
-                            labelValue={name}
-                            onChangeText={(userName) => setName(userName)}
-                            placeholderText="TEXT"
-                            iconType="user"
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                        />
-
                     </View>
                 </View>
                 <View style={{ marginTop: 32 }}>
@@ -130,6 +152,24 @@ const EditProfile = ({ }) => {
                         </View>
                     </ScrollView>
                 </View>
+
+                <View style={{ alignItems: "center" }}>
+                    <View style={styles.infoContainer}>
+                        <FormButton
+                            buttonTitle="Save"
+                            onPress = {
+                                ()=>{
+
+                                }
+                            }
+                        />
+                        
+                    </View>
+                </View>
+                <Text>
+
+                </Text>
+
 
             </ScrollView>
         </SafeAreaView>

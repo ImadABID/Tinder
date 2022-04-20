@@ -16,6 +16,9 @@ const ProfileScreen = ({ }) => {
     const navigation = useNavigation();
 
     const [username, setUsername] = useState('');
+    const [age, setAge] = useState('');
+    const [description, setDescription] = useState('');
+    const [passion, setPassion] = useState('');
 
     const at_start_up = async () => {
         
@@ -36,7 +39,16 @@ const ProfileScreen = ({ }) => {
             fetch(link, myInit)
             .then((res)=>{return res.json();})
             .then( res =>{
-                setUsername(res.username);
+                setUsername(res.client.username);
+                if(res.client.hasOwnProperty('age')){
+                    setAge(res.client.age);
+                }
+                if(res.client.hasOwnProperty('description')){
+                    setDescription(res.client.description);
+                }
+                if(res.client.hasOwnProperty('passion')){
+                    setPassion(res.client.passion);
+                }
             }).catch(err => {
                 navigation.navigate('LoginScreen');
             });
@@ -94,7 +106,6 @@ const ProfileScreen = ({ }) => {
 
                 <View style={styles.infoContainer}>
                     <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>{username}</Text>
-                    <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Photographer</Text>
                 </View>
 
                 <View style={styles.statsContainer}>
