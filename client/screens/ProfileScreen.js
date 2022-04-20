@@ -2,12 +2,15 @@ import React from "react";
 import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
+import Header from './Header';
 
 const ProfileScreen = ({ }) => {
     const navigation = useNavigation();
 
     return (
         <SafeAreaView style={styles.container}>
+            <Header/>
+
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.titleBar}>
                     <Ionicons name="ios-arrow-back" size={24} color="#52575D"

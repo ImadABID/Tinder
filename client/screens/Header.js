@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet,SafeAreaView } from 'react-native'
 import { FontAwesome5, FontAwesome } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native';
 const refreshPage = ()=>{
@@ -30,7 +30,7 @@ export default Header;
 const styles = StyleSheet.create({
   container: {
     height: 60,
-    bottom:-20,
+    marginTop:50,
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 15,
