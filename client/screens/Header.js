@@ -14,12 +14,8 @@ function Header() {
 
       />
       <FontAwesome name="comments" size={27} color="#5c5c5c" 
-<<<<<<< HEAD
     
       onPress={() => navigation.navigate('ChatScreen')}
-=======
-      onPress={() => navigation.navigate('Chattwo')}
->>>>>>> 81520e67087a6544fad9afc21e0fb79d162b0fe3
       />
       <FontAwesome name="search" size={27} color="#5c5c5c" 
       onPress={() => navigation.navigate('Matches')}
