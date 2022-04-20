@@ -70,8 +70,6 @@ MongoClient.connect(url)
               res.json({msg:'Uknown problem'});
             }else{
 
-              console.log(insertOne_res);
-
               let token_ele = {
                 email : client.email
               }
@@ -86,6 +84,39 @@ MongoClient.connect(url)
       }
     )
   
+  });
+
+
+  app.post('/users/login', (req, res)=>{
+    
+    /*
+      curl
+        -X POST 
+        -d 'email=lora17@yml.fr'
+        -d 'password=kona75mi:-)'
+        http://localhost:3000/users/login
+    */
+
+    console.log('login');
+
+    users.findOne(
+      {"email" : req.body.email},
+      (err, client)=>{
+        if(bcrypt.compareSync(req.body.password, client.hashed_password)){
+          
+          let token_ele = {
+            email : client.email
+          }
+          let token = jwt.sign(token_ele, token_sig);
+          console.log('sending token : '+token);
+          res.json({msg:'0', token:token});
+          
+        }else{
+          res.json({msg:'not registred or wrong password'});
+        }
+      }
+    )
+
   });
 
   // just for test in dev mode

@@ -89,9 +89,37 @@ const LoginScreen = ({}) => {
 
       <FormButton
         buttonTitle="Sign In"
-        onPress = {()=>{
-          signup("1337");
-          navigation.navigate('ProfileScreen');
+        onPress = {async ()=>{
+
+          let host_name = await ip_server.get_hostname();
+          let link = 'http://'+host_name+'/users/login';
+
+          console.log(link);
+
+          let data = 'email='+email+'&password='+password;
+
+          let myInit = {
+            method: 'POST',
+            headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+            body: data
+          };
+
+          fetch(link, myInit)
+          .then((res)=>{return res.json();})
+          .then(res =>{
+
+            if(res.msg === '0'){
+              signup(res.token);
+              navigation.navigate('ProfileScreen');
+            }else{
+              //setErrorMsg(res.msg);
+            }
+
+          })
+          .catch(err =>{
+              console.log(err);
+          });
+
         }}
       />
 
