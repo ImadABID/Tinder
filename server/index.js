@@ -102,17 +102,23 @@ MongoClient.connect(url)
     users.findOne(
       {"email" : req.body.email},
       (err, client)=>{
-        if(bcrypt.compareSync(req.body.password, client.hashed_password)){
-          
-          let token_ele = {
-            email : client.email
-          }
-          let token = jwt.sign(token_ele, token_sig);
-          console.log('sending token : '+token);
-          res.json({msg:'0', token:token});
-          
+        if(client == null){
+          res.json({msg:'not registred'});
         }else{
-          res.json({msg:'not registred or wrong password'});
+
+          if(bcrypt.compareSync(req.body.password, client.hashed_password)){
+          
+            let token_ele = {
+              email : client.email
+            }
+            let token = jwt.sign(token_ele, token_sig);
+            console.log('sending token : '+token);
+            res.json({msg:'0', token:token});
+            
+          }else{
+            res.json({msg:'wrong password'});
+          }
+
         }
       }
     )

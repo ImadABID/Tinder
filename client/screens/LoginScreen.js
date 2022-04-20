@@ -35,6 +35,7 @@ var popup_first_time = true;
 const LoginScreen = ({}) => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [errorMsg, setErrorMsg] = useState('');
   const navigation = useNavigation();
 
 //  const {login, googleLogin, fbLogin} = useContext(AuthContext);
@@ -87,9 +88,15 @@ const LoginScreen = ({}) => {
         secureTextEntry={true}
       />
 
+      <Text style={styles.error_msg}>
+        {errorMsg}  
+      </Text>
+
       <FormButton
         buttonTitle="Sign In"
         onPress = {async ()=>{
+
+          setErrorMsg('');
 
           let host_name = await ip_server.get_hostname();
           let link = 'http://'+host_name+'/users/login';
@@ -112,7 +119,7 @@ const LoginScreen = ({}) => {
               signup(res.token);
               navigation.navigate('ProfileScreen');
             }else{
-              //setErrorMsg(res.msg);
+              setErrorMsg(res.msg);
             }
 
           })
@@ -241,5 +248,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5
+  },
+  error_msg : {
+    fontSize: 13,
+    fontWeight : 'bold',
+    color : 'red'
   }
 });
