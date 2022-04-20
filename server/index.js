@@ -112,6 +112,29 @@ MongoClient.connect(url)
 
   });
 
+  app.post('/users/profile', (req, res)=>{
+    
+    /*
+      curl
+        -X POST 
+        -d 'token=lora17@yml.fr'
+        http://localhost:3000/users/profile
+    */
+
+    jwt.verify(req.body.token, token_sig, (err, user)=>{
+      
+      users.findOne(
+        {"email" : user.email},
+        (err, client)=>{
+          res.json({msg:'0', username : client.username});
+        }
+      )
+      
+    })
+
+
+  });
+
   // just for test in dev mode
   app.get('/drop_db', (req, res) => {
     users.drop();

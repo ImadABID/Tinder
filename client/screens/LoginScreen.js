@@ -47,8 +47,6 @@ const LoginScreen = ({}) => {
       ip_server.verify(setModalVisible, serverIp_txt, serverPort_txt);
     }
   
-    console.log('executing useEffect');
-  
     // if connected
     let result = await SecureStore.getItemAsync('token');
     if (result) {

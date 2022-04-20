@@ -1,9 +1,11 @@
-import React from "react";
+import React, {useState} from "react";
 import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView} from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
-
+import { useFocusEffect } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
+
+import * as ip_server from './server_ip';
 
 async function log_out(){
     await SecureStore.deleteItemAsync('token');
@@ -11,6 +13,43 @@ async function log_out(){
 
 const ProfileScreen = ({ }) => {
     const navigation = useNavigation();
+
+    const [username, setUsername] = useState('');
+
+    const at_start_up = async () => {
+        
+        let token = await SecureStore.getItemAsync('token');
+        if (token) {
+            
+            let host_name = await ip_server.get_hostname();
+            let link = 'http://'+host_name+'/users/profile';
+
+            let data = 'token='+token;
+
+            let myInit = {
+                method: 'POST',
+                headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+                body: data
+            };
+
+            fetch(link, myInit)
+            .then((res)=>{return res.json();})
+            .then( res =>{
+                setUsername(res.username);
+            }).catch(err => {
+                navigation.navigate('LoginScreen');
+            });
+            
+        }else{
+            navigation.navigate('LoginScreen');
+        }
+    }
+
+    useFocusEffect(
+        React.useCallback(() => {
+            at_start_up();
+        })
+    );
 
     return (
         <SafeAreaView style={styles.container}>
@@ -51,7 +90,7 @@ const ProfileScreen = ({ }) => {
                 </View>
 
                 <View style={styles.infoContainer}>
-                    <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>Julie</Text>
+                    <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>{username}</Text>
                     <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Photographer</Text>
                 </View>
 
