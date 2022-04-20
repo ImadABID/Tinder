@@ -4,11 +4,10 @@ module.exports = function(api) {
     presets: ['babel-preset-expo'],
     plugins:
     [
-      'module-resolver',
+      'react-native-reanimated/plugin',
       ["react-native-platform-specific-extensions", {
         "extensions": ["css", "scss", "sass"],
-      }],
-      'react-native-reanimated/plugin'
+      }]
     ]
 
   };

@@ -10,9 +10,15 @@ function Header() {
   return (
     <View style={styles.container}>
       <FontAwesome5 name="fire" size={27} color="#F06795" 
+      onPress={() => navigation.navigate('TinderMain')}
+
       />
       <FontAwesome name="comments" size={27} color="#5c5c5c" 
+    
       onPress={() => navigation.navigate('ChatScreen')}
+      />
+      <FontAwesome name="search" size={27} color="#5c5c5c" 
+      onPress={() => navigation.navigate('Matches')}
       />
       <FontAwesome name="user" size={27} color="#5c5c5c"
         onPress={() => navigation.navigate('ProfileScreen')}>
@@ -24,6 +30,7 @@ export default Header;
 const styles = StyleSheet.create({
   container: {
     height: 60,
+    bottom:-20,
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 15,
