@@ -164,8 +164,7 @@ MongoClient.connect(url)
           res.json(
             {
               msg:'0',
-              username : client.username,
-              age : 2
+              client : client
             }
           );
         }
