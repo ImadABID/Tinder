@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from '../assets/styles';
 import Header from './Header';
+import { useNavigation } from '@react-navigation/native';
 
 import {
   ScrollView,
@@ -15,6 +16,8 @@ import Icon from '../components/Icon';
 import Demo from '../assets/data/demo.js';
 
 const Matches = () => {
+  const navigation = useNavigation();
+
   return (
     <ImageBackground
       source={require('../assets/images/bg.png')}
@@ -37,7 +40,10 @@ const Matches = () => {
             data={Demo}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
-              <TouchableOpacity>
+              <TouchableOpacity
+              onPress={() => navigation.navigate('ProfileScreenVisitor')}
+
+              >
                 <CardItem
                   image={item.image}
                   name={item.name}

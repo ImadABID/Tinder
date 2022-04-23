@@ -1,16 +1,38 @@
 import React from "react";
 import { useContext, useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView} from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, Image,Button,Platform,ScrollView} from "react-native";
 import {Picker} from "@react-native-picker/picker";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
+import * as ImagePicker from 'expo-image-picker';
+import demo from '../assets/data/demo.js';
 
 const EditProfile = ({ }) => {
     const navigation = useNavigation();
     const [name, setName] = useState();
     const [age, setAge] = useState();
+    const [image, setImage] = useState(null);
+    const [Demo, setData] = useState(demo);
+    const removeItem = (index) => {
+        setData(Demo.filter((o, i) => index !== i));
+    };
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
+    
+        console.log(result);
+    
+        if (!result.cancelled) {
+          setImage(result.uri);
+        }
+      };
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -24,7 +46,8 @@ const EditProfile = ({ }) => {
                         <Image source={require("../assets/profile-pic.jpg")} style={styles.image} resizeMode="center"></Image>
                     </View>
                     <View style={styles.dm}>
-                        <Ionicons name="pencil" size={20} color="#DFD8C8" onPress={() => navigation.navigate('EditProfile')} ></Ionicons>
+                        <Ionicons name="pencil" size={20} color="#DFD8C8" onPress={pickImage} />
+                        {image && <Image source={{ uri: image }} style={styles.image}  />}
                     </View>
 
                 </View>
@@ -133,23 +156,13 @@ const EditProfile = ({ }) => {
                 </View>
                 <View style={{ marginTop: 32 }}>
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                        <View style={styles.mediaImageContainer}>
+                        {Demo.map((item, index) => (
+                            <View key={index} style={styles.mediaImageContainer}>
+                                <Image source={item.image} style={styles.image} resizeMode="cover"></Image>
+                                <Ionicons name="trash" color="red" size={25} onPress={()=>removeItem(index)} style={{ position: 'absolute', top: 10, left: 10 }} />
 
-                            <Image source={require("../assets/media1.jpg")} style={styles.image} resizeMode="cover"></Image>
-                            <Ionicons name="trash" color="red" size={25} style={{ position: 'absolute', top: 10, left: 10 }} />
-
-                        </View>
-
-                        <View style={styles.mediaImageContainer}>
-                            <Image source={require("../assets/media2.jpg")} style={styles.image} resizeMode="cover"></Image>
-                            <Ionicons name="trash" color="red" size={25} style={{ position: 'absolute', top: 10, left: 10 }} />
-
-                        </View>
-                        <View style={styles.mediaImageContainer}>
-                            <Image source={require("../assets/media3.jpg")} style={styles.image} resizeMode="cover"></Image>
-                            <Ionicons name="trash" color="red" size={25} style={{ position: 'absolute', top: 10, left: 10 }} />
-
-                        </View>
+                            </View>
+                        ))}
                     </ScrollView>
                 </View>
 

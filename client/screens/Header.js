@@ -17,7 +17,7 @@ function Header() {
     
       onPress={() => navigation.navigate('ChatScreen')}
       />
-      <FontAwesome name="search" size={27} color="#5c5c5c" 
+      <FontAwesome name="heart" size={27} color="#5c5c5c" 
       onPress={() => navigation.navigate('Matches')}
       />
       <FontAwesome name="user" size={27} color="#5c5c5c"

@@ -1,17 +1,34 @@
 import React, {useState} from "react";
-import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView} from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, Image,Button,Platform,ScrollView} from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 import Header from './Header';
+import Demo from '../assets/data/demo.js';
+
 import { useFocusEffect } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
+import * as ImagePicker from 'expo-image-picker';
 
 import * as ip_server from './server_ip';
 
 async function log_out(){
     await SecureStore.deleteItemAsync('token');
 }
+const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
+    console.log(result);
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+  };
 const ProfileScreen = ({ }) => {
     const navigation = useNavigation();
 
@@ -19,6 +36,7 @@ const ProfileScreen = ({ }) => {
     const [age, setAge] = useState('');
     const [description, setDescription] = useState('');
     const [passion, setPassion] = useState('');
+    const [image, setImage] = useState(null);
 
     const at_start_up = async () => {
         
@@ -87,7 +105,7 @@ const ProfileScreen = ({ }) => {
                         ></MaterialIcons>
                     </View>
                     <View style={styles.add}>
-                        <Ionicons name="ios-add" size={30} color="#DFD8C8" style={{ marginTop: 3, marginLeft: 2 }}></Ionicons>
+                        <Ionicons name="ios-add" size={30} color="#DFD8C8" style={{ marginTop: 3, marginLeft: 2 }} onPress={pickImage} ></Ionicons>
                     </View>
                     <View style={styles.logout}>
                         <Ionicons
@@ -118,20 +136,19 @@ const ProfileScreen = ({ }) => {
 
                 <View style={{ marginTop: 32 }}>
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+
                         <View style={styles.mediaImageContainer}>
+                        <Button title="Pick an image from camera roll" onPress={pickImage} />
+                        {image && <Image source={{ uri: image }} style={styles.image}  />}
                             <Image source={require("../assets/media1.jpg")} style={styles.image} resizeMode="cover"></Image>
                         </View>
-                        <View style={styles.mediaImageContainer}>
-                            <Image source={require("../assets/media2.jpg")} style={styles.image} resizeMode="cover"></Image>
-                        </View>
-                        <View style={styles.mediaImageContainer}>
-                            <Image source={require("../assets/media3.jpg")} style={styles.image} resizeMode="cover"></Image>
-                        </View>
+                        {Demo.map((item, index) => (
+                            <View key={index} style={styles.mediaImageContainer}>
+                                <Image source={item.image} style={styles.image} resizeMode="cover"></Image>
+                            </View>
+                        ))}
                     </ScrollView>
-                    <View style={styles.mediaCount}>
-                        <Text style={[styles.text, { fontSize: 24, color: "#DFD8C8", fontWeight: "300" }]}>5</Text>
-                        <Text style={[styles.text, { fontSize: 12, color: "#DFD8C8", textTransform: "uppercase" }]}>Media</Text>
-                    </View>
+
                 </View>
                 <Text style={[styles.subText, styles.recent]}>Description</Text>
                 <View style={{ alignItems: "center" }}>
