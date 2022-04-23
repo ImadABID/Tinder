@@ -130,7 +130,7 @@ const ProfileScreen = ({ }) => {
 
                     <View style={[styles.statsBox]}>
                         <Text style={[styles.text, { fontSize: 24 }]}>Age</Text>
-                        <Text style={[styles.text, styles.subText]}>22</Text>
+                        <Text style={[styles.text, styles.subText]}>{age}</Text>
                     </View>
                 </View>
 
@@ -156,31 +156,19 @@ const ProfileScreen = ({ }) => {
                         <View style={styles.activityIndicator}></View>
                         <View style={{ width: 250 }}>
                             <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
-                            Text <Text style={{ fontWeight: "400" }}>Text</Text> Text <Text style={{ fontWeight: "400" }}>Text</Text>
+                                {description}
                             </Text>
                         </View>
                     </View>
 
                 </View>
-                <Text style={[styles.subText, styles.recent]}>Passion   </Text>
+                <Text style={[styles.subText, styles.recent]}>Passion</Text>
                 <View style={{ alignItems: "center" }}>
                     <View style={styles.recentItem}>
                         <View style={styles.activityIndicator}></View>
                         <View style={{ width: 250 }}>
                             <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
-                            Text <Text style={{ fontWeight: "400" }}>Text</Text> Text <Text style={{ fontWeight: "400" }}>Text</Text>
-                            </Text>
-                        </View>
-                    </View>
-
-                </View>
-                <Text style={[styles.subText, styles.recent]}>Orientation</Text>
-                <View style={{ alignItems: "center" }}>
-                    <View style={styles.recentItem}>
-                        <View style={styles.activityIndicator}></View>
-                        <View style={{ width: 250 }}>
-                            <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
-                            Text <Text style={{ fontWeight: "400" }}>Text</Text> Text <Text style={{ fontWeight: "400" }}>Text</Text>
+                                {passion}
                             </Text>
                         </View>
                     </View>
