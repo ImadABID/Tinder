@@ -20,7 +20,7 @@ const TinderCard = () => {
     latitude: 27.950575,
     longitude: -82.457178
   }
-
+  console.log(haversine(start, end, {unit: 'meter'}))
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -40,7 +40,6 @@ const TinderCard = () => {
     text = JSON.stringify(location);
   }
   console.log(text)
-  
   return (
 
       <View style={styles.containerHome}>
