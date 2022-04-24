@@ -172,6 +172,32 @@ MongoClient.connect(url)
       
     })
 
+  });
+
+  app.post('/profile/update', (req, res)=>{
+    
+    jwt.verify(req.body.token, token_sig, (err, user)=>{
+
+
+      let updated_user = user;
+      Object.assign(updated_user, user);
+      
+      updated_user.username = req.body.username;
+      updated_user.age = req.body.age;
+      updated_user.description = req.body.description;
+      updated_user.passion = req.body.passion;
+      updated_user.orientation = req.body.orientation;
+      updated_user.targetedSex = req.body.targetedSex;
+      
+      users.updateOne({email : updated_user.email}, {$set:updated_user}, {upsert: true});
+
+      res.json(
+        {
+          msg : '0'
+        }
+      );
+      
+    })
 
   });
 

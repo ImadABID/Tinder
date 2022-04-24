@@ -9,30 +9,104 @@ import FormButton from '../components/FormButton';
 import * as ImagePicker from 'expo-image-picker';
 import demo from '../assets/data/demo.js';
 
+import { useFocusEffect } from '@react-navigation/native';
+import * as SecureStore from 'expo-secure-store';
+import * as ip_server from './server_ip';
+
+var first_time = 1;
+
 const EditProfile = ({ }) => {
+    
     const navigation = useNavigation();
-    const [name, setName] = useState();
+
+    const [username, setUsername] = useState('');
     const [age, setAge] = useState();
+    const [description, setDescription] = useState('');
+    const [passion, setPassion] = useState('');
+    const [orientation, setOrientation] = useState('male');
+    const [targetedSex, setTargetedSex] = useState('na');
+    
     const [image, setImage] = useState(null);
     const [Demo, setData] = useState(demo);
+    
     const removeItem = (index) => {
         setData(Demo.filter((o, i) => index !== i));
     };
+
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
         let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.All,
-          allowsEditing: true,
-          aspect: [4, 3],
-          quality: 1,
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
         });
-    
+
         console.log(result);
-    
+
         if (!result.cancelled) {
-          setImage(result.uri);
+            setImage(result.uri);
         }
-      };
+    };
+
+    const at_start_up = async () => {
+
+        if(first_time === 1){
+            
+            first_time = 0;
+
+            console.log('start up script');
+
+            let token = await SecureStore.getItemAsync('token');
+            if (token) {
+                
+                let host_name = await ip_server.get_hostname();
+                let link = 'http://'+host_name+'/users/profile';
+
+                let data = 'token='+token;
+
+                let myInit = {
+                    method: 'POST',
+                    headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+                    body: data
+                };
+
+                fetch(link, myInit)
+                .then((res)=>{return res.json();})
+                .then( res =>{
+                    setUsername(res.client.username);
+                    if(res.client.hasOwnProperty('age')){
+                        setAge(res.client.age);
+                    }
+                    if(res.client.hasOwnProperty('description')){
+                        setDescription(res.client.description);
+                    }
+                    if(res.client.hasOwnProperty('passion')){
+                        setPassion(res.client.passion);
+                    }
+                    if(res.client.hasOwnProperty('orientation')){
+                        setOrientation(res.client.orientation);
+                    }
+                    if(res.client.hasOwnProperty('targetedSex')){
+                        setTargetedSex(res.client.targetedSex);
+                    }
+                }).catch(err => {
+                    navigation.navigate('LoginScreen');
+                });
+                
+            }else{
+                navigation.navigate('LoginScreen');
+            }
+        }
+    
+    }
+
+    useFocusEffect(
+        React.useCallback(() => {
+            at_start_up();
+        })
+    );
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -57,9 +131,9 @@ const EditProfile = ({ }) => {
                 <View style={{ alignItems: "center" }}>
                     <View style={styles.infoContainer}>
                         <FormInput
-                            labelValue={name}
-                            onChangeText={(userName) => setName(userName)}
-                            placeholderText="JUlie"
+                            labelValue={username}
+                            onChangeText={(name) => setUsername(name)}
+                            placeholderText="name"
                             iconType="user"
                             autoCapitalize="none"
                             autoCorrect={false}
@@ -70,9 +144,9 @@ const EditProfile = ({ }) => {
                 <View style={{ alignItems: "center" }}>
                     <View style={styles.infoContainer}>
                         <FormInput
-                            labelValue={name}
-                            onChangeText={(userName) => setName(userName)}
-                            placeholderText="22"
+                            labelValue={age}
+                            onChangeText={(age) => setAge(age)}
+                            placeholderText="age"
                             iconType="user"
                             autoCapitalize="none"
                             autoCorrect={false}
@@ -83,11 +157,11 @@ const EditProfile = ({ }) => {
                 <View style={{ alignItems: "center" }}>
                     <View style={styles.infoContainer}>
                         <Picker
-                            //selectedValue={selectedValue}
+                            selectedValue = {orientation}
                             style={{ height: 50, width: 150 }}
                             onValueChange={
                                 (itemValue, itemIndex) => {
-                                    //setSelectedValue(itemValue)
+                                    setOrientation(itemValue)
                                 }
                             }
                         >
@@ -100,11 +174,11 @@ const EditProfile = ({ }) => {
                 <View style={{ alignItems: "center" }}>
                     <View style={styles.infoContainer}>
                         <Picker
-                            //selectedValue={selectedValue}
+                            selectedValue={targetedSex}
                             style={{ height: 50, width: 150 }}
                             onValueChange={
                                 (itemValue, itemIndex) => {
-                                    //setSelectedValue(itemValue)
+                                    setTargetedSex(itemValue)
                                 }
                             }
                         >
@@ -118,9 +192,9 @@ const EditProfile = ({ }) => {
                 <View style={{ alignItems: "center" }}>
                     <View style={styles.infoContainer}>
                         <FormInput
-                            labelValue={name}
-                            onChangeText={(userName) => setName(userName)}
-                            placeholderText="TEXT"
+                            labelValue={passion}
+                            onChangeText={(pas) => setPassion(pas)}
+                            placeholderText="passion"
                             iconType="user"
                             autoCapitalize="none"
                             autoCorrect={false}
@@ -132,22 +206,9 @@ const EditProfile = ({ }) => {
                 <View style={{ alignItems: "center" }}>
                     <View style={styles.infoContainer}>
                         <FormInput
-                            labelValue={name}
-                            onChangeText={(userName) => setName(userName)}
-                            placeholderText="TEXT"
-                            iconType="user"
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                        />
-                    </View>
-                </View>
-                <Text style={[styles.subText, styles.recent]}>Description</Text>
-                <View style={{ alignItems: "center" }}>
-                    <View style={styles.infoContainer}>
-                        <FormInput
-                            labelValue={name}
-                            onChangeText={(userName) => setName(userName)}
-                            placeholderText="TEXT"
+                            labelValue={description}
+                            onChangeText={(des) => setDescription(des)}
+                            placeholderText="description"
                             iconType="user"
                             autoCapitalize="none"
                             autoCorrect={false}
@@ -171,7 +232,68 @@ const EditProfile = ({ }) => {
                         <FormButton
                             buttonTitle="Save"
                             onPress = {
-                                ()=>{
+                                async ()=>{
+
+                                    first_time = 1;
+
+                                    let token = await SecureStore.getItemAsync('token');
+                                    if (token) {
+
+                                        console.log(token);
+
+                                        let host_name = await ip_server.get_hostname();
+                                        let link = 'http://'+host_name+'/profile/update';
+
+                                        console.log('link');
+
+                                        /*
+                                        
+                                            * Req :
+                                            curl
+                                                -X POST 
+                                                -d 'username=lora'
+                                                -d 'email=lora17@yml.fr'
+                                                -d 'password=kona75mi:-)'
+                                                http://localhost:3000/users/register
+                                            
+                                            * Res :
+                                                {
+                                                msg : '0' if no err,
+                                                token : if no err
+                                                }
+                                        */
+
+                                        let data = 'token='+token+'&username='+username+'&age='+age+'&orientation='+orientation+'&targetedSex='+targetedSex+'&description='+description+'&passion='+passion;
+
+                                        console.log(data);
+
+                                        let myInit = {
+                                            method: 'POST',
+                                            headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+                                            body: data
+                                        };
+
+                                        fetch(link, myInit)
+                                        .then((res)=>{return res.json();})
+                                        .then(res =>{
+
+
+                                            if(res.msg === '0'){
+                                                navigation.navigate('ProfileScreen');
+                                            }else{
+                                                //setErrorMsg(res.msg);
+                                            }
+
+                                        })
+                                        .catch(err =>{
+                                            console.log(err);
+                                        })
+                                        .finally(()=>{
+
+                                        });
+                                    }else{
+                                        navigation.navigate('LoginScreen');
+                                    }
 
                                 }
                             }
