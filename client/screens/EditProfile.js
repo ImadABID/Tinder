@@ -1,6 +1,6 @@
 import React from "react";
 import { useContext, useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Image,Button,Platform,ScrollView} from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView, TouchableOpacity} from "react-native";
 import {Picker} from "@react-native-picker/picker";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
@@ -217,6 +217,15 @@ const EditProfile = ({ }) => {
                 </View>
                 <View style={{ marginTop: 32 }}>
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                        
+                        
+                        <TouchableOpacity onPress={pickImage}>
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={require("../assets/add_image.png")} style={styles.image} resizeMode="cover"></Image>
+                            </View>
+                        </TouchableOpacity>
+                        
+
                         {Demo.map((item, index) => (
                             <View key={index} style={styles.mediaImageContainer}>
                                 <Image source={item.image} style={styles.image} resizeMode="cover"></Image>

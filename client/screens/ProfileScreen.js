@@ -134,11 +134,6 @@ const ProfileScreen = ({ }) => {
                 <View style={{ marginTop: 32 }}>
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
 
-                        <View style={styles.mediaImageContainer}>
-                        <Button title="Pick an image from camera roll" onPress={pickImage} />
-                        {image && <Image source={{ uri: image }} style={styles.image}  />}
-                            <Image source={require("../assets/media1.jpg")} style={styles.image} resizeMode="cover"></Image>
-                        </View>
                         {Demo.map((item, index) => (
                             <View key={index} style={styles.mediaImageContainer}>
                                 <Image source={item.image} style={styles.image} resizeMode="cover"></Image>
