@@ -104,9 +104,6 @@ const ProfileScreen = ({ }) => {
                         <MaterialIcons name="build" size={20} color="#DFD8C8" onPress={() => navigation.navigate('EditProfile')}
                         ></MaterialIcons>
                     </View>
-                    <View style={styles.add}>
-                        <Ionicons name="ios-add" size={30} color="#DFD8C8" style={{ marginTop: 3, marginLeft: 2 }} onPress={pickImage} ></Ionicons>
-                    </View>
                     <View style={styles.logout}>
                         <Ionicons
                             name="log-out-outline" size={30} color="#DFD8C8" style={{ marginTop: 3, marginLeft: 2 }}
