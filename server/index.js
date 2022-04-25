@@ -38,6 +38,33 @@ MongoClient.connect(url)
     res.json({respond:"Hello_World"});
   });
 
+
+  app.post('/users/setLocalisation', (req, res)=>{
+    //console.log(req.body.email)
+    users.updateOne(
+      { "email": req.body.email}, // Filter
+      {$set:{"latitude": req.body.latitude,
+      "longitude": req.body.longitude } },// Update
+  )
+  .then((obj) => {
+      console.log('Updated - ' + obj);
+
+    })
+  .catch((err) => {
+      console.log('Error: ' + err);
+  })
+  });
+  /*app.post('/users/setLocalisation', (req, res)=>{
+    //console.log(req.body.email)
+    users.find({}).toArray(function(err, result) {
+      if (err) throw err;
+      console.log(result);
+    });
+  
+  });
+*/
+    
+
   app.post('/users/register', (req, res)=>{
 
     /*
