@@ -6,6 +6,23 @@ const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 var token_sig = 'pjezfpjajfajeipjfez4845as5';
 
+// --- /Multer ----
+
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination(req, file, callback) {
+    callback(null, './images');
+  },
+  filename(req, file, callback) {
+    callback(null, `${file.fieldname}_${Date.now()}_${file.originalname}`);
+  },
+});
+
+// const upload = multer({ storage });
+const upload = multer({ dest: 'uploads/' });
+
+// --- Multer\ ----
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -201,6 +218,15 @@ MongoClient.connect(url)
 
   });
 
+
+  app.post('/upload_image', upload.single('photo'), (req, res) => {
+    console.log('file', req.file);
+    console.log('body', req.body);
+    res.status(200).json({
+      message: 'success!',
+    });
+  });
+
   // just for test in dev mode
   app.get('/drop_db', (req, res) => {
     users.drop();
@@ -210,6 +236,7 @@ MongoClient.connect(url)
   app.listen(3000, () => {
     console.log("En attente de requêtes...");
   });
+
 })
 .catch(function (err) {
   throw err;
