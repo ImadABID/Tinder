@@ -222,10 +222,43 @@ MongoClient.connect(url)
   app.post('/upload_image', upload.single('photo'), (req, res) => {
     console.log('file', req.file);
     console.log('body', req.body);
-    res.status(200).json({
-      message: 'success!',
-    });
+
+    jwt.verify(req.body.token, token_sig, (err, user)=>{
+
+
+      let updated_user = user;
+      Object.assign(updated_user, user); // copy
+      
+      switch(req.body.imageRole){
+
+        case 'profileImage':
+          updated_user.profileImage = req.file.filename;
+          break;
+
+        default :
+          res.json(
+            {
+              msg : 'imageRole not known. image ignored.'
+            }
+          );
+
+      }
+      
+      users.updateOne({email : updated_user.email}, {$set:updated_user}, {upsert: true});
+
+      res.json(
+        {
+          msg : '0'
+        }
+      );
+      
+    })
+
   });
+
+  app.get('/get_image', (req, res)=>{
+    res.sendFile('uploads/'+req.query.filename , {root : __dirname});
+  })
 
   // just for test in dev mode
   app.get('/drop_db', (req, res) => {

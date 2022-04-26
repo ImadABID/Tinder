@@ -67,11 +67,11 @@ const EditProfile = ({ }) => {
         return data;
     };
 
-    const handleUploadPhoto = (img, host_name, token) => {
+    const handleUploadPhoto = (img, host_name, token, imageRole) => {
         fetch('http://'+host_name+'/upload_image', {
             method: 'POST',
             headers : {'Accept' : 'application/json', 'Content-Type' : 'multipart/form-data'},
-            body: createFormData(img, { token :  token}),
+            body: createFormData(img, { token :  token, imageRole : imageRole}),
         })
         .then((response) => response.json())
         .then((response) => {
@@ -124,7 +124,7 @@ const EditProfile = ({ }) => {
                         setTargetedSex(res.client.targetedSex);
                     }
                     if(res.client.hasOwnProperty('profileImage')){
-                        setProfileImage({uri : res.client.profileImage});
+                        setProfileImage({uri : 'http://'+host_name+'/get_image?filename='+res.client.profileImage});
                     }
                 }).catch(err => {
                     navigation.navigate('LoginScreen');
@@ -148,7 +148,7 @@ const EditProfile = ({ }) => {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.titleBar}>
                     <Ionicons name="ios-arrow-back" size={24} color="#52575D"
-                        onPress={() => navigation.goBack()}
+                        onPress={() => {first_time = 1; navigation.goBack();}}
                     ></Ionicons>
                 </View>
                 <View style={{ alignSelf: "center" }}>
@@ -338,7 +338,7 @@ const EditProfile = ({ }) => {
                                         });
 
                                         // sending profile pic
-                                        handleUploadPhoto(profileImage, host_name, token);
+                                        handleUploadPhoto(profileImage, host_name, token, 'profileImage');
 
                                     }else{
                                         navigation.navigate('LoginScreen');

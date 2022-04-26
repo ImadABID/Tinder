@@ -38,6 +38,8 @@ const ProfileScreen = ({ }) => {
     const [passion, setPassion] = useState('');
     const [image, setImage] = useState(null);
 
+    const [profileImage, setProfileImage] = useState({uri : 'none'});
+
     const at_start_up = async () => {
         
         let token = await SecureStore.getItemAsync('token');
@@ -67,6 +69,9 @@ const ProfileScreen = ({ }) => {
                 if(res.client.hasOwnProperty('passion')){
                     setPassion(res.client.passion);
                 }
+                if(res.client.hasOwnProperty('profileImage')){
+                    setProfileImage({uri : 'http://'+host_name+'/get_image?filename='+res.client.profileImage});
+                }
             }).catch(err => {
                 navigation.navigate('LoginScreen');
             });
@@ -95,7 +100,7 @@ const ProfileScreen = ({ }) => {
                 </View>
                 <View style={{ alignSelf: "center" }}>
                     <View style={styles.profileImage}>
-                        <Image source={require("../assets/profile-pic.jpg")} style={styles.image} resizeMode="center"></Image>
+                    {profileImage.uri == 'none' ? <Image source={require('../assets/default-img.jpg')} style={styles.image} resizeMode="center"></Image> : <Image source={{uri : profileImage.uri}} style={styles.image} resizeMode="center"></Image>}
                     </View>
                     <View style={styles.dm}>
                         <MaterialIcons name="chat" size={20} color="#DFD8C8" onPress={() => navigation.navigate('ChatScreen')} ></MaterialIcons>
