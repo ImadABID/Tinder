@@ -82,13 +82,43 @@ const EditProfile = ({ }) => {
         });
     };
 
+    const delete_image = async (imageRole) => {
+
+        let token = await SecureStore.getItemAsync('token');
+        if(token){
+
+            let host_name = await ip_server.get_hostname();
+            let link = 'http://'+host_name+'/delete_image';
+
+            let data = 'token='+token+'&imageRole='+imageRole;
+
+            let myInit = {
+                method: 'POST',
+                headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+                body: data
+            };
+
+            fetch(link, myInit)
+            .then((res)=>{return res.json();})
+            .then( res =>{
+                if(res.msg != '0'){
+                    console.log(res.msg);
+                }
+            }).catch(err => {
+                navigation.navigate('LoginScreen');
+            });
+
+        }else{
+            navigation.navigate('LoginScreen');
+        }
+
+    }
+
     const at_start_up = async () => {
 
         if(first_time === 1){
             
             first_time = 0;
-
-            console.log('start up script');
 
             let token = await SecureStore.getItemAsync('token');
             if (token) {
@@ -157,7 +187,17 @@ const EditProfile = ({ }) => {
                     </View>
                     <View style={styles.dm}>
                         <Ionicons name="pencil" size={20} color="#DFD8C8" onPress={ ()=>{pickImage(setProfileImage);}} />
-                        {image && <Image source={{ uri: image.uri }} style={styles.image}  />}
+                    </View>
+                    <View style={styles.delete_profile_image}>
+                        <MaterialIcons
+                            name="delete" size={20} color="#DFD8C8"
+                            onPress={
+                                () => {
+                                    setProfileImage({uri:'none'});
+                                    delete_image('profileImage');
+                                }
+                            }
+                        ></MaterialIcons>
                     </View>
 
                 </View>
@@ -402,6 +442,17 @@ const styles = StyleSheet.create({
         backgroundColor: "#41444B",
         position: "absolute",
         top: 20,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    delete_profile_image: {
+        backgroundColor: "#41444B",
+        position: "absolute",
+        bottom : 20,
+        right : 0,
         width: 40,
         height: 40,
         borderRadius: 20,
