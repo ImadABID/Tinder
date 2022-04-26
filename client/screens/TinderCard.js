@@ -14,8 +14,7 @@ import data from './data';
 const TinderCard = () => {
   const navigation = useNavigation();
 
-  const t = {};
-
+  const [Swiper , setSwiper] = useState();
   const [datadb, setDatadb] = useState([{}]);
   const [errorMsg, setErrorMsg] = useState(null);
   const at_start_up = async () => {
@@ -77,7 +76,7 @@ const TinderCard = () => {
         loop={true}
         verticalSwipe={false}
         renderNoMoreCards={() => null}
-        ref={swiper => { t.swiper = swiper }}
+        ref={swiper => { setSwiper(swiper)  }}
       >
         {datadb.map((item, index) => (
           <Card key={index}>
@@ -87,8 +86,8 @@ const TinderCard = () => {
               //description={item.description}
               matches={(parseInt(100 - item.distance * 100)).toString()}
               actions
-              onPressLeft={() => t.swiper.swipeLeft()}
-              onPressRight={() => t.swiper.swipeRight()}
+              onPressLeft={() => Swiper.swipeLeft()}
+              onPressRight={() => Swiper.swipeRight()}
             />
           </Card>
         ))}
