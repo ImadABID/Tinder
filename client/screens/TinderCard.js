@@ -84,7 +84,7 @@ const TinderCard = () => {
               //image={item.image}
               name={item.username}
               //description={item.description}
-              matches={(parseInt(100 - item.distance * 100)).toString()}
+              matches={(parseInt( item.distance )).toString()}
               actions
               onPressLeft={() => Swiper.swipeLeft()}
               onPressRight={() => Swiper.swipeRight()}
