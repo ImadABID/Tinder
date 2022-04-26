@@ -41,6 +41,22 @@ MongoClient.connect(url)
 
     app.post('/users/setLocalisation', (req, res) => {
 
+      function deg2rad(deg) {
+        return deg * (Math.PI/180)
+      }
+      function getDistance(lat1, lon1, lat2, lon2) {
+        var R = 6371; // Radius of the earth in km
+        var dLat = deg2rad(lat2-lat1);  // deg2rad below
+        var dLon = deg2rad(lon2-lon1); 
+        var a = 
+          Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+          Math.sin(dLon/2) * Math.sin(dLon/2)
+          ; 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        var d = R * c; // Distance in km
+        return d;
+      }
 
       /*jwt.verify(req.body.token, token_sig, (err, user)=>{
         
@@ -59,6 +75,7 @@ MongoClient.connect(url)
       })
       */
       jwt.verify(req.body.token, token_sig, (err, user) => {
+
         users.updateOne(
           { "email": user.email }, // Filter
           {
@@ -68,8 +85,33 @@ MongoClient.connect(url)
             }
           },// Update
         )
+        
           .then((obj) => {
-            res.json({ msg: 'updated' })
+
+            users.find({}).toArray(function (err, matches) {
+              let data ={};
+              let tmp ; 
+              let dist ; 
+              i = 0 ; 
+              for (let attr in matches) {
+                  if ( getDistance ( req.body.latitude,req.body.longitude,  matches[attr].latitude , matches[attr].longitude ) < 10 )
+                  {
+
+                    dist = { distance : getDistance ( req.body.latitude,req.body.longitude,  matches[attr].latitude , matches[attr].longitude ) }
+                    tmp = Object.assign(  matches[attr] ,dist );
+                    data[i] = tmp ;
+                    i ++ ;
+                  }  
+              }
+              const jsonAsArray = Object.keys(data).map(function (key) {
+                return data[key];
+              })
+              .sort(function (itemA, itemB) {
+                return itemA.distance < itemB.distance;
+              });
+              res.json({ jsonAsArray })
+            });
+
           })
           .catch((err) => {
             console.log('Error: ' + err);
