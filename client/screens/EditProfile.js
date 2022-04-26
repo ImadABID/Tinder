@@ -29,11 +29,13 @@ const EditProfile = ({ }) => {
     const [image, setImage] = useState({uri : 'none'});
     const [Demo, setData] = useState(demo);
     
+    const [profileImage, setProfileImage] = useState({uri : 'none'});
+
     const removeItem = (index) => {
         setData(Demo.filter((o, i) => index !== i));
     };
 
-    const pickImage = async () => {
+    const pickImage = async (setImage) => {
         // No permissions request is necessary for launching the image library
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -65,11 +67,11 @@ const EditProfile = ({ }) => {
         return data;
     };
 
-    const handleUploadPhoto = (host_name, token) => {
+    const handleUploadPhoto = (img, host_name, token) => {
         fetch('http://'+host_name+'/upload_image', {
             method: 'POST',
             headers : {'Accept' : 'application/json', 'Content-Type' : 'multipart/form-data'},
-            body: createFormData(image, { token :  token}),
+            body: createFormData(img, { token :  token}),
         })
         .then((response) => response.json())
         .then((response) => {
@@ -121,6 +123,9 @@ const EditProfile = ({ }) => {
                     if(res.client.hasOwnProperty('targetedSex')){
                         setTargetedSex(res.client.targetedSex);
                     }
+                    if(res.client.hasOwnProperty('profileImage')){
+                        setProfileImage({uri : res.client.profileImage});
+                    }
                 }).catch(err => {
                     navigation.navigate('LoginScreen');
                 });
@@ -148,10 +153,10 @@ const EditProfile = ({ }) => {
                 </View>
                 <View style={{ alignSelf: "center" }}>
                     <View style={styles.profileImage}>
-                        {image.uri == 'none' ? <Image source={require('../assets/default-img.jpg')} style={styles.image} resizeMode="center"></Image> : <Image source={{uri : image.uri}} style={styles.image} resizeMode="center"></Image>}
+                        {profileImage.uri == 'none' ? <Image source={require('../assets/default-img.jpg')} style={styles.image} resizeMode="center"></Image> : <Image source={{uri : profileImage.uri}} style={styles.image} resizeMode="center"></Image>}
                     </View>
                     <View style={styles.dm}>
-                        <Ionicons name="pencil" size={20} color="#DFD8C8" onPress={pickImage} />
+                        <Ionicons name="pencil" size={20} color="#DFD8C8" onPress={ ()=>{pickImage(setProfileImage);}} />
                         {image && <Image source={{ uri: image.uri }} style={styles.image}  />}
                     </View>
 
@@ -333,42 +338,7 @@ const EditProfile = ({ }) => {
                                         });
 
                                         // sending profile pic
-                                        handleUploadPhoto(host_name, token);
-
-                                        // RNFetchBlob.fetch(
-                                        //     'GET',
-                                        //     'http://'+host_name+'/upload_image',
-                                        //     {
-                                        //         'Content-Type': 'multipart/form-data',
-                                        //         'x-auth': token,
-                                        //     },
-                                        //     [
-                                        //         {
-                                        //             name: 'photo',
-                                        //             filename: Date.now() + '.jpeg',
-                                        //             type: 'image/jpeg',
-                                        //             data: RNFetchBlob.wrap(image.uri),
-                                        //         }
-                                        //     ]
-                                        // )
-                                        // .then((res) => {
-                                        //     let status = res.info().status;
-
-                                        //     if(status == 200) {
-                                        //     // the conversion is done in native code
-                                        //     let base64Str = res.base64()
-                                        //     // the following conversions are done in js, it's SYNC
-                                        //     let text = res.text()
-                                        //     let json = res.json()
-                                        //     } else {
-                                        //     // handle other status codes
-                                        //     }
-                                        // })
-                                        // // Something went wrong:
-                                        // .catch((errorMessage, statusCode) => {
-                                        //     // error handling
-                                        // })
-
+                                        handleUploadPhoto(profileImage, host_name, token);
 
                                     }else{
                                         navigation.navigate('LoginScreen');
