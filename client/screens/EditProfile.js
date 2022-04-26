@@ -105,10 +105,12 @@ const EditProfile = ({ }) => {
                     console.log(res.msg);
                 }
             }).catch(err => {
+                first_time = 1;
                 navigation.navigate('LoginScreen');
             });
 
         }else{
+            first_time = 1;
             navigation.navigate('LoginScreen');
         }
 
@@ -155,12 +157,16 @@ const EditProfile = ({ }) => {
                     }
                     if(res.client.hasOwnProperty('profileImage')){
                         setProfileImage({uri : 'http://'+host_name+'/get_image?filename='+res.client.profileImage});
+                    }else{
+                        setProfileImage({uri : 'none'});
                     }
                 }).catch(err => {
+                    first_time = 1;
                     navigation.navigate('LoginScreen');
                 });
                 
             }else{
+                first_time = 1;
                 navigation.navigate('LoginScreen');
             }
         }
@@ -364,6 +370,7 @@ const EditProfile = ({ }) => {
 
 
                                             if(res.msg === '0'){
+                                                first_time = 1;
                                                 navigation.navigate('ProfileScreen');
                                             }else{
                                                 //setErrorMsg(res.msg);
@@ -381,6 +388,7 @@ const EditProfile = ({ }) => {
                                         handleUploadPhoto(profileImage, host_name, token, 'profileImage');
 
                                     }else{
+                                        first_time = 1;
                                         navigation.navigate('LoginScreen');
                                     }
 

@@ -71,6 +71,8 @@ const ProfileScreen = ({ }) => {
                 }
                 if(res.client.hasOwnProperty('profileImage')){
                     setProfileImage({uri : 'http://'+host_name+'/get_image?filename='+res.client.profileImage});
+                }else{
+                    setProfileImage({uri : 'none'});
                 }
             }).catch(err => {
                 navigation.navigate('LoginScreen');
