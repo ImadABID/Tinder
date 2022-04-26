@@ -9,27 +9,16 @@ import * as ip_server from './server_ip';
 import { useFocusEffect } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
+import data from './data';
 
 const TinderCard = () => {
   const navigation = useNavigation();
 
   const t = {};
-  const [location] = useState(null);
+
+  const [datadb, setDatadb] = useState([{}]);
   const [errorMsg, setErrorMsg] = useState(null);
-  const haversine = require('haversine')
-  const start = {
-    latitude: 30.849635,
-    longitude: -83.24559
-  }
-  const end = {
-    latitude: 27.950575,
-    longitude: -82.457178
-  }
-  console.log("la distance est = " + haversine(start, end, { unit: 'meter' }))
-
-
   const at_start_up = async () => {
-
     let token = await SecureStore.getItemAsync('token');
     if (token) {
       //
@@ -63,11 +52,10 @@ const TinderCard = () => {
       fetch(linkLoc, reqLoc)
         .then((res) => { return res.json(); })
         .then(res => {
-          console.log(res)
+          setDatadb(res.jsonAsArray)
         }).catch(err => {
           console.log(err)
         });
-
     } else {
       navigation.navigate('LoginScreen');
     }
@@ -77,6 +65,7 @@ const TinderCard = () => {
       at_start_up();
     })
   );
+
   return (
 
     <View style={styles.containerHome}>
@@ -90,13 +79,13 @@ const TinderCard = () => {
         renderNoMoreCards={() => null}
         ref={swiper => { t.swiper = swiper }}
       >
-        {Demo.map((item, index) => (
+        {datadb.map((item, index) => (
           <Card key={index}>
             <CardItem
-              image={item.image}
-              name={item.name}
-              description={item.description}
-              matches={item.match}
+              //image={item.image}
+              name={item.username}
+              //description={item.description}
+              matches={(parseInt(100 - item.distance * 100)).toString()}
               actions
               onPressLeft={() => t.swiper.swipeLeft()}
               onPressRight={() => t.swiper.swipeRight()}
