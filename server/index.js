@@ -35,6 +35,8 @@ const corsOptions ={
 }
 app.use(cors(corsOptions)) // Use this after the variable declaration
 
+var fs = require('fs');
+
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 const url = 'mongodb://localhost:27017';
@@ -195,44 +197,38 @@ MongoClient.connect(url)
     
     jwt.verify(req.body.token, token_sig, (err, user)=>{
 
+      let client = {};
 
-      let updated_user = user;
-      Object.assign(updated_user, user);
+      client.username = req.body.username;
+      client.age = req.body.age;
+      client.description = req.body.description;
+      client.passion = req.body.passion;
+      client.orientation = req.body.orientation;
+      client.targetedSex = req.body.targetedSex;
       
-      updated_user.username = req.body.username;
-      updated_user.age = req.body.age;
-      updated_user.description = req.body.description;
-      updated_user.passion = req.body.passion;
-      updated_user.orientation = req.body.orientation;
-      updated_user.targetedSex = req.body.targetedSex;
-      
-      users.updateOne({email : updated_user.email}, {$set:updated_user}, {upsert: true});
+      users.updateOne({email : user.email}, {$set:client}, {upsert: true});
 
       res.json(
         {
           msg : '0'
         }
       );
-      
+
     })
 
   });
 
 
   app.post('/upload_image', upload.single('photo'), (req, res) => {
-    console.log('file', req.file);
-    console.log('body', req.body);
 
     jwt.verify(req.body.token, token_sig, (err, user)=>{
 
+      to_add = {};
 
-      let updated_user = user;
-      Object.assign(updated_user, user); // copy
-      
       switch(req.body.imageRole){
 
         case 'profileImage':
-          updated_user.profileImage = req.file.filename;
+          to_add.profileImage = req.file.filename;
           break;
 
         default :
@@ -244,7 +240,7 @@ MongoClient.connect(url)
 
       }
       
-      users.updateOne({email : updated_user.email}, {$set:updated_user}, {upsert: true});
+      users.updateOne({email : user.email}, {$set:to_add}, {upsert: true});
 
       res.json(
         {
@@ -252,6 +248,47 @@ MongoClient.connect(url)
         }
       );
       
+    })
+
+  });
+
+  app.post('/delete_image', (req, res) => {
+
+    jwt.verify(req.body.token, token_sig, (err, user)=>{
+
+      users.findOne(
+        {"email" : user.email},
+        (err, client)=>{
+
+          switch(req.body.imageRole){
+
+            case 'profileImage':
+    
+              fs.unlink(__dirname+'/uploads/'+client.profileImage,
+                ()=>{
+                  users.updateOne({email : user.email}, {$unset:{profileImage:''}});
+                }
+              );
+              break;
+    
+            default :
+              res.json(
+                {
+                  msg : 'imageRole not known. operation ignored.'
+                }
+              );
+    
+          }
+    
+          res.json(
+            {
+              msg : '0'
+            }
+          );
+
+        }
+      )
+
     })
 
   });
