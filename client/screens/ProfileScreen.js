@@ -97,10 +97,12 @@ const ProfileScreen = ({ }) => {
                         setImage5({uri : 'none'});
                     }
                 }).catch(err => {
+                    first_time = 1;
                     navigation.navigate('LoginScreen');
                 });
                 
             }else{
+                first_time = 1;
                 navigation.navigate('LoginScreen');
             }
         }
@@ -120,7 +122,7 @@ const ProfileScreen = ({ }) => {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.titleBar}>
                     <Ionicons name="ios-arrow-back" size={24} color="#52575D"
-                        onPress={() => navigation.goBack()}
+                        onPress={() => {first_time = 1; navigation.goBack()}}
                     ></Ionicons>
 
                 </View>
@@ -129,10 +131,10 @@ const ProfileScreen = ({ }) => {
                     {profileImage.uri == 'none' ? <Image source={require('../assets/default-img.jpg')} style={styles.image} resizeMode="center"></Image> : <Image source={{uri : profileImage.uri}} style={styles.image} resizeMode="center"></Image>}
                     </View>
                     <View style={styles.dm}>
-                        <MaterialIcons name="chat" size={20} color="#DFD8C8" onPress={() => navigation.navigate('ChatScreen')} ></MaterialIcons>
+                        <MaterialIcons name="chat" size={20} color="#DFD8C8" onPress={() => {first_time = 1; navigation.navigate('ChatScreen')}} ></MaterialIcons>
                     </View>
                     <View style={styles.edit}>
-                        <MaterialIcons name="build" size={20} color="#DFD8C8" onPress={() => navigation.navigate('EditProfile')}
+                        <MaterialIcons name="build" size={20} color="#DFD8C8" onPress={() => {first_time = 1; navigation.navigate('EditProfile')}}
                         ></MaterialIcons>
                     </View>
                     <View style={styles.logout}>
@@ -141,6 +143,7 @@ const ProfileScreen = ({ }) => {
                             onPress = {
                                 ()=>{
                                     log_out();
+                                    first_time = 1;
                                     navigation.navigate('LoginScreen');
                                 }
                             }
