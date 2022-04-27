@@ -15,6 +15,8 @@ import * as ip_server from './server_ip';
 
 var first_time = 1;
 
+var empty_image = [1, 1, 1, 1, 1];
+
 const EditProfile = ({ }) => {
     
     const navigation = useNavigation();
@@ -30,6 +32,13 @@ const EditProfile = ({ }) => {
     const [Demo, setData] = useState(demo);
     
     const [profileImage, setProfileImage] = useState({uri : 'none'});
+
+    const [image1, setImage1] = useState({uri : 'none'});
+    const [image2, setImage2] = useState({uri : 'none'});
+    const [image3, setImage3] = useState({uri : 'none'});
+    const [image4, setImage4] = useState({uri : 'none'});
+    const [image5, setImage5] = useState({uri : 'none'});
+    const imageSetters = [setImage1, setImage2, setImage3, setImage4, setImage5];
 
     const removeItem = (index) => {
         setData(Demo.filter((o, i) => index !== i));
@@ -160,6 +169,42 @@ const EditProfile = ({ }) => {
                     }else{
                         setProfileImage({uri : 'none'});
                     }
+                    if(res.client.hasOwnProperty('image1')){
+                        setImage1({uri : 'http://'+host_name+'/get_image?filename='+res.client.image1});
+                        empty_image[0] = 0;
+                    }else{
+                        setImage1({uri : 'none'});
+                        empty_image[0] = 1;
+                    }
+                    if(res.client.hasOwnProperty('image2')){
+                        setImage2({uri : 'http://'+host_name+'/get_image?filename='+res.client.image2});
+                        empty_image[1] = 0;
+                    }else{
+                        setImage2({uri : 'none'});
+                        empty_image[2] = 0;
+                    }
+                    if(res.client.hasOwnProperty('image3')){
+                        setImage3({uri : 'http://'+host_name+'/get_image?filename='+res.client.image3});
+                        empty_image[2] = 0;
+                    }else{
+                        setImage3({uri : 'none'});
+                        empty_image[2] = 1;
+                    }
+                    if(res.client.hasOwnProperty('image4')){
+                        setImage4({uri : 'http://'+host_name+'/get_image?filename='+res.client.image4});
+                        empty_image[3] = 0;
+                    }else{
+                        setImage4({uri : 'none'});
+                        empty_image[3] = 1;
+                    }
+                    if(res.client.hasOwnProperty('image5')){
+                        setImage5({uri : 'http://'+host_name+'/get_image?filename='+res.client.image5});
+                        empty_image[4] = 0;
+                    }else{
+                        setImage5({uri : 'none'});
+                        empty_image[4] = 1;
+                    }
+                    
                 }).catch(err => {
                     first_time = 1;
                     navigation.navigate('LoginScreen');
@@ -301,20 +346,113 @@ const EditProfile = ({ }) => {
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                         
                         
-                        <TouchableOpacity onPress={pickImage}>
+                        {
+                            empty_image.indexOf(1) != -1 ?
+                            <TouchableOpacity
+                                onPress={
+                                    ()=>{
+                                        pickImage(imageSetters[empty_image.indexOf(1)])
+                                        empty_image[empty_image.indexOf(1)] = 0;
+                                    }
+                                }
+                            >
+                                <View style={styles.mediaImageContainer}>
+                                    <Image source={require("../assets/add_image.png")} style={styles.image} resizeMode="cover"></Image>
+                                </View>
+                            </TouchableOpacity>
+                            :<View></View>
+                        }
+
+                        {
+                            image1.uri != 'none' ?
                             <View style={styles.mediaImageContainer}>
-                                <Image source={require("../assets/add_image.png")} style={styles.image} resizeMode="cover"></Image>
+                                <Image source={{uri:image1.uri}} style={styles.image} resizeMode="cover"></Image>
+                                <Ionicons
+                                    name="trash" color="red" size={25} style={{ position: 'absolute', top: 10, left: 10 }}
+                                    onPress={
+                                        () => {
+                                            empty_image[0] = 1;
+                                            setImage1({uri:'none'});
+                                            delete_image('image1');
+                                        }
+                                    }
+                                />
                             </View>
-                        </TouchableOpacity>
-                        
+                            :<View></View>
+                        }
 
-                        {Demo.map((item, index) => (
-                            <View key={index} style={styles.mediaImageContainer}>
-                                <Image source={item.image} style={styles.image} resizeMode="cover"></Image>
-                                <Ionicons name="trash" color="red" size={25} onPress={()=>removeItem(index)} style={{ position: 'absolute', top: 10, left: 10 }} />
-
+                        {
+                            image2.uri != 'none' ?
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={{uri:image2.uri}} style={styles.image} resizeMode="cover"></Image>
+                                <Ionicons
+                                    name="trash" color="red" size={25} style={{ position: 'absolute', top: 10, left: 10 }}
+                                    onPress={
+                                        () => {
+                                            empty_image[1] = 1;
+                                            setImage2({uri:'none'});
+                                            delete_image('image2');
+                                        }
+                                    }
+                                />
                             </View>
-                        ))}
+                            :<View></View>
+                        }
+
+                        {
+                            image3.uri != 'none' ?
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={{uri:image3.uri}} style={styles.image} resizeMode="cover"></Image>
+                                <Ionicons
+                                    name="trash" color="red" size={25} style={{ position: 'absolute', top: 10, left: 10 }}
+                                    onPress={
+                                        () => {
+                                            empty_image[2] = 1;
+                                            setImage3({uri:'none'});
+                                            delete_image('image3');
+                                        }
+                                    }
+                                />
+                            </View>
+                            :<View></View>
+                        }
+
+                        {
+                            image4.uri != 'none' ?
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={{uri:image4.uri}} style={styles.image} resizeMode="cover"></Image>
+                                <Ionicons
+                                    name="trash" color="red" size={25} style={{ position: 'absolute', top: 10, left: 10 }}
+                                    onPress={
+                                        () => {
+                                            empty_image[3] = 1;
+                                            setImage4({uri:'none'});
+                                            delete_image('image4');
+                                        }
+                                    }
+                                />
+                            </View>
+                            :<View></View>
+                        }
+
+                        {
+                            image5.uri != 'none' ?
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={{uri:image5.uri}} style={styles.image} resizeMode="cover"></Image>
+                                <Ionicons
+                                    name="trash" color="red" size={25} style={{ position: 'absolute', top: 10, left: 10 }}
+                                    onPress={
+                                        () => {
+                                            empty_image[4] = 1;
+                                            setImage5({uri:'none'});
+                                            delete_image('image5');
+                                        }
+                                    }
+                                />
+                            </View>
+                            :<View></View>
+                        }
+
                     </ScrollView>
                 </View>
 
