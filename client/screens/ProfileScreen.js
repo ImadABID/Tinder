@@ -14,21 +14,9 @@ import * as ip_server from './server_ip';
 async function log_out(){
     await SecureStore.deleteItemAsync('token');
 }
-const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
 
-    console.log(result);
+var first_time = 1;
 
-    if (!result.cancelled) {
-      setImage(result.uri);
-    }
-  };
 const ProfileScreen = ({ }) => {
     const navigation = useNavigation();
 
@@ -36,51 +24,87 @@ const ProfileScreen = ({ }) => {
     const [age, setAge] = useState('');
     const [description, setDescription] = useState('');
     const [passion, setPassion] = useState('');
-    const [image, setImage] = useState(null);
 
     const [profileImage, setProfileImage] = useState({uri : 'none'});
 
+    const [image1, setImage1] = useState({uri : 'none'});
+    const [image2, setImage2] = useState({uri : 'none'});
+    const [image3, setImage3] = useState({uri : 'none'});
+    const [image4, setImage4] = useState({uri : 'none'});
+    const [image5, setImage5] = useState({uri : 'none'});
+
     const at_start_up = async () => {
-        
-        let token = await SecureStore.getItemAsync('token');
-        if (token) {
-            
-            let host_name = await ip_server.get_hostname();
-            let link = 'http://'+host_name+'/users/profile';
 
-            let data = 'token='+token;
+        if(first_time === 1){
 
-            let myInit = {
-                method: 'POST',
-                headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
-                body: data
-            };
+            first_time=0;
 
-            fetch(link, myInit)
-            .then((res)=>{return res.json();})
-            .then( res =>{
-                setUsername(res.client.username);
-                if(res.client.hasOwnProperty('age')){
-                    setAge(res.client.age);
-                }
-                if(res.client.hasOwnProperty('description')){
-                    setDescription(res.client.description);
-                }
-                if(res.client.hasOwnProperty('passion')){
-                    setPassion(res.client.passion);
-                }
-                if(res.client.hasOwnProperty('profileImage')){
-                    setProfileImage({uri : 'http://'+host_name+'/get_image?filename='+res.client.profileImage});
-                }else{
-                    setProfileImage({uri : 'none'});
-                }
-            }).catch(err => {
+            let token = await SecureStore.getItemAsync('token');
+            if (token) {
+                
+                let host_name = await ip_server.get_hostname();
+                let link = 'http://'+host_name+'/users/profile';
+
+                let data = 'token='+token;
+
+                let myInit = {
+                    method: 'POST',
+                    headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+                    body: data
+                };
+
+                fetch(link, myInit)
+                .then((res)=>{return res.json();})
+                .then( res =>{
+                    setUsername(res.client.username);
+                    if(res.client.hasOwnProperty('age')){
+                        setAge(res.client.age);
+                    }
+                    if(res.client.hasOwnProperty('description')){
+                        setDescription(res.client.description);
+                    }
+                    if(res.client.hasOwnProperty('passion')){
+                        setPassion(res.client.passion);
+                    }
+                    if(res.client.hasOwnProperty('profileImage')){
+                        setProfileImage({uri : 'http://'+host_name+'/get_image?filename='+res.client.profileImage});
+                    }else{
+                        setProfileImage({uri : 'none'});
+                    }
+                    if(res.client.hasOwnProperty('image1')){
+                        setImage1({uri : 'http://'+host_name+'/get_image?filename='+res.client.image1});
+                    }else{
+                        setImage1({uri : 'none'});
+                    }
+                    if(res.client.hasOwnProperty('image2')){
+                        setImage2({uri : 'http://'+host_name+'/get_image?filename='+res.client.image2});
+                    }else{
+                        setImage2({uri : 'none'});
+                    }
+                    if(res.client.hasOwnProperty('image3')){
+                        setImage3({uri : 'http://'+host_name+'/get_image?filename='+res.client.image3});
+                    }else{
+                        setImage3({uri : 'none'});
+                    }
+                    if(res.client.hasOwnProperty('image4')){
+                        setImage4({uri : 'http://'+host_name+'/get_image?filename='+res.client.image4});
+                    }else{
+                        setImage4({uri : 'none'});
+                    }
+                    if(res.client.hasOwnProperty('image5')){
+                        setImage5({uri : 'http://'+host_name+'/get_image?filename='+res.client.image5});
+                    }else{
+                        setImage5({uri : 'none'});
+                    }
+                }).catch(err => {
+                    navigation.navigate('LoginScreen');
+                });
+                
+            }else{
                 navigation.navigate('LoginScreen');
-            });
-            
-        }else{
-            navigation.navigate('LoginScreen');
+            }
         }
+        
     }
 
     useFocusEffect(
@@ -141,11 +165,47 @@ const ProfileScreen = ({ }) => {
                 <View style={{ marginTop: 32 }}>
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
 
-                        {Demo.map((item, index) => (
-                            <View key={index} style={styles.mediaImageContainer}>
-                                <Image source={item.image} style={styles.image} resizeMode="cover"></Image>
+                        {
+                            image1.uri != 'none' ?
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={{uri:image1.uri}} style={styles.image} resizeMode="cover"></Image>
                             </View>
-                        ))}
+                            :<View></View>
+                        }
+
+                        {
+                            image2.uri != 'none' ?
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={{uri:image2.uri}} style={styles.image} resizeMode="cover"></Image>
+                            </View>
+                            :<View></View>
+                        }
+
+                        {
+                            image3.uri != 'none' ?
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={{uri:image3.uri}} style={styles.image} resizeMode="cover"></Image>
+                            </View>
+                            :<View></View>
+                        }
+
+                        {
+                            image4.uri != 'none' ?
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={{uri:image4.uri}} style={styles.image} resizeMode="cover"></Image>
+                            </View>
+                            :<View></View>
+                        }
+
+                        {
+                            image5.uri != 'none' ?
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={{uri:image5.uri}} style={styles.image} resizeMode="cover"></Image>
+                            </View>
+                            :<View></View>
+                        }
+
+                        
                     </ScrollView>
 
                 </View>

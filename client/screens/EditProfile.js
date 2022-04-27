@@ -27,8 +27,7 @@ const EditProfile = ({ }) => {
     const [passion, setPassion] = useState('');
     const [orientation, setOrientation] = useState('male');
     const [targetedSex, setTargetedSex] = useState('na');
-    
-    const [image, setImage] = useState({uri : 'none'});
+
     const [Demo, setData] = useState(demo);
     
     const [profileImage, setProfileImage] = useState({uri : 'none'});
