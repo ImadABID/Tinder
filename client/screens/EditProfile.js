@@ -525,6 +525,13 @@ const EditProfile = ({ }) => {
                                         // sending profile pic
                                         handleUploadPhoto(profileImage, host_name, token, 'profileImage');
 
+                                        //sending other 5 images
+                                        handleUploadPhoto(image1, host_name, token, 'image1');
+                                        handleUploadPhoto(image2, host_name, token, 'image2');
+                                        handleUploadPhoto(image3, host_name, token, 'image3');
+                                        handleUploadPhoto(image4, host_name, token, 'image4');
+                                        handleUploadPhoto(image5, host_name, token, 'image5');
+
                                     }else{
                                         first_time = 1;
                                         navigation.navigate('LoginScreen');

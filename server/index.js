@@ -231,6 +231,26 @@ MongoClient.connect(url)
           to_add.profileImage = req.file.filename;
           break;
 
+        case 'image1':
+          to_add.image1 = req.file.filename;
+          break;
+
+        case 'image2':
+          to_add.image2 = req.file.filename;
+          break;
+
+        case 'image3':
+          to_add.image3 = req.file.filename;
+          break;
+
+        case 'image4':
+          to_add.image4 = req.file.filename;
+          break;
+
+        case 'image5':
+          to_add.image5 = req.file.filename;
+          break;
+
         default :
           res.json(
             {
@@ -271,6 +291,51 @@ MongoClient.connect(url)
               );
               break;
     
+            case 'image1':
+  
+              fs.unlink(__dirname+'/uploads/'+client.image1,
+                ()=>{
+                  users.updateOne({email : user.email}, {$unset:{image1:''}});
+                }
+              );
+              break;
+
+            case 'image2':
+
+              fs.unlink(__dirname+'/uploads/'+client.image2,
+                ()=>{
+                  users.updateOne({email : user.email}, {$unset:{image2:''}});
+                }
+              );
+              break;
+
+            case 'image3':
+
+              fs.unlink(__dirname+'/uploads/'+client.image3,
+                ()=>{
+                  users.updateOne({email : user.email}, {$unset:{image3:''}});
+                }
+              );
+              break;
+
+            case 'image4':
+
+              fs.unlink(__dirname+'/uploads/'+client.image4,
+                ()=>{
+                  users.updateOne({email : user.email}, {$unset:{image4:''}});
+                }
+              );
+              break;
+
+            case 'image5':
+
+              fs.unlink(__dirname+'/uploads/'+client.image5,
+                ()=>{
+                  users.updateOne({email : user.email}, {$unset:{image5:''}});
+                }
+              );
+              break;
+
             default :
               res.json(
                 {
