@@ -17,6 +17,8 @@ var first_time = 1;
 
 var empty_image = [1, 1, 1, 1, 1];
 
+var nbr_element_not_uploaded_yet;
+
 const EditProfile = ({ }) => {
     
     const navigation = useNavigation();
@@ -27,6 +29,8 @@ const EditProfile = ({ }) => {
     const [passion, setPassion] = useState('');
     const [orientation, setOrientation] = useState('male');
     const [targetedSex, setTargetedSex] = useState('na');
+
+    const [saveButtonTitle, setSaveButtonTitle] = useState('Save');
 
     const [Demo, setData] = useState(demo);
     
@@ -83,10 +87,19 @@ const EditProfile = ({ }) => {
         })
         .then((response) => response.json())
         .then((response) => {
-            console.log('response', response);
+            nbr_element_not_uploaded_yet--;
+            if(nbr_element_not_uploaded_yet===0){
+                first_time = 1;
+                navigation.navigate('ProfileScreen');
+            }
         })
         .catch((error) => {
             console.log('upload image error', error);
+            nbr_element_not_uploaded_yet--;
+            if(nbr_element_not_uploaded_yet===0){
+                first_time = 1;
+                navigation.navigate('ProfileScreen');
+            }
         });
     };
 
@@ -458,38 +471,21 @@ const EditProfile = ({ }) => {
                 <View style={{ alignItems: "center" }}>
                     <View style={styles.infoContainer}>
                         <FormButton
-                            buttonTitle="Save"
+                            buttonTitle={saveButtonTitle}
                             onPress = {
                                 async ()=>{
+
+                                    setSaveButtonTitle('Saving ...');
 
                                     first_time = 1;
 
                                     let token = await SecureStore.getItemAsync('token');
                                     if (token) {
 
-                                        console.log(token);
-
                                         let host_name = await ip_server.get_hostname();
                                         let link = 'http://'+host_name+'/profile/update';
 
-                                        console.log('link');
-
-                                        /*
-                                        
-                                            * Req :
-                                            curl
-                                                -X POST 
-                                                -d 'username=lora'
-                                                -d 'email=lora17@yml.fr'
-                                                -d 'password=kona75mi:-)'
-                                                http://localhost:3000/users/register
-                                            
-                                            * Res :
-                                                {
-                                                msg : '0' if no err,
-                                                token : if no err
-                                                }
-                                        */
+                                        nbr_element_not_uploaded_yet = 7;
 
                                         let data = 'token='+token+'&username='+username+'&age='+age+'&orientation='+orientation+'&targetedSex='+targetedSex+'&description='+description+'&passion='+passion;
 
@@ -507,15 +503,24 @@ const EditProfile = ({ }) => {
 
 
                                             if(res.msg === '0'){
-                                                first_time = 1;
-                                                navigation.navigate('ProfileScreen');
+                                                //
                                             }else{
                                                 //setErrorMsg(res.msg);
+                                            }
+                                            nbr_element_not_uploaded_yet--;
+                                            if(nbr_element_not_uploaded_yet===0){
+                                                first_time = 1;
+                                                navigation.navigate('ProfileScreen');
                                             }
 
                                         })
                                         .catch(err =>{
                                             console.log(err);
+                                            nbr_element_not_uploaded_yet--;
+                                            if(nbr_element_not_uploaded_yet===0){
+                                                first_time = 1;
+                                                navigation.navigate('ProfileScreen');
+                                            }
                                         })
                                         .finally(()=>{
 
