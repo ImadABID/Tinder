@@ -26,10 +26,10 @@ const url = 'mongodb://localhost:27017';
 MongoClient.connect(url)
   // On commence par récupérer la collection que l'on va utiliser et la passer
   .then(function (client) {
-    return client.db("tinderb").collection("users");
+    return client.db("tinderb");
   })
-  .then((users) => {
-
+  .then((db) => {
+    
     // Rajouter vos routes et les traitements
 
     // just for test in dev mode
@@ -39,8 +39,90 @@ MongoClient.connect(url)
     });
 
 
-    app.post('/users/setLocalisation', (req, res) => {
+    app.post('/matches/get', (req, res) => {
 
+      /*
+        curl
+          -X POST 
+          -d 'token=lora17@yml.fr'
+          http://localhost:3000/users/profile
+      */
+
+
+      jwt.verify(req.body.token, token_sig, (err, user)=>{
+        
+        db.collection("users").find({}).toArray(function (err, matches) {
+          db.collection("matches").find({ }).toArray(function (err, matcher) {
+
+          let data = [{}];
+          i = 0;
+          for (let attr in matches) {
+            let test = 0 ; 
+            for (let ind in matcher) {
+              if( ( (matches[attr].email == matcher[ind].email_1) || (matches[attr].email == matcher[ind].email_2) ) &&
+               ( (user.email == matcher[ind].email_1) || (user.email == matcher[ind].email_2) ) )
+              {                    
+                test = 1 ; 
+              }
+            }                  
+              if ( (test == 1 ) ) {
+
+              data[i] = Object.assign(matches[attr]);
+              i++;
+            }
+            
+          }
+          const jsonAsArray = Object.keys(data).map(function (key) {
+            return data[key];
+          })
+            .sort(function (itemA, itemB) {
+              return itemA._id < itemB._id;
+            });
+          res.json({ jsonAsArray })
+        });
+        });
+        
+      })
+
+
+
+    });
+    app.post('/matches/set', (req, res) => {
+
+      /*
+        curl
+          -X POST 
+          -d 'token=lora17@yml.fr'
+          http://localhost:3000/users/profile
+      */
+
+      /*jwt.verify(req.body.token, token_sig, (err, user)=>{
+        
+        db.collection("matches").findOne(
+          {"email_1" : user.email},
+          (err, client)=>{
+            console.log(client)
+          }
+        )
+        
+      })*/
+      
+      jwt.verify(req.body.token, token_sig, (err, user)=>{
+
+        var myobj = { 'email_1' : user.email , 'email_2' : req.body.email, 'action' : req.body.action  };
+        db.collection("matches").insertOne(myobj, function(err, res) {
+          if (err) throw err;
+          console.log("1 element inserted");
+
+        });
+        
+      })
+
+
+
+    });
+    app.post('/users/setLocalisation', (req, res) => {
+      
       function deg2rad(deg) {
         return deg * (Math.PI / 180)
       }
@@ -76,7 +158,7 @@ MongoClient.connect(url)
       */
       jwt.verify(req.body.token, token_sig, (err, user) => {
 
-        users.updateOne(
+        db.collection("users").updateOne(
           { "email": user.email }, // Filter
           {
             $set: {
@@ -85,23 +167,34 @@ MongoClient.connect(url)
             }
           },// Update
         )
-
+          
           .then((obj) => {
+            //db.collection("matches").deleteMany({});
+            db.collection("users").find({}).toArray(function (err, matches) {
+              db.collection("matches").find({ }).toArray(function (err, matcher) {
 
-            users.find({}).toArray(function (err, matches) {
               let data = {};
               let tmp;
               let dist;
               i = 0;
               for (let attr in matches) {
-                if (getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) < 10) {
-
+                let test = 0 ; 
+                for (let ind in matcher) {
+                  if( ( (matches[attr].email == matcher[ind].email_1) || (matches[attr].email == matcher[ind].email_2) ) &&
+                   ( (user.email == matcher[ind].email_1) || (user.email == matcher[ind].email_2) ) )
+                  {                    
+                    test = 1 ; 
+                  }
+                }                  
+                  if ((getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) < 10) && (test == 0 ) ) {
                   dist = { distance: getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) }
                   tmp = Object.assign(matches[attr], dist);
                   data[i] = tmp;
                   i++;
                 }
+                
               }
+
               const jsonAsArray = Object.keys(data).map(function (key) {
                 return data[key];
               })
@@ -109,6 +202,7 @@ MongoClient.connect(url)
                   return itemA.distance < itemB.distance;
                 });
               res.json({ jsonAsArray })
+            });
             });
 
           })
@@ -146,14 +240,14 @@ MongoClient.connect(url)
       client.hashed_password = bcrypt.hashSync(req.body.password, salt);
 
       // verify email uniqueness
-      users.findOne(
+      db.collection("users").findOne(
         { "email": req.body.email },
         (err, cl) => {
           if (cl) {
             res.json({ msg: 'email already used' });
           } else {
 
-            users.insertOne(client, (insertOne_err, insertOne_res) => {
+            db.collection("users").insertOne(client, (insertOne_err, insertOne_res) => {
               if (insertOne_err) {
                 console.log(insertOne_err);
                 res.json({ msg: 'Uknown problem' });
@@ -187,7 +281,7 @@ MongoClient.connect(url)
 
       console.log('login');
 
-      users.findOne(
+      db.collection("users").findOne(
         { "email": req.body.email },
         (err, client) => {
           if (client == null) {
@@ -223,7 +317,7 @@ MongoClient.connect(url)
           http://localhost:3000/users/is_registered
       */
 
-      users.findOne(
+          db.collection("users").findOne(
         { "email": req.body.email },
         (err, client) => {
           if (bcrypt.compareSync(req.body.password, client.hashed_password)) {
@@ -247,7 +341,7 @@ MongoClient.connect(url)
 
       jwt.verify(req.body.token, token_sig, (err, user) => {
 
-        users.findOne(
+        db.collection("users").findOne(
           { "email": user.email },
           (err, client) => {
             res.json(
@@ -266,7 +360,7 @@ MongoClient.connect(url)
 
     // just for test in dev mode
     app.get('/drop_db', (req, res) => {
-      users.drop();
+      db.collection("users").drop();
       res.send("drop_db");
     });
 

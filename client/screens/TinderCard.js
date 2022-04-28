@@ -17,6 +17,35 @@ const TinderCard = () => {
   const [Swiper , setSwiper] = useState();
   const [datadb, setDatadb] = useState([{}]);
   const [errorMsg, setErrorMsg] = useState(null);
+  const send  = async (email,action) => {
+
+    let token = await SecureStore.getItemAsync('token');
+    if (token) {
+      
+      let host_name = await ip_server.get_hostname();
+  
+      let data = 'token=' + token;
+      let linkLoc = 'http://' + host_name + '/matches/set';
+      data += "&email=" + email + "&action=" + action ;
+      let reqLoc = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },// this line is important, if this content-type is not set it wont work
+        body: data
+  
+      };
+      fetch(linkLoc, reqLoc)
+        .then((res) => { return res.json(); })
+        .then(res => {
+          
+        }).catch(err => {
+  
+          console.log(err)
+  
+        });
+    } else {
+      navigation.navigate('LoginScreen');
+    }
+  }
   const at_start_up = async () => {
     let token = await SecureStore.getItemAsync('token');
     if (token) {
@@ -86,8 +115,8 @@ const TinderCard = () => {
               //description={item.description}
               matches={(parseInt( item.distance )).toString()}
               actions
-              onPressLeft={() => Swiper.swipeLeft()}
-              onPressRight={() => Swiper.swipeRight()}
+              onPressLeft={() =>{ send (item.email , "no" ) ; Swiper.swipeLeft() } }
+              onPressRight={() => { send (item.email,"yes"  ) ;  Swiper.swipeRight() } }
             />
           </Card>
         ))}
