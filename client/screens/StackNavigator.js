@@ -10,6 +10,8 @@ import ProfileScreenVisitor from './ProfileScreenVisitor';
 import Chattwo from './Chattwo'
 import ChatScreen from './ChatScreen';
 import EditProfile from './EditProfile';
+import CheckProfile from './CheckProfile';
+
 ProfileScreenVisitor
 const Stack = createNativeStackNavigator();
 const StackNavigator = () => {
@@ -19,6 +21,7 @@ const StackNavigator = () => {
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="Matches" component={Matches} />
         <Stack.Screen name="TinderMain" component={TinderMain} />
+        <Stack.Screen name="CheckProfile" component={CheckProfile} />
         <Stack.Screen name="SignupScreen" component={SignupScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="ProfileScreen" component={ProfileScreen} />

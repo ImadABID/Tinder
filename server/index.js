@@ -129,10 +129,12 @@ MongoClient.connect(url)
     jwt.verify(req.body.token, token_sig, (err, user)=>{
 
       var myobj = { 'email_1' : user.email , 'email_2' : req.body.email, 'action' : req.body.action  };
-      db.collection("matches").insertOne(myobj, function(err, res) {
+      db.collection("matches").insertOne(myobj, function(err, resreq) {
         if (err) throw err;
         console.log("1 element inserted");
-
+        res.json({ 
+          'msg' : 'yes' 
+          })
       });
       
     })
@@ -159,22 +161,6 @@ MongoClient.connect(url)
       return d;
     }
 
-    /*jwt.verify(req.body.token, token_sig, (err, user)=>{
-      
-      users.findOne(
-        {"email" : user.email},
-        (err, client)=>{
-          res.json(
-            {
-              msg:'0',
-              client : client
-            }
-          );
-        }
-      )
-      
-    })
-    */
     jwt.verify(req.body.token, token_sig, (err, user) => {
 
       db.collection("users").updateOne(
@@ -191,31 +177,39 @@ MongoClient.connect(url)
       
 
 
-          //db.collection("matches").deleteMany({});
-          db.collection("users").find({}).toArray(function (err, matches) {
-            db.collection("matches").find({ }).toArray(function (err, matcher) {
+            //db.collection("matches").deleteMany({});
+            db.collection("users").find({}).toArray(function (err, matches) {
+              db.collection("matches").find({ }).toArray(function (err, matcher) {
 
-            let data = {};
-            let tmp;
-            let dist;
-            i = 0;
-            for (let attr in matches) {
-              let test = 0 ; 
-              for (let ind in matcher) {
-                if( ( (matches[attr].email == matcher[ind].email_1) || (matches[attr].email == matcher[ind].email_2) ) &&
-                  ( (user.email == matcher[ind].email_1) || (user.email == matcher[ind].email_2) ) )
-                {                    
-                  test = 1 ; 
+                let data = {};
+                let current = {};
+                let tmp;
+                let dist;
+                i = 0;
+                for (let attr in matches) {
+                  let test = 0 ; 
+                  for (let ind in matcher) {
+
+                    if(
+                      ((matches[attr].email == matcher[ind].email_1) || (matches[attr].email == matcher[ind].email_2)) &&
+                      ((user.email == matcher[ind].email_1) || (user.email == matcher[ind].email_2))
+                    ){
+                      
+                      if (user.email == matches[attr].email){
+                        current = matches[attr]; 
+                      }                   
+                      test = 1 ; 
+                    }
+                  }                  
+                                    
+                  if ((getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) < 10) && (test == 0 ) && (i<20) ) {
+                  dist = { distance: getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) }
+                  tmp = Object.assign(matches[attr], dist);
+                  data[i] = tmp;
+                  i++;
                 }
-              }                  
-                if ((getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) < 10) && (test == 0 ) && (i<20) ) {
-                dist = { distance: getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) }
-                tmp = Object.assign(matches[attr], dist);
-                data[i] = tmp;
-                i++;
+                
               }
-              
-            }
 
             const jsonAsArray = Object.keys(data).map(function (key) {
               return data[key];
@@ -233,13 +227,6 @@ MongoClient.connect(url)
         })
     })
   });
-  /*
-  app.post('/users/setLocalisation', (req, res) => {
-    users.find({}).toArray(function (err, result) {
-        console.log(result);
-    });
-
-  });*/
 
 
 
