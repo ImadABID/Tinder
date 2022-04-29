@@ -12,6 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import data from './data';
 
 const TinderCard = () => {
+  const [state, setState] = useState({});
   const navigation = useNavigation();
   const [Swiper , setSwiper] = useState();
   const [datadb, setDatadb] = useState([{}]);
@@ -22,7 +23,8 @@ const TinderCard = () => {
     let token = await SecureStore.getItemAsync('token');
     if (token) {
       let host_name = await ip_server.get_hostname();
-  
+      setState({}); // This worked for me
+
       let data = 'token=' + token;
       let linkLoc = 'http://' + host_name + '/matches/set';
       data += "&email=" + email + "&action=" + action ;
@@ -87,10 +89,9 @@ const TinderCard = () => {
       navigation.navigate('LoginScreen');
     }
   }
-  useFocusEffect(
+  useEffect(
     React.useCallback(() => {
       at_start_up();
-
     })
   );
 
@@ -110,16 +111,16 @@ const TinderCard = () => {
         {datadb.map((item, index) => (
           <Card key={index}
               onSwipedLeft = {()=>send (item.email , "no" )  }
-              onSwipedRight ={()=>send (item.email , "yes" )  }>
+              onSwipedRight ={()=>send (item.email , "yes")  }>
             <CardItem
-              //image={}
+              //image={ }
               name={item.username}
               description={item.description}
               matches={(parseInt( item.distance )).toString()}
               actions
 
-              onPressLeft={() =>{ send (item.email,"no"  ) ;  Swiper.swipeLeft() } }
-              onPressRight={() => { send (item.email,"yes"  ) ;  Swiper.swipeRight() } }
+              onPressLeft={() =>{   Swiper.swipeLeft() } }
+              onPressRight={() => {  Swiper.swipeRight() } }
             />
           </Card>
         ))}

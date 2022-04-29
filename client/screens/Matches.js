@@ -21,6 +21,7 @@ import Demo from '../assets/data/demo.js';
 const Matches = () => {
   const navigation = useNavigation();
   const [datadb, setDatadb] = useState([{}]);
+  const [state, setState] = useState({});
   const at_start_up = async () => {
 
   let token = await SecureStore.getItemAsync('token');
@@ -51,10 +52,14 @@ const Matches = () => {
   }
 }
 
-useFocusEffect(
+useEffect(
   React.useCallback(() => {
     at_start_up();
+    
   })
+  
+ 
+  
 );
 
 
@@ -85,7 +90,7 @@ useFocusEffect(
 
               >
                 <CardItem
-                  image={item.image}
+                  //image={item.image}
                   name={item.username}
                   //status={item.status}
                   variant
