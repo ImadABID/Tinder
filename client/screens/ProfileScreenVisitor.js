@@ -3,8 +3,12 @@ import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView } from "react-n
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 
-const ProfileScreen = ({ }) => {
+const ProfileScreen = ({route}) => {
     const navigation = useNavigation();
+
+    var visited_user_email = route.params.visited_user_email;
+
+    console.log(visited_user_email);
 
     return (
         <SafeAreaView style={styles.container}>

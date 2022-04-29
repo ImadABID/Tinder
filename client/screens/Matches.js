@@ -71,7 +71,7 @@ const Matches = () => {
   useFocusEffect(
     React.useCallback(() => {
       if(state){
-        console.log('useFocusEffect');
+        // console.log('useFocusEffect');
       }
       at_start_up();
       
@@ -90,7 +90,7 @@ const Matches = () => {
           <View style={styles.top}>
             <Text style={styles.title}>Matches</Text>
             <Ionicons name="refresh-outline" size={24} color="#52575D"
-                onPress={() => {console.log('ref clicked'); setState({}); first_time = 1; navigation.navigate('Matches');}}
+                onPress={() => {setState({}); first_time = 1; navigation.navigate('Matches');}}
             ></Ionicons>
           </View>
 
@@ -103,7 +103,7 @@ const Matches = () => {
               onPress={
                 () => {
                   first_time = 1;
-                  navigation.navigate('ProfileScreenVisitor');
+                  navigation.navigate('ProfileScreenVisitor', {visited_user_email : item.email});
                 }
               }
 
