@@ -13,15 +13,14 @@ import data from './data';
 
 const TinderCard = () => {
   const navigation = useNavigation();
-
   const [Swiper , setSwiper] = useState();
   const [datadb, setDatadb] = useState([{}]);
   const [errorMsg, setErrorMsg] = useState(null);
-  const send  = async (email,action) => {
+  
+  const send  = async (email,action ) => {
 
     let token = await SecureStore.getItemAsync('token');
     if (token) {
-      
       let host_name = await ip_server.get_hostname();
   
       let data = 'token=' + token;
@@ -91,6 +90,7 @@ const TinderCard = () => {
   useFocusEffect(
     React.useCallback(() => {
       at_start_up();
+
     })
   );
 
@@ -108,14 +108,17 @@ const TinderCard = () => {
         ref={swiper => { setSwiper(swiper)  }}
       >
         {datadb.map((item, index) => (
-          <Card key={index}>
+          <Card key={index}
+              onSwipedLeft = {()=>send (item.email , "no" )  }
+              onSwipedRight ={()=>send (item.email , "yes" )  }>
             <CardItem
-              //image={item.image}
+              //image={}
               name={item.username}
-              //description={item.description}
+              description={item.description}
               matches={(parseInt( item.distance )).toString()}
               actions
-              onPressLeft={() =>{ send (item.email , "no" ) ; Swiper.swipeLeft() } }
+
+              onPressLeft={() =>{ send (item.email,"no"  ) ;  Swiper.swipeLeft() } }
               onPressRight={() => { send (item.email,"yes"  ) ;  Swiper.swipeRight() } }
             />
           </Card>

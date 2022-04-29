@@ -59,7 +59,7 @@ MongoClient.connect(url)
           for (let attr in matches) {
             let test = 0 ; 
             for (let ind in matcher) {
-              if( ( (matches[attr].email == matcher[ind].email_1) || (matches[attr].email == matcher[ind].email_2) ) &&
+              if( ( matcher[ind].action == "yes" ) && ( (matches[attr].email == matcher[ind].email_1) || (matches[attr].email == matcher[ind].email_2) ) &&
                ( (user.email == matcher[ind].email_1) || (user.email == matcher[ind].email_2) ) )
               {                    
                 test = 1 ; 
@@ -169,6 +169,9 @@ MongoClient.connect(url)
         )
           
           .then((obj) => {
+        
+
+
             //db.collection("matches").deleteMany({});
             db.collection("users").find({}).toArray(function (err, matches) {
               db.collection("matches").find({ }).toArray(function (err, matcher) {
@@ -186,7 +189,7 @@ MongoClient.connect(url)
                     test = 1 ; 
                   }
                 }                  
-                  if ((getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) < 10) && (test == 0 ) ) {
+                  if ((getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) < 10) && (test == 0 ) && (i<20) ) {
                   dist = { distance: getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) }
                   tmp = Object.assign(matches[attr], dist);
                   data[i] = tmp;
