@@ -24,12 +24,12 @@ import Icon from '../components/Icon';
 import Demo from '../assets/data/demo.js';
 
 var params2init = {first_time : 1};
+var datadb = [];
 
 var host_name;
 
 const Matches = () => {
   const navigation = useNavigation();
-  const [datadb, setDatadb] = useState([]);
 
 
   // only to oblige refresh
@@ -57,8 +57,8 @@ const Matches = () => {
         fetch(linkLoc, reqLoc)
           .then((res) => { return res.json(); })
           .then(res => {
-            setDatadb(res.jsonAsArray);
-            console.log(datadb);
+
+            datadb = res.jsonAsArray;
 
           }).catch(err => {
 
@@ -106,29 +106,44 @@ const Matches = () => {
             ></Ionicons>
           </View>
 
-          <FlatList
-            numColumns={2}
-            data={datadb}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-              onPress={
-                () => {
-                  params2init.first_time = 1;
-                  navigation.navigate('ProfileScreenVisitor', {visited_user_email : item.email});
+          {
+            datadb.length > 0 ?
+            <FlatList
+              numColumns={2}
+              data={datadb}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                onPress={
+                  () => {
+                    params2init.first_time = 1;
+                    navigation.navigate('ProfileScreenVisitor', {visited_user_email : item.email});
+                  }
                 }
-              }
 
-              >
-                <CardItem
-                  image={'http://'+host_name+'/get_image?filename='+item.profileImage}
-                  name={item.username}
-                  //status={item.status}
-                  variant
-                />
-              </TouchableOpacity>
-            )}
-          />
+                >
+
+                  {
+                    item.hasOwnProperty('profileImage') ?
+                    <CardItem
+                      image={'http://'+host_name+'/get_image?filename='+item.profileImage}
+                      name={item.username}
+                      variant
+                    />
+                    :
+                    <CardItem
+                      name={item.username}
+                      variant
+                    />
+                  }
+
+                </TouchableOpacity>
+              )}
+            />
+            :<View></View>
+            
+          }
+
         </ScrollView>
       </View>
     </ImageBackground>

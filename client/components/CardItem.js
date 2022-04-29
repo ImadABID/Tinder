@@ -38,8 +38,13 @@ const CardItem = ({
 
   return (
     <View style={styles.containerCardItem}>
-      {/* IMAGE */}
-      <Image source={{uri:image}} style={imageStyle} />
+
+      {
+        image ?
+        <Image source={{uri:image}} style={imageStyle} />
+        :
+        <Image source={require('../assets/default-img.jpg')} style={imageStyle} />
+      }
 
       {/* MATCHES */}
       {matches && (
