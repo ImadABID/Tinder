@@ -16,8 +16,8 @@ const StackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Group>
-      <Stack.Screen name="LoginScreen" component={LoginScreen} />
-      <Stack.Screen name="Matches" component={Matches} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="Matches" component={Matches} />
         <Stack.Screen name="TinderMain" component={TinderMain} />
         <Stack.Screen name="SignupScreen" component={SignupScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />

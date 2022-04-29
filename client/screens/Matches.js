@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useState} from 'react';
 import styles from '../assets/styles';
 import Header from './Header';
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 import * as ip_server from './server_ip';
@@ -23,10 +24,15 @@ var first_time = 1;
 const Matches = () => {
   const navigation = useNavigation();
   const [datadb, setDatadb] = useState([{}]);
+
+
+  // only to oblige refresh
   const [state, setState] = useState({});
+  
+  
   const at_start_up = async () => {
 
-    if(first_time == 1){
+    if(first_time === 1){
       first_time = 0;
 
       let token = await SecureStore.getItemAsync('token');
@@ -62,8 +68,11 @@ const Matches = () => {
 
   }
 
-  useEffect(
+  useFocusEffect(
     React.useCallback(() => {
+      if(state){
+        console.log('useFocusEffect');
+      }
       at_start_up();
       
     })
@@ -80,6 +89,9 @@ const Matches = () => {
         <ScrollView>
           <View style={styles.top}>
             <Text style={styles.title}>Matches</Text>
+            <Ionicons name="refresh-outline" size={24} color="#52575D"
+                onPress={() => {console.log('ref clicked'); setState({}); first_time = 1; navigation.navigate('Matches');}}
+            ></Ionicons>
           </View>
 
           <FlatList
