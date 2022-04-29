@@ -14,7 +14,10 @@ const ChatScreen = ({ }) => {
   const navigation = useNavigation();
   return (
     <SafeAreaView>
-            <Header/>
+        
+        <Header
+            navigation={navigation}
+        />
 
       <Ionicons name="ios-arrow-back" size={24} color="#52575D"
         onPress={() => navigation.goBack()}

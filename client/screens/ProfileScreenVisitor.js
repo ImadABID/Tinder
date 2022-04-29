@@ -108,8 +108,16 @@ const ProfileScreen = ({route}) => {
         })
     );
 
+    var params2init = {first_time : first_time};
+
     return (
         <SafeAreaView style={styles.container}>
+
+            {/* <Header
+                params2init={params2init}
+                navigation={navigation}
+            /> */}
+
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.titleBar}>
                     <Ionicons name="ios-arrow-back" size={24} color="#52575D"

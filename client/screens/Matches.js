@@ -19,7 +19,7 @@ import CardItem from '../components/CardItem';
 import Icon from '../components/Icon';
 import Demo from '../assets/data/demo.js';
 
-var first_time = 1;
+var params2init = {first_time : 1};
 
 const Matches = () => {
   const navigation = useNavigation();
@@ -32,8 +32,8 @@ const Matches = () => {
   
   const at_start_up = async () => {
 
-    if(first_time === 1){
-      first_time = 0;
+    if(params2init.first_time === 1){
+      params2init.first_time = 0;
 
       let token = await SecureStore.getItemAsync('token');
       if (token) {
@@ -59,7 +59,7 @@ const Matches = () => {
 
           });
       } else {
-        first_time = 1;
+        params2init.first_time = 1;
         navigation.navigate('LoginScreen');
       }
 
@@ -77,19 +77,24 @@ const Matches = () => {
     })
   );
 
+  
+
 
   return (
     <ImageBackground
       source={require('../assets/images/bg.png')}
       style={styles.bg}
     >
-          <Header/>
+      <Header
+        params2init={params2init}
+        navigation={navigation}
+      />
       <View style={styles.containerMatches}>
         <ScrollView>
           <View style={styles.top}>
             <Text style={styles.title}>Matches</Text>
             <Ionicons name="refresh-outline" size={24} color="#52575D"
-                onPress={() => {setState({}); first_time = 1; navigation.navigate('Matches');}}
+                onPress={() => {setState({}); params2init.first_time = 1; navigation.navigate('Matches');}}
             ></Ionicons>
           </View>
 
@@ -101,7 +106,7 @@ const Matches = () => {
               <TouchableOpacity
               onPress={
                 () => {
-                  first_time = 1;
+                  params2init.first_time = 1;
                   navigation.navigate('ProfileScreenVisitor', {visited_user_email : item.email});
                 }
               }

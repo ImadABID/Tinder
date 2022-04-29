@@ -14,7 +14,8 @@ async function log_out(){
     await SecureStore.deleteItemAsync('token');
 }
 
-var first_time = 1;
+
+var params2init = {first_time : 1};
 
 const ProfileScreen = ({ }) => {
     const navigation = useNavigation();
@@ -34,9 +35,9 @@ const ProfileScreen = ({ }) => {
 
     const at_start_up = async () => {
 
-        if(first_time === 1){
+        if(params2init.first_time === 1){
 
-            first_time=0;
+            params2init.first_time=0;
 
             let token = await SecureStore.getItemAsync('token');
             if (token) {
@@ -96,12 +97,12 @@ const ProfileScreen = ({ }) => {
                         setImage5({uri : 'none'});
                     }
                 }).catch(err => {
-                    first_time = 1;
+                    params2init.first_time = 1;
                     navigation.navigate('LoginScreen');
                 });
                 
             }else{
-                first_time = 1;
+                params2init.first_time = 1;
                 navigation.navigate('LoginScreen');
             }
         }
@@ -116,12 +117,15 @@ const ProfileScreen = ({ }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Header/>
+            <Header
+                params2init={params2init}
+                navigation={navigation}
+            />
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.titleBar}>
                     <Ionicons name="ios-arrow-back" size={24} color="#52575D"
-                        onPress={() => {first_time = 1; navigation.goBack()}}
+                        onPress={() => {fparams2init.irst_time = 1; navigation.goBack()}}
                     ></Ionicons>
 
                 </View>
@@ -130,10 +134,10 @@ const ProfileScreen = ({ }) => {
                     {profileImage.uri == 'none' ? <Image source={require('../assets/default-img.jpg')} style={styles.image} resizeMode="center"></Image> : <Image source={{uri : profileImage.uri}} style={styles.image} resizeMode="center"></Image>}
                     </View>
                     <View style={styles.dm}>
-                        <MaterialIcons name="chat" size={20} color="#DFD8C8" onPress={() => {first_time = 1; navigation.navigate('ChatScreen')}} ></MaterialIcons>
+                        <MaterialIcons name="chat" size={20} color="#DFD8C8" onPress={() => {params2init.first_time = 1; navigation.navigate('ChatScreen')}} ></MaterialIcons>
                     </View>
                     <View style={styles.edit}>
-                        <MaterialIcons name="build" size={20} color="#DFD8C8" onPress={() => {first_time = 1; navigation.navigate('EditProfile')}}
+                        <MaterialIcons name="build" size={20} color="#DFD8C8" onPress={() => {params2init.first_time = 1; navigation.navigate('EditProfile')}}
                         ></MaterialIcons>
                     </View>
                     <View style={styles.logout}>
@@ -142,7 +146,7 @@ const ProfileScreen = ({ }) => {
                             onPress = {
                                 ()=>{
                                     log_out();
-                                    first_time = 1;
+                                    params2init.first_time = 1;
                                     navigation.navigate('LoginScreen');
                                 }
                             }
