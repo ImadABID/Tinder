@@ -419,7 +419,7 @@ MongoClient.connect(url)
       client.orientation = req.body.orientation;
       client.targetedSex = req.body.targetedSex;
       
-      users.updateOne({email : user.email}, {$set:client}, {upsert: true});
+      db.collection("users").updateOne({email : user.email}, {$set:client}, {upsert: true});
 
       res.json(
         {
@@ -473,7 +473,7 @@ MongoClient.connect(url)
 
       }
       
-      users.updateOne({email : user.email}, {$set:to_add}, {upsert: true});
+      db.collection("users").updateOne({email : user.email}, {$set:to_add}, {upsert: true});
 
       res.json(
         {
@@ -489,7 +489,7 @@ MongoClient.connect(url)
 
     jwt.verify(req.body.token, token_sig, (err, user)=>{
 
-      users.findOne(
+      db.collection("users").findOne(
         {"email" : user.email},
         (err, client)=>{
 
@@ -499,7 +499,7 @@ MongoClient.connect(url)
     
               fs.unlink(__dirname+'/uploads/'+client.profileImage,
                 ()=>{
-                  users.updateOne({email : user.email}, {$unset:{profileImage:''}});
+                  db.collection("users").updateOne({email : user.email}, {$unset:{profileImage:''}});
                 }
               );
               break;
@@ -508,7 +508,7 @@ MongoClient.connect(url)
   
               fs.unlink(__dirname+'/uploads/'+client.image1,
                 ()=>{
-                  users.updateOne({email : user.email}, {$unset:{image1:''}});
+                  db.collection("users").updateOne({email : user.email}, {$unset:{image1:''}});
                 }
               );
               break;
@@ -517,7 +517,7 @@ MongoClient.connect(url)
 
               fs.unlink(__dirname+'/uploads/'+client.image2,
                 ()=>{
-                  users.updateOne({email : user.email}, {$unset:{image2:''}});
+                  db.collection("users").updateOne({email : user.email}, {$unset:{image2:''}});
                 }
               );
               break;
@@ -526,7 +526,7 @@ MongoClient.connect(url)
 
               fs.unlink(__dirname+'/uploads/'+client.image3,
                 ()=>{
-                  users.updateOne({email : user.email}, {$unset:{image3:''}});
+                  db.collection("users").updateOne({email : user.email}, {$unset:{image3:''}});
                 }
               );
               break;
@@ -535,7 +535,7 @@ MongoClient.connect(url)
 
               fs.unlink(__dirname+'/uploads/'+client.image4,
                 ()=>{
-                  users.updateOne({email : user.email}, {$unset:{image4:''}});
+                  db.collection("users").updateOne({email : user.email}, {$unset:{image4:''}});
                 }
               );
               break;
@@ -544,7 +544,7 @@ MongoClient.connect(url)
 
               fs.unlink(__dirname+'/uploads/'+client.image5,
                 ()=>{
-                  users.updateOne({email : user.email}, {$unset:{image5:''}});
+                  db.collection("users").updateOne({email : user.email}, {$unset:{image5:''}});
                 }
               );
               break;
@@ -577,7 +577,7 @@ MongoClient.connect(url)
 
   // just for test in dev mode
   app.get('/drop_db', (req, res) => {
-    users.drop();
+    db.drop();
     res.send("drop_db");
   });
 
