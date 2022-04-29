@@ -5,8 +5,9 @@ import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
 import * as ip_server from './server_ip';
+import Header from './Header';
 
-var first_time = 1;
+var params2init = {first_time : 1};
 
 const ProfileScreen = ({route}) => {
     const navigation = useNavigation();
@@ -28,9 +29,9 @@ const ProfileScreen = ({route}) => {
 
     const at_start_up = async () => {
 
-        if(first_time === 1){
+        if(params2init.first_time === 1){
 
-            first_time=0;
+            params2init.first_time=0;
 
             let token = await SecureStore.getItemAsync('token');
             if (token) {
@@ -90,12 +91,12 @@ const ProfileScreen = ({route}) => {
                         setImage5({uri : 'none'});
                     }
                 }).catch(err => {
-                    first_time = 1;
+                    params2init.first_time = 1;
                     navigation.navigate('LoginScreen');
                 });
                 
             }else{
-                first_time = 1;
+                params2init.first_time = 1;
                 navigation.navigate('LoginScreen');
             }
         }
@@ -108,20 +109,18 @@ const ProfileScreen = ({route}) => {
         })
     );
 
-    var params2init = {first_time : first_time};
-
     return (
         <SafeAreaView style={styles.container}>
 
-            {/* <Header
+            <Header
                 params2init={params2init}
                 navigation={navigation}
-            /> */}
+            />
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.titleBar}>
                     <Ionicons name="ios-arrow-back" size={24} color="#52575D"
-                        onPress={() => {first_time = 1; navigation.goBack();}}
+                        onPress={() => {params2init.first_time = 1; navigation.goBack();}}
                     ></Ionicons>
 
                 </View>
