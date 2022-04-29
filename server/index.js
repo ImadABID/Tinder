@@ -129,10 +129,12 @@ MongoClient.connect(url)
       jwt.verify(req.body.token, token_sig, (err, user)=>{
 
         var myobj = { 'email_1' : user.email , 'email_2' : req.body.email, 'action' : req.body.action  };
-        db.collection("matches").insertOne(myobj, function(err, res) {
+        db.collection("matches").insertOne(myobj, function(err, resreq) {
           if (err) throw err;
           console.log("1 element inserted");
-
+          res.json({ 
+            'msg' : 'yes' 
+           })
         });
         
       })
@@ -177,6 +179,16 @@ MongoClient.connect(url)
       */
       jwt.verify(req.body.token, token_sig, (err, user) => {
 
+        /*db.collection("users").updateOne(
+          { "email": user.email }, // Filter
+          {
+            $set: {
+              "profile": "no"
+            }
+          },// Update
+        )*/
+
+
         db.collection("users").updateOne(
           { "email": user.email }, // Filter
           {
@@ -196,6 +208,7 @@ MongoClient.connect(url)
               db.collection("matches").find({ }).toArray(function (err, matcher) {
 
               let data = {};
+              let current = {};
               let tmp;
               let dist;
               i = 0;
@@ -204,7 +217,11 @@ MongoClient.connect(url)
                 for (let ind in matcher) {
                   if( ( (matches[attr].email == matcher[ind].email_1) || (matches[attr].email == matcher[ind].email_2) ) &&
                    ( (user.email == matcher[ind].email_1) || (user.email == matcher[ind].email_2) ) )
-                  {                    
+                  { 
+                    if ( user.email == matches[attr].email )
+                    {
+                      current = matches[attr]; 
+                    }                   
                     test = 1 ; 
                   }
                 }                  
@@ -223,7 +240,17 @@ MongoClient.connect(url)
                 .sort(function (itemA, itemB) {
                   return itemA.distance < itemB.distance;
                 });
-              res.json({ jsonAsArray })
+
+                if ( current.profile == "no" )
+                {
+                  res.json({ 
+                    'msg' : 'no' 
+                   })
+                }
+                else 
+                {
+                  res.json({ jsonAsArray })
+                }
             });
             });
 

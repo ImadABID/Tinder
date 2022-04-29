@@ -23,7 +23,7 @@ const TinderCard = () => {
     let token = await SecureStore.getItemAsync('token');
     if (token) {
       let host_name = await ip_server.get_hostname();
-      setState({}); // This worked for me
+      
 
       let data = 'token=' + token;
       let linkLoc = 'http://' + host_name + '/matches/set';
@@ -37,7 +37,7 @@ const TinderCard = () => {
       fetch(linkLoc, reqLoc)
         .then((res) => { return res.json(); })
         .then(res => {
-          
+          //console.log(res);
         }).catch(err => {
   
           console.log(err)
@@ -81,7 +81,13 @@ const TinderCard = () => {
       fetch(linkLoc, reqLoc)
         .then((res) => { return res.json(); })
         .then(res => {
-          setDatadb(res.jsonAsArray)
+          if ( res.msg=="no" )
+          {
+            navigation.navigate('CheckProfile');
+          }
+          else {
+            setDatadb(res.jsonAsArray) 
+          }
         }).catch(err => {
           console.log(err)
         });
@@ -92,6 +98,7 @@ const TinderCard = () => {
   useEffect(
     React.useCallback(() => {
       at_start_up();
+      
     })
   );
 
@@ -118,7 +125,6 @@ const TinderCard = () => {
               description={item.description}
               matches={(parseInt( item.distance )).toString()}
               actions
-
               onPressLeft={() =>{   Swiper.swipeLeft() } }
               onPressRight={() => {  Swiper.swipeRight() } }
             />
