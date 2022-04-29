@@ -6,6 +6,23 @@ const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 var token_sig = 'pjezfpjajfajeipjfez4845as5';
 
+// --- /Multer ----
+
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination(req, file, callback) {
+    callback(null, './images');
+  },
+  filename(req, file, callback) {
+    callback(null, `${file.fieldname}_${Date.now()}_${file.originalname}`);
+  },
+});
+
+// const upload = multer({ storage });
+const upload = multer({ dest: 'uploads/' });
+
+// --- Multer\ ----
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -17,6 +34,8 @@ const corsOptions = {
   optionSuccessStatus: 200,
 }
 app.use(cors(corsOptions)) // Use this after the variable declaration
+
+var fs = require('fs');
 
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
@@ -358,19 +377,188 @@ MongoClient.connect(url)
 
       })
 
-
-    });
-
-    // just for test in dev mode
-    app.get('/drop_db', (req, res) => {
-      db.collection("users").drop();
-      res.send("drop_db");
-    });
-
-    app.listen(3000, () => {
-      console.log("En attente de requêtes...");
-    });
-  })
-  .catch(function (err) {
-    throw err;
   });
+
+  app.post('/profile/update', (req, res)=>{
+    
+    jwt.verify(req.body.token, token_sig, (err, user)=>{
+
+      let client = {};
+
+      client.username = req.body.username;
+      client.age = req.body.age;
+      client.description = req.body.description;
+      client.passion = req.body.passion;
+      client.orientation = req.body.orientation;
+      client.targetedSex = req.body.targetedSex;
+      
+      users.updateOne({email : user.email}, {$set:client}, {upsert: true});
+
+      res.json(
+        {
+          msg : '0'
+        }
+      );
+
+    })
+
+  });
+
+
+  app.post('/upload_image', upload.single('photo'), (req, res) => {
+
+    jwt.verify(req.body.token, token_sig, (err, user)=>{
+
+      to_add = {};
+
+      switch(req.body.imageRole){
+
+        case 'profileImage':
+          to_add.profileImage = req.file.filename;
+          break;
+
+        case 'image1':
+          to_add.image1 = req.file.filename;
+          break;
+
+        case 'image2':
+          to_add.image2 = req.file.filename;
+          break;
+
+        case 'image3':
+          to_add.image3 = req.file.filename;
+          break;
+
+        case 'image4':
+          to_add.image4 = req.file.filename;
+          break;
+
+        case 'image5':
+          to_add.image5 = req.file.filename;
+          break;
+
+        default :
+          res.json(
+            {
+              msg : 'imageRole not known. image ignored.'
+            }
+          );
+
+      }
+      
+      users.updateOne({email : user.email}, {$set:to_add}, {upsert: true});
+
+      res.json(
+        {
+          msg : '0'
+        }
+      );
+      
+    })
+
+  });
+
+  app.post('/delete_image', (req, res) => {
+
+    jwt.verify(req.body.token, token_sig, (err, user)=>{
+
+      users.findOne(
+        {"email" : user.email},
+        (err, client)=>{
+
+          switch(req.body.imageRole){
+
+            case 'profileImage':
+    
+              fs.unlink(__dirname+'/uploads/'+client.profileImage,
+                ()=>{
+                  users.updateOne({email : user.email}, {$unset:{profileImage:''}});
+                }
+              );
+              break;
+    
+            case 'image1':
+  
+              fs.unlink(__dirname+'/uploads/'+client.image1,
+                ()=>{
+                  users.updateOne({email : user.email}, {$unset:{image1:''}});
+                }
+              );
+              break;
+
+            case 'image2':
+
+              fs.unlink(__dirname+'/uploads/'+client.image2,
+                ()=>{
+                  users.updateOne({email : user.email}, {$unset:{image2:''}});
+                }
+              );
+              break;
+
+            case 'image3':
+
+              fs.unlink(__dirname+'/uploads/'+client.image3,
+                ()=>{
+                  users.updateOne({email : user.email}, {$unset:{image3:''}});
+                }
+              );
+              break;
+
+            case 'image4':
+
+              fs.unlink(__dirname+'/uploads/'+client.image4,
+                ()=>{
+                  users.updateOne({email : user.email}, {$unset:{image4:''}});
+                }
+              );
+              break;
+
+            case 'image5':
+
+              fs.unlink(__dirname+'/uploads/'+client.image5,
+                ()=>{
+                  users.updateOne({email : user.email}, {$unset:{image5:''}});
+                }
+              );
+              break;
+
+            default :
+              res.json(
+                {
+                  msg : 'imageRole not known. operation ignored.'
+                }
+              );
+    
+          }
+    
+          res.json(
+            {
+              msg : '0'
+            }
+          );
+
+        }
+      )
+
+    })
+
+    });
+
+  app.get('/get_image', (req, res)=>{
+    res.sendFile('uploads/'+req.query.filename , {root : __dirname});
+  })
+
+  // just for test in dev mode
+  app.get('/drop_db', (req, res) => {
+    users.drop();
+    res.send("drop_db");
+  });
+
+  app.listen(3000, () => {
+    console.log("En attente de requêtes...");
+  });
+
+})
+.catch(function (err) {
+  throw err;
+});
