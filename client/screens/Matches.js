@@ -18,49 +18,56 @@ import CardItem from '../components/CardItem';
 import Icon from '../components/Icon';
 import Demo from '../assets/data/demo.js';
 
+var first_time = 1;
+
 const Matches = () => {
   const navigation = useNavigation();
   const [datadb, setDatadb] = useState([{}]);
   const [state, setState] = useState({});
   const at_start_up = async () => {
 
-  let token = await SecureStore.getItemAsync('token');
-  if (token) {
-    //
-    let host_name = await ip_server.get_hostname();
+    if(first_time == 1){
+      first_time = 0;
 
-    let data = 'token=' + token;
-    let linkLoc = 'http://' + host_name + '/matches/get';
-    let reqLoc = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },// this line is important, if this content-type is not set it wont work
-      body: data
+      let token = await SecureStore.getItemAsync('token');
+      if (token) {
+        //
+        let host_name = await ip_server.get_hostname();
 
-    };
-    fetch(linkLoc, reqLoc)
-      .then((res) => { return res.json(); })
-      .then(res => {
-        //console.log("aaa :"  +res.jsonAsArray );
-        setDatadb(res.jsonAsArray)
-      }).catch(err => {
+        let data = 'token=' + token;
+        let linkLoc = 'http://' + host_name + '/matches/get';
+        let reqLoc = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },// this line is important, if this content-type is not set it wont work
+          body: data
 
-        console.log(err)
+        };
+        fetch(linkLoc, reqLoc)
+          .then((res) => { return res.json(); })
+          .then(res => {
+            //console.log("aaa :"  +res.jsonAsArray );
+            setDatadb(res.jsonAsArray)
+            console.log(res.jsonAsArray);
+          }).catch(err => {
 
-      });
-  } else {
-    navigation.navigate('LoginScreen');
+            console.log(err)
+
+          });
+      } else {
+        first_time = 1;
+        navigation.navigate('LoginScreen');
+      }
+
+    }
+
   }
-}
 
-useEffect(
-  React.useCallback(() => {
-    at_start_up();
-    
-  })
-  
- 
-  
-);
+  useEffect(
+    React.useCallback(() => {
+      at_start_up();
+      
+    })
+  );
 
 
   return (
@@ -73,11 +80,6 @@ useEffect(
         <ScrollView>
           <View style={styles.top}>
             <Text style={styles.title}>Matches</Text>
-            <TouchableOpacity>
-              <Text style={styles.icon}>
-                <Icon name="optionsV" />
-              </Text>
-            </TouchableOpacity>
           </View>
 
           <FlatList
@@ -86,7 +88,12 @@ useEffect(
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
               <TouchableOpacity
-              onPress={() => navigation.navigate('ProfileScreenVisitor')}
+              onPress={
+                () => {
+                  first_time = 1;
+                  navigation.navigate('ProfileScreenVisitor');
+                }
+              }
 
               >
                 <CardItem
