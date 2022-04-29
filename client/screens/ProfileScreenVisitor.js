@@ -13,8 +13,6 @@ const ProfileScreen = ({route}) => {
 
     var visited_user_email = route.params.visited_user_email;
 
-    console.log(visited_user_email);
-
     const [username, setUsername] = useState('');
     const [age, setAge] = useState('');
     const [description, setDescription] = useState('');
@@ -115,7 +113,7 @@ const ProfileScreen = ({route}) => {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={styles.titleBar}>
                     <Ionicons name="ios-arrow-back" size={24} color="#52575D"
-                        onPress={() => navigation.goBack()}
+                        onPress={() => {first_time = 1; navigation.goBack();}}
                     ></Ionicons>
 
                 </View>

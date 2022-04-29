@@ -53,7 +53,6 @@ const Matches = () => {
           .then(res => {
             //console.log("aaa :"  +res.jsonAsArray );
             setDatadb(res.jsonAsArray)
-            console.log(res.jsonAsArray);
           }).catch(err => {
 
             console.log(err)
