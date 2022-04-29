@@ -25,9 +25,11 @@ import Demo from '../assets/data/demo.js';
 
 var params2init = {first_time : 1};
 
+var host_name;
+
 const Matches = () => {
   const navigation = useNavigation();
-  const [datadb, setDatadb] = useState([{}]);
+  const [datadb, setDatadb] = useState([]);
 
 
   // only to oblige refresh
@@ -42,7 +44,7 @@ const Matches = () => {
       let token = await SecureStore.getItemAsync('token');
       if (token) {
         //
-        let host_name = await ip_server.get_hostname();
+        host_name = await ip_server.get_hostname();
 
         let data = 'token=' + token;
         let linkLoc = 'http://' + host_name + '/matches/get';
@@ -55,8 +57,9 @@ const Matches = () => {
         fetch(linkLoc, reqLoc)
           .then((res) => { return res.json(); })
           .then(res => {
-            //console.log("aaa :"  +res.jsonAsArray );
-            setDatadb(res.jsonAsArray)
+            setDatadb(res.jsonAsArray);
+            console.log(datadb);
+
           }).catch(err => {
 
             console.log(err)
@@ -118,7 +121,7 @@ const Matches = () => {
 
               >
                 <CardItem
-                  //image={item.image}
+                  image={'http://'+host_name+'/get_image?filename='+item.profileImage}
                   name={item.username}
                   //status={item.status}
                   variant
