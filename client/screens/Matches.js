@@ -58,7 +58,13 @@ const Matches = () => {
           .then((res) => { return res.json(); })
           .then(res => {
 
-            datadb = res.jsonAsArray;
+            if(res.jsonAsArray[0].hasOwnProperty('email')){
+              datadb = res.jsonAsArray;
+            }
+
+            
+
+            console.log(datadb);
 
           }).catch(err => {
 
