@@ -98,11 +98,13 @@ const ProfileScreen = ({ }) => {
                     }
                 }).catch(err => {
                     params2init.first_time = 1;
+                    log_out();
                     navigation.navigate('LoginScreen');
                 });
                 
             }else{
                 params2init.first_time = 1;
+                log_out();
                 navigation.navigate('LoginScreen');
             }
         }

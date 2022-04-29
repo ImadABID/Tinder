@@ -13,6 +13,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
 import * as ip_server from './server_ip';
 
+async function log_out(){
+    await SecureStore.deleteItemAsync('token');
+}
+
 var first_time = 1;
 
 var empty_image = [1, 1, 1, 1, 1];
@@ -90,6 +94,7 @@ const EditProfile = ({ }) => {
             nbr_element_not_uploaded_yet--;
             if(nbr_element_not_uploaded_yet===0){
                 first_time = 1;
+                log_out();
                 navigation.navigate('ProfileScreen');
             }
         })
@@ -98,6 +103,7 @@ const EditProfile = ({ }) => {
             nbr_element_not_uploaded_yet--;
             if(nbr_element_not_uploaded_yet===0){
                 first_time = 1;
+                log_out();
                 navigation.navigate('ProfileScreen');
             }
         });
@@ -127,11 +133,13 @@ const EditProfile = ({ }) => {
                 }
             }).catch(err => {
                 first_time = 1;
+                log_out();
                 navigation.navigate('LoginScreen');
             });
 
         }else{
             first_time = 1;
+            log_out();
             navigation.navigate('LoginScreen');
         }
 
@@ -219,11 +227,13 @@ const EditProfile = ({ }) => {
                     
                 }).catch(err => {
                     first_time = 1;
+                    log_out();
                     navigation.navigate('LoginScreen');
                 });
                 
             }else{
                 first_time = 1;
+                log_out();
                 navigation.navigate('LoginScreen');
             }
         }
@@ -510,6 +520,7 @@ const EditProfile = ({ }) => {
                                             nbr_element_not_uploaded_yet--;
                                             if(nbr_element_not_uploaded_yet===0){
                                                 first_time = 1;
+                                                log_out();
                                                 navigation.navigate('ProfileScreen');
                                             }
 
@@ -519,6 +530,7 @@ const EditProfile = ({ }) => {
                                             nbr_element_not_uploaded_yet--;
                                             if(nbr_element_not_uploaded_yet===0){
                                                 first_time = 1;
+                                                log_out();
                                                 navigation.navigate('ProfileScreen');
                                             }
                                         })
@@ -538,6 +550,7 @@ const EditProfile = ({ }) => {
 
                                     }else{
                                         first_time = 1;
+                                        log_out();
                                         navigation.navigate('LoginScreen');
                                     }
 

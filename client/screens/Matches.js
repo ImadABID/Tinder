@@ -7,6 +7,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import * as ip_server from './server_ip';
 import * as SecureStore from 'expo-secure-store';
 
+async function log_out(){
+  await SecureStore.deleteItemAsync('token');
+}
+
 import {
   ScrollView,
   View,
@@ -60,6 +64,7 @@ const Matches = () => {
           });
       } else {
         params2init.first_time = 1;
+        log_out();
         navigation.navigate('LoginScreen');
       }
 

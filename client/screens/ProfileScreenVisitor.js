@@ -7,6 +7,10 @@ import * as SecureStore from 'expo-secure-store';
 import * as ip_server from './server_ip';
 import Header from './Header';
 
+async function log_out(){
+    await SecureStore.deleteItemAsync('token');
+}
+
 var params2init = {first_time : 1};
 
 const ProfileScreen = ({route}) => {
@@ -92,11 +96,13 @@ const ProfileScreen = ({route}) => {
                     }
                 }).catch(err => {
                     params2init.first_time = 1;
+                    log_out();
                     navigation.navigate('LoginScreen');
                 });
                 
             }else{
                 params2init.first_time = 1;
+                log_out();
                 navigation.navigate('LoginScreen');
             }
         }
