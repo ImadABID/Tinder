@@ -1,7 +1,12 @@
-import React from "react";
+import React, {useState} from "react";
 import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
+import * as SecureStore from 'expo-secure-store';
+import * as ip_server from './server_ip';
+
+var first_time = 1;
 
 const ProfileScreen = ({route}) => {
     const navigation = useNavigation();
@@ -9,6 +14,101 @@ const ProfileScreen = ({route}) => {
     var visited_user_email = route.params.visited_user_email;
 
     console.log(visited_user_email);
+
+    const [username, setUsername] = useState('');
+    const [age, setAge] = useState('');
+    const [description, setDescription] = useState('');
+    const [passion, setPassion] = useState('');
+
+    const [profileImage, setProfileImage] = useState({uri : 'none'});
+
+    const [image1, setImage1] = useState({uri : 'none'});
+    const [image2, setImage2] = useState({uri : 'none'});
+    const [image3, setImage3] = useState({uri : 'none'});
+    const [image4, setImage4] = useState({uri : 'none'});
+    const [image5, setImage5] = useState({uri : 'none'});
+
+    const at_start_up = async () => {
+
+        if(first_time === 1){
+
+            first_time=0;
+
+            let token = await SecureStore.getItemAsync('token');
+            if (token) {
+                
+                let host_name = await ip_server.get_hostname();
+                let link = 'http://'+host_name+'/users/profile/visit';
+
+                let data = 'token='+token+'&email='+visited_user_email;
+
+                let myInit = {
+                    method: 'POST',
+                    headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+                    body: data
+                };
+
+                fetch(link, myInit)
+                .then((res)=>{return res.json();})
+                .then( res =>{
+                    setUsername(res.client.username);
+                    if(res.client.hasOwnProperty('age')){
+                        setAge(res.client.age);
+                    }
+                    if(res.client.hasOwnProperty('description')){
+                        setDescription(res.client.description);
+                    }
+                    if(res.client.hasOwnProperty('passion')){
+                        setPassion(res.client.passion);
+                    }
+                    if(res.client.hasOwnProperty('profileImage')){
+                        setProfileImage({uri : 'http://'+host_name+'/get_image?filename='+res.client.profileImage});
+                    }else{
+                        setProfileImage({uri : 'none'});
+                    }
+                    if(res.client.hasOwnProperty('image1')){
+                        setImage1({uri : 'http://'+host_name+'/get_image?filename='+res.client.image1});
+                    }else{
+                        setImage1({uri : 'none'});
+                    }
+                    if(res.client.hasOwnProperty('image2')){
+                        setImage2({uri : 'http://'+host_name+'/get_image?filename='+res.client.image2});
+                    }else{
+                        setImage2({uri : 'none'});
+                    }
+                    if(res.client.hasOwnProperty('image3')){
+                        setImage3({uri : 'http://'+host_name+'/get_image?filename='+res.client.image3});
+                    }else{
+                        setImage3({uri : 'none'});
+                    }
+                    if(res.client.hasOwnProperty('image4')){
+                        setImage4({uri : 'http://'+host_name+'/get_image?filename='+res.client.image4});
+                    }else{
+                        setImage4({uri : 'none'});
+                    }
+                    if(res.client.hasOwnProperty('image5')){
+                        setImage5({uri : 'http://'+host_name+'/get_image?filename='+res.client.image5});
+                    }else{
+                        setImage5({uri : 'none'});
+                    }
+                }).catch(err => {
+                    first_time = 1;
+                    navigation.navigate('LoginScreen');
+                });
+                
+            }else{
+                first_time = 1;
+                navigation.navigate('LoginScreen');
+            }
+        }
+        
+    }
+
+    useFocusEffect(
+        React.useCallback(() => {
+            at_start_up();
+        })
+    );
 
     return (
         <SafeAreaView style={styles.container}>
@@ -21,7 +121,7 @@ const ProfileScreen = ({route}) => {
                 </View>
                 <View style={{ alignSelf: "center" }}>
                     <View style={styles.profileImage}>
-                        <Image source={require("../assets/profile-pic.jpg")} style={styles.image} resizeMode="center"></Image>
+                    {profileImage.uri == 'none' ? <Image source={require('../assets/default-img.jpg')} style={styles.image} resizeMode="center"></Image> : <Image source={{uri : profileImage.uri}} style={styles.image} resizeMode="center"></Image>}
                     </View>
                     <View style={styles.dm}>
                         <MaterialIcons name="chat" size={20} color="#DFD8C8" onPress={() => navigation.navigate('ChatScreen')} ></MaterialIcons>
@@ -29,71 +129,91 @@ const ProfileScreen = ({route}) => {
                 </View>
 
                 <View style={styles.infoContainer}>
-                    <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>Julie</Text>
-                    <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Photographer</Text>
+                    <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>{username}</Text>
                 </View>
 
                 <View style={styles.statsContainer}>
 
                     <View style={[styles.statsBox]}>
                         <Text style={[styles.text, { fontSize: 24 }]}>Age</Text>
-                        <Text style={[styles.text, styles.subText]}>22</Text>
+                        <Text style={[styles.text, styles.subText]}>{age}</Text>
                     </View>
                 </View>
 
                 <View style={{ marginTop: 32 }}>
+                    
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                        <View style={styles.mediaImageContainer}>
-                            <Image source={require("../assets/media1.jpg")} style={styles.image} resizeMode="cover"></Image>
-                        </View>
-                        <View style={styles.mediaImageContainer}>
-                            <Image source={require("../assets/media2.jpg")} style={styles.image} resizeMode="cover"></Image>
-                        </View>
-                        <View style={styles.mediaImageContainer}>
-                            <Image source={require("../assets/media3.jpg")} style={styles.image} resizeMode="cover"></Image>
-                        </View>
+
+                        {
+                            image1.uri != 'none' ?
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={{uri:image1.uri}} style={styles.image} resizeMode="cover"></Image>
+                            </View>
+                            :<View></View>
+                        }
+
+                        {
+                            image2.uri != 'none' ?
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={{uri:image2.uri}} style={styles.image} resizeMode="cover"></Image>
+                            </View>
+                            :<View></View>
+                        }
+
+                        {
+                            image3.uri != 'none' ?
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={{uri:image3.uri}} style={styles.image} resizeMode="cover"></Image>
+                            </View>
+                            :<View></View>
+                        }
+
+                        {
+                            image4.uri != 'none' ?
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={{uri:image4.uri}} style={styles.image} resizeMode="cover"></Image>
+                            </View>
+                            :<View></View>
+                        }
+
+                        {
+                            image5.uri != 'none' ?
+                            <View style={styles.mediaImageContainer}>
+                                <Image source={{uri:image5.uri}} style={styles.image} resizeMode="cover"></Image>
+                            </View>
+                            :<View></View>
+                        }
+
+
                     </ScrollView>
-                    <View style={styles.mediaCount}>
-                        <Text style={[styles.text, { fontSize: 24, color: "#DFD8C8", fontWeight: "300" }]}>5</Text>
-                        <Text style={[styles.text, { fontSize: 12, color: "#DFD8C8", textTransform: "uppercase" }]}>Media</Text>
-                    </View>
+                    
                 </View>
+
                 <Text style={[styles.subText, styles.recent]}>Description</Text>
                 <View style={{ alignItems: "center" }}>
                     <View style={styles.recentItem}>
                         <View style={styles.activityIndicator}></View>
                         <View style={{ width: 250 }}>
                             <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
-                            Text <Text style={{ fontWeight: "400" }}>Text</Text> Text <Text style={{ fontWeight: "400" }}>Text</Text>
+                                {description}
                             </Text>
                         </View>
                     </View>
 
                 </View>
-                <Text style={[styles.subText, styles.recent]}>Passion   </Text>
+                <Text style={[styles.subText, styles.recent]}>Passion</Text>
                 <View style={{ alignItems: "center" }}>
                     <View style={styles.recentItem}>
                         <View style={styles.activityIndicator}></View>
                         <View style={{ width: 250 }}>
                             <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
-                            Text <Text style={{ fontWeight: "400" }}>Text</Text> Text <Text style={{ fontWeight: "400" }}>Text</Text>
+                                {passion}
                             </Text>
                         </View>
                     </View>
 
                 </View>
-                <Text style={[styles.subText, styles.recent]}>Orientation</Text>
-                <View style={{ alignItems: "center" }}>
-                    <View style={styles.recentItem}>
-                        <View style={styles.activityIndicator}></View>
-                        <View style={{ width: 250 }}>
-                            <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
-                            Text <Text style={{ fontWeight: "400" }}>Text</Text> Text <Text style={{ fontWeight: "400" }}>Text</Text>
-                            </Text>
-                        </View>
-                    </View>
 
-                </View>
             </ScrollView>
         </SafeAreaView>
     );
