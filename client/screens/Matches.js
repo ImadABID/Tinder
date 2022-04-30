@@ -62,9 +62,6 @@ const Matches = () => {
               datadb = res.jsonAsArray;
             }
 
-            
-
-            console.log(datadb);
 
           }).catch(err => {
 

@@ -170,60 +170,85 @@ MongoClient.connect(url)
 
     jwt.verify(req.body.token, token_sig, (err, user) => {
 
-      db.collection("users").updateOne(
-        { "email": user.email }, // Filter
-        {
-          $set: {
-            "latitude": req.body.latitude,
-            "longitude": req.body.longitude
-          }
-        },// Update
-      )
-        
-        .then((obj) => {
-      
+      db.collection("users").findOne(
+        {"email" : user.email},
+        (err, client)=>{
 
+          if(
+            !client.hasOwnProperty('username') ||
+            !client.hasOwnProperty('age') ||
+            !client.hasOwnProperty('description') ||
+            !client.hasOwnProperty('passion') ||
+            !client.hasOwnProperty('orientation') ||
+            !client.hasOwnProperty('targetedSex')
+          ){
 
-          //db.collection("matches").deleteMany({});
-          db.collection("users").find({}).toArray(function (err, matches) {
-            db.collection("matches").find({ }).toArray(function (err, matcher) {
-
-            let data = {};
-            let tmp;
-            let dist;
-            i = 0;
-            for (let attr in matches) {
-              let test = 0 ; 
-              for (let ind in matcher) {
-                if( ( (matches[attr].email == matcher[ind].email_1) || (matches[attr].email == matcher[ind].email_2) ) &&
-                  ( (user.email == matcher[ind].email_1) || (user.email == matcher[ind].email_2) ) )
-                {                    
-                  test = 1 ; 
-                }
-              }                  
-                if ((getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) < 10) && (test == 0 ) && (i<20) ) {
-                dist = { distance: getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) }
-                tmp = Object.assign(matches[attr], dist);
-                data[i] = tmp;
-                i++;
+            res.json(
+              {
+                msg:'some profile info are missing.'
               }
-              
-            }
+            );
+            
 
-            const jsonAsArray = Object.keys(data).map(function (key) {
-              return data[key];
-            })
-              .sort(function (itemA, itemB) {
-                return itemA.distance < itemB.distance;
+          }else{
+
+            db.collection("users").updateOne(
+              { "email": user.email }, // Filter
+              {
+                $set: {
+                  "latitude": req.body.latitude,
+                  "longitude": req.body.longitude
+                }
+              },
+            )
+            .then((obj) => {
+      
+              //db.collection("matches").deleteMany({});
+              db.collection("users").find({}).toArray(function (err, matches) {
+                db.collection("matches").find({ }).toArray(function (err, matcher) {
+      
+                  let data = {};
+                  let tmp;
+                  let dist;
+                  i = 0;
+                  for (let attr in matches) {
+                    let test = 0 ; 
+                    for (let ind in matcher) {
+                      if( ( (matches[attr].email == matcher[ind].email_1) || (matches[attr].email == matcher[ind].email_2) ) &&
+                        ( (user.email == matcher[ind].email_1) || (user.email == matcher[ind].email_2) ) )
+                      {                    
+                        test = 1 ; 
+                      }
+                    }                  
+                      if ((getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) < 10) && (test == 0 ) && (i<20) ) {
+                      dist = { distance: getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) }
+                      tmp = Object.assign(matches[attr], dist);
+                      data[i] = tmp;
+                      i++;
+                    }
+                    
+                  }
+      
+                  const jsonAsArray = Object.keys(data).map(function (key) {
+                    return data[key];
+                  })
+                    .sort(function (itemA, itemB) {
+                      return itemA.distance < itemB.distance;
+                    });
+                  res.json({ jsonAsArray })
+                });
               });
-            res.json({ jsonAsArray })
-          });
-          });
+      
+            })
+            .catch((err) => {
+              console.log('Error: ' + err);
+            })
 
-        })
-        .catch((err) => {
-          console.log('Error: ' + err);
-        })
+          }
+
+        }
+      )
+
     })
   });
 

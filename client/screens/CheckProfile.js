@@ -21,12 +21,14 @@ import Header from './Header';
 
 const CheckProfile = ({}) => {
 
-
+  const navigation = useNavigation();
 
 
   return (
     <View>
-    <Header/>
+    <Header
+      navigation={navigation}
+    />
 
     <ScrollView contentContainerStyle={styles.container}>
 
@@ -34,9 +36,22 @@ const CheckProfile = ({}) => {
         source={require('../assets/rn-social-logo.png')}
         style={styles.logo}
       />
-      <Text style={styles.text}>Check Your Profile </Text>
+      <Text style={styles.text}>Some profile's info are missing</Text>
 
-      
+      <View
+        style={{marginTop : 50}}
+      >
+        <Button
+          title='update your profile'
+          onPress={
+            ()=>{
+              navigation.navigate('EditProfile');
+            }
+          }
+        >
+        </Button>
+      </View>
+
     </ScrollView>
     </View>
 
