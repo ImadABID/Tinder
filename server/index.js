@@ -208,23 +208,33 @@ MongoClient.connect(url)
                 db.collection("matches").find({ }).toArray(function (err, matcher) {
       
                   let data = {};
-                  let tmp;
                   let dist;
-                  i = 0;
+                  let i = 0;
+                  let test;
                   for (let attr in matches) {
-                    let test = 0 ; 
+                    test = 0 ; 
                     for (let ind in matcher) {
-                      if( ( (matches[attr].email == matcher[ind].email_1) || (matches[attr].email == matcher[ind].email_2) ) &&
-                        ( (user.email == matcher[ind].email_1) || (user.email == matcher[ind].email_2) ) )
-                      {                    
+                      if(
+                        ((matches[attr].email == matcher[ind].email_1) || (matches[attr].email == matcher[ind].email_2)) &&
+                        ((user.email == matcher[ind].email_1) || (user.email == matcher[ind].email_2))
+                      ){                    
                         test = 1 ; 
+                        break;
                       }
-                    }                  
-                      if ((getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) < 10) && (test == 0 ) && (i<20) ) {
+                    }
+
+                    if (
+                      (getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) < 10)
+                      && test === 0
+                      && user.email != matches[attr].email
+                    ){
                       dist = { distance: getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) }
-                      tmp = Object.assign(matches[attr], dist);
-                      data[i] = tmp;
+                      data[i] = Object.assign(matches[attr], dist);
                       i++;
+                    }
+
+                    if(i > 20){
+                      break;
                     }
                     
                   }
