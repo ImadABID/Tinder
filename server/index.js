@@ -213,6 +213,10 @@ MongoClient.connect(url)
                   let test;
                   for (let attr in matches) {
 
+                    if(matches[attr].email == user.email){
+                      continue;
+                    }
+
                     if(
                       !matches[attr].hasOwnProperty('username') ||
                       !matches[attr].hasOwnProperty('age') ||
@@ -238,7 +242,6 @@ MongoClient.connect(url)
                     if (
                       (getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) < 10)
                       && test === 0
-                      && user.email != matches[attr].email
                     ){
                       dist = { distance: getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) }
                       data[i] = Object.assign(matches[attr], dist);
@@ -254,15 +257,19 @@ MongoClient.connect(url)
                   const jsonAsArray = Object.keys(data).map(function (key) {
                     return data[key];
                   })
-                    .sort(function (itemA, itemB) {
-                      return itemA.distance < itemB.distance;
-                    });
+                  .sort(function (itemA, itemB) {
+                    return itemA.distance < itemB.distance;
+                  });
+
+                  console.log(jsonAsArray);                 
+
                   res.json(
                     {
                       msg : '0',
                       jsonAsArray : jsonAsArray
                     }
-                  )
+                  );
+
                 });
               });
       

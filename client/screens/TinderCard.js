@@ -19,7 +19,7 @@ async function log_out(){
 
 var params2init = {first_time : 1};
 
-var datadb = [];
+var datadb_dom = [];
 
 const TinderCard = () => {
 
@@ -70,6 +70,7 @@ const TinderCard = () => {
       
       params2init.first_time = 0;
 
+      setDatadbReady(false);
       setGettingLocationPopUp(true);
       console.log('getting Location');
 
@@ -115,21 +116,29 @@ const TinderCard = () => {
               navigation.navigate('CheckProfile');
             }
             else {
-              datadb = res.jsonAsArray;
-              setDatadbReady(true);
-              console.log("--- 1 ---");
-              console.log(res);
-              console.log("--- 2 ---");
-              console.log(res.jsonAsArray);
-              console.log("--- 3 ---");
-              console.log(datadb);
-              console.log("--- 4 ---");
-              datadb.map(
-                (x, i)=>{
-                  console.log(x);
-                  return x;
+              
+              datadb_dom = [];
+              res.jsonAsArray.map(
+                (item, index)=>{
+                  datadb_dom.push(
+                    <Card key={index}
+                    onSwipedLeft = {()=>send (item.email , "no" )  }
+                    onSwipedRight ={()=>send (item.email , "yes")  }
+                    >
+                      <CardItem
+                        //image={ }
+                        name={item.username}
+                        description={item.description}
+                        matches={(parseInt( item.distance )).toString()}
+                        actions
+                        onPressLeft={() =>{   Swiper.swipeLeft() } }
+                        onPressRight={() => {  Swiper.swipeRight() } }
+                      />
+                    </Card>
+                  );
                 }
               )
+              setDatadbReady(true);
             }
           }).catch(err => {
             console.log(err);
@@ -196,24 +205,7 @@ const TinderCard = () => {
       >
         {
           datadbReady===true ?
-            datadb.map(
-              (item, index) => {
-                <Card key={index}
-                    onSwipedLeft = {()=>send (item.email , "no" )  }
-                    onSwipedRight ={()=>send (item.email , "yes")  }
-                >
-                  <CardItem
-                    //image={ }
-                    name={item.username}
-                    description={item.description}
-                    matches={(parseInt( item.distance )).toString()}
-                    actions
-                    onPressLeft={() =>{   Swiper.swipeLeft() } }
-                    onPressRight={() => {  Swiper.swipeRight() } }
-                  />
-                </Card>
-              }
-            )
+            datadb_dom
           :
             <View></View>
         }
