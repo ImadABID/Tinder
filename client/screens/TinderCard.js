@@ -120,22 +120,44 @@ const TinderCard = () => {
               datadb_dom = [];
               res.jsonAsArray.map(
                 (item, index)=>{
-                  datadb_dom.push(
-                    <Card key={index}
-                    onSwipedLeft = {()=>send (item.email , "no" )  }
-                    onSwipedRight ={()=>send (item.email , "yes")  }
-                    >
-                      <CardItem
-                        //image={ }
-                        name={item.username}
-                        description={item.description}
-                        matches={(parseInt( item.distance )).toString()}
-                        actions
-                        onPressLeft={() =>{   Swiper.swipeLeft() } }
-                        onPressRight={() => {  Swiper.swipeRight() } }
-                      />
-                    </Card>
-                  );
+                  if(item.hasOwnProperty('profileImage')){
+
+                    datadb_dom.push(
+                      <Card key={index}
+                      onSwipedLeft = {()=>send (item.email , "no" )  }
+                      onSwipedRight ={()=>send (item.email , "yes")  }
+                      >
+                        <CardItem
+                          image={'http://'+host_name+'/get_image?filename='+item.profileImage}
+                          name={item.username}
+                          description={item.description}
+                          matches={(parseInt( item.distance )).toString()}
+                          actions
+                          onPressLeft={() =>{   Swiper.swipeLeft() } }
+                          onPressRight={() => {  Swiper.swipeRight() } }
+                        />
+                      </Card>
+                    );
+
+                  }else{
+
+                    datadb_dom.push(
+                      <Card key={index}
+                      onSwipedLeft = {()=>send (item.email , "no" )  }
+                      onSwipedRight ={()=>send (item.email , "yes")  }
+                      >
+                        <CardItem
+                          name={item.username}
+                          description={item.description}
+                          matches={(parseInt( item.distance )).toString()}
+                          actions
+                          onPressLeft={() =>{   Swiper.swipeLeft() } }
+                          onPressRight={() => {  Swiper.swipeRight() } }
+                        />
+                      </Card>
+                    );
+
+                  }
                 }
               )
               setDatadbReady(true);
