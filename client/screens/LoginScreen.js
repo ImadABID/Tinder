@@ -51,7 +51,7 @@ const LoginScreen = ({}) => {
     // if connected
     let result = await SecureStore.getItemAsync('token');
     if (result) {
-      navigation.navigate('ProfileScreen');
+      navigation.navigate('TinderCard');
     }
   }
 
@@ -116,7 +116,7 @@ const LoginScreen = ({}) => {
 
             if(res.msg === '0'){
               signup(res.token);
-              navigation.navigate('ProfileScreen');
+              navigation.navigate('TinderCard');
             }else{
               setErrorMsg(res.msg);
             }
