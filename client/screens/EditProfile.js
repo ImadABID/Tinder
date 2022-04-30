@@ -94,6 +94,7 @@ const EditProfile = ({ }) => {
             nbr_element_not_uploaded_yet--;
             if(nbr_element_not_uploaded_yet===0){
                 first_time = 1;
+                setSaveButtonTitle("Save");
                 navigation.navigate('ProfileScreen');
             }
         })
@@ -102,6 +103,7 @@ const EditProfile = ({ }) => {
             nbr_element_not_uploaded_yet--;
             if(nbr_element_not_uploaded_yet===0){
                 first_time = 1;
+                setSaveButtonTitle("Save");
                 navigation.navigate('ProfileScreen');
             }
         });
