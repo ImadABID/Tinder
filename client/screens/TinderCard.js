@@ -18,6 +18,10 @@ async function log_out(){
 }
 
 var params2init = {first_time : 1};
+var gps_first_time = 1;
+
+var latitude;
+var longitude;
 
 var datadb_dom = [];
 
@@ -71,26 +75,33 @@ const TinderCard = () => {
       params2init.first_time = 0;
 
       setDatadbReady(false);
-      setGettingLocationPopUp(true);
-      console.log('getting Location');
 
 
       let token = await SecureStore.getItemAsync('token');
       if (token) {
 
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          setErrorMsg('Permission to access location was denied');
-          return;
-        }
-        var location = await Location.getCurrentPositionAsync({});
-        let text = 'Waiting..';
-        if (errorMsg) {
-          text = errorMsg;
-        } else if (location) {
-          var latitude = location.coords.latitude;
-          var longitude = location.coords.longitude;
 
+        if(gps_first_time === 1){
+          gps_first_time = 0;
+
+          setGettingLocationPopUp(true);
+
+          let { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== 'granted') {
+            setErrorMsg('Permission to access location was denied');
+            return;
+          }
+          let location = await Location.getCurrentPositionAsync({});
+          let text = 'Waiting..';
+          if (errorMsg) {
+            text = errorMsg;
+          } else if (location) {
+            latitude = location.coords.latitude;
+            longitude = location.coords.longitude;
+
+
+          }
+          setGettingLocationPopUp(false);
 
         }
 
@@ -105,7 +116,7 @@ const TinderCard = () => {
           body: data
 
         };
-        setGettingLocationPopUp(false);
+
         fetch(linkLoc, reqLoc)
           .then((res) => { return res.json(); })
           .then(res => {

@@ -112,9 +112,9 @@ MongoClient.connect(url)
       
     })
 
-
-
   });
+
+
   app.post('/matches/set', (req, res) => {
 
     /*
@@ -260,8 +260,7 @@ MongoClient.connect(url)
                   .sort(function (itemA, itemB) {
                     return itemA.distance < itemB.distance;
                   });
-
-                  console.log(jsonAsArray);                 
+                 
 
                   res.json(
                     {
