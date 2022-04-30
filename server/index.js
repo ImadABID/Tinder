@@ -212,6 +212,18 @@ MongoClient.connect(url)
                   let i = 0;
                   let test;
                   for (let attr in matches) {
+
+                    if(
+                      !matches[attr].hasOwnProperty('username') ||
+                      !matches[attr].hasOwnProperty('age') ||
+                      !matches[attr].hasOwnProperty('description') ||
+                      !matches[attr].hasOwnProperty('passion') ||
+                      !matches[attr].hasOwnProperty('orientation') ||
+                      !matches[attr].hasOwnProperty('targetedSex')
+                    ){
+                      continue;
+                    }
+
                     test = 0 ; 
                     for (let ind in matcher) {
                       if(
