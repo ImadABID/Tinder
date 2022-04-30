@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { View, ImageBackground, Modal, Text } from 'react-native';
+import { View, ImageBackground, Modal, Text, TouchableOpacity } from 'react-native';
 import { ActivityIndicator, Colors } from 'react-native-paper';
 import CardStack, { Card } from 'react-native-card-stack-swiper';
 import CardItem from '../components/CardItem';
@@ -142,15 +142,24 @@ const TinderCard = () => {
                       onSwipedLeft = {()=>send (item.email , "no" )  }
                       onSwipedRight ={()=>send (item.email , "yes")  }
                       >
-                        <CardItem
-                          image={'http://'+host_name+'/get_image?filename='+item.profileImage}
-                          name={item.username}
-                          description={item.description}
-                          matches={(parseInt( item.distance )).toString()}
-                          actions
-                          onPressLeft={() =>{   Swiper.swipeLeft() } }
-                          onPressRight={() => {  Swiper.swipeRight() } }
-                        />
+                        <TouchableOpacity
+                          onPress={
+                            () => {
+                              params2init.first_time = 1;
+                              navigation.navigate('ProfileScreenVisitor', {visited_user_email : item.email});
+                            }
+                          }
+                        >
+                          <CardItem
+                            image={'http://'+host_name+'/get_image?filename='+item.profileImage}
+                            name={item.username}
+                            description={item.description}
+                            matches={(parseInt( item.distance )).toString()}
+                            actions
+                            onPressLeft={() =>{   Swiper.swipeLeft() } }
+                            onPressRight={() => {  Swiper.swipeRight() } }
+                          />
+                        </TouchableOpacity>
                       </Card>
                     );
 
@@ -161,14 +170,23 @@ const TinderCard = () => {
                       onSwipedLeft = {()=>send (item.email , "no" )  }
                       onSwipedRight ={()=>send (item.email , "yes")  }
                       >
-                        <CardItem
-                          name={item.username}
-                          description={item.description}
-                          matches={(parseInt( item.distance )).toString()}
-                          actions
-                          onPressLeft={() =>{   Swiper.swipeLeft() } }
-                          onPressRight={() => {  Swiper.swipeRight() } }
-                        />
+                        <TouchableOpacity
+                          onPress={
+                            () => {
+                              params2init.first_time = 1;
+                              navigation.navigate('ProfileScreenVisitor', {visited_user_email : item.email});
+                            }
+                          }
+                        >
+                          <CardItem
+                            name={item.username}
+                            description={item.description}
+                            matches={(parseInt( item.distance )).toString()}
+                            actions
+                            onPressLeft={() =>{   Swiper.swipeLeft() } }
+                            onPressRight={() => {  Swiper.swipeRight() } }
+                          />
+                        </TouchableOpacity>
                       </Card>
                     );
 
@@ -221,16 +239,26 @@ const TinderCard = () => {
                       onSwipedLeft = {()=>send (item.email , "no" )  }
                       onSwipedRight ={()=>send (item.email , "yes")  }
                       >
-                        <CardItem
-                          image={'http://'+host_name+'/get_image?filename='+item.profileImage}
-                          name={item.username}
-                          description={item.description}
-                          matches={(parseInt( item.distance )).toString()}
-                          actions
-                          onPressLeft={() =>{   Swiper.swipeLeft() } }
-                          onPressRight={() => {  Swiper.swipeRight() } }
-                        />
+                        <TouchableOpacity
+                          onPress={
+                            () => {
+                              params2init.first_time = 1;
+                              navigation.navigate('ProfileScreenVisitor', {visited_user_email : item.email});
+                            }
+                          }
+                        >
+                          <CardItem
+                            image={'http://'+host_name+'/get_image?filename='+item.profileImage}
+                            name={item.username}
+                            description={item.description}
+                            matches={(parseInt( item.distance )).toString()}
+                            actions
+                            onPressLeft={() =>{   Swiper.swipeLeft() } }
+                            onPressRight={() => {  Swiper.swipeRight() } }
+                          />
+                        </TouchableOpacity>
                       </Card>
+                        
                     );
 
                   }else{
@@ -240,14 +268,23 @@ const TinderCard = () => {
                       onSwipedLeft = {()=>send (item.email , "no" )  }
                       onSwipedRight ={()=>send (item.email , "yes")  }
                       >
-                        <CardItem
-                          name={item.username}
-                          description={item.description}
-                          matches={(parseInt( item.distance )).toString()}
-                          actions
-                          onPressLeft={() =>{   Swiper.swipeLeft() } }
-                          onPressRight={() => {  Swiper.swipeRight() } }
-                        />
+                        <TouchableOpacity
+                          onPress={
+                            () => {
+                              params2init.first_time = 1;
+                              navigation.navigate('ProfileScreenVisitor', {visited_user_email : item.email});
+                            }
+                          }
+                        >
+                          <CardItem
+                            name={item.username}
+                            description={item.description}
+                            matches={(parseInt( item.distance )).toString()}
+                            actions
+                            onPressLeft={() =>{   Swiper.swipeLeft() } }
+                            onPressRight={() => {  Swiper.swipeRight() } }
+                          />
+                        </TouchableOpacity>
                       </Card>
                     );
 
