@@ -70,47 +70,39 @@ MongoClient.connect(url)
 
     jwt.verify(req.body.token, token_sig, (err, user)=>{
       
-      db.collection("users").find({}).toArray(function (err, matches) {
-        db.collection("matches").find({ }).toArray(function (err, matcher) {
+      db.collection("matches").find({ }).toArray(function (err, matches) {
 
-          let data = [{}];
-          let test;
-          i = 0;
-          for (let attr in matches) {
+        let data = [];
+        
+        for(match_i in matches){
 
-            if(matches[attr].email == user.email){
-              continue;
-            }
-            
-            test = 0 ;
-            for (let ind in matcher) {
+          if(matches[match_i].email_1 === user.email){
+
+            for(mutual_match_i in matches){
               if(
-                (matcher[ind].action == "yes" ) && ( (matches[attr].email == matcher[ind].email_1) || (matches[attr].email == matcher[ind].email_2)) &&
-                ((user.email == matcher[ind].email_1) || (user.email == matcher[ind].email_2))
-              ){                    
-                test = 1 ;
-                break;
+                matches[mutual_match_i].email_2 === user.email &&
+                matches[mutual_match_i].email_1 === matches[match_i].email_2
+              ){
+
+                db.collection("users").findOne(
+                  {email : matches[match_i].email_2},
+                  (err, matcher_profile)=>{
+                    data.push(matcher_profile);
+                  }
+                );
+
               }
             }
-        
-            if ( (test == 1 ) ) {
 
-              data[i] = Object.assign(matches[attr]);
-              i++;
-            }
-            
           }
-          const jsonAsArray = Object.keys(data).map(function (key) {
-            return data[key];
-          })
-            .sort(function (itemA, itemB) {
-              return itemA._id < itemB._id;
-            });
-          res.json({jsonAsArray})
-        });
-      });
-      
-    })
+
+        }
+
+        res.json({matchers : data});
+    
+      })
+
+    });
 
   });
 
