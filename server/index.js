@@ -213,6 +213,9 @@ MongoClient.connect(url)
               db.collection("users").find({}).toArray(function (err, matches) {
                 db.collection("matches").find({ }).toArray(function (err, matcher) {
       
+                  console.log(matches);
+                  console.log(matcher);
+
                   let data = {};
                   let dist;
                   let i = 0;
@@ -234,19 +237,19 @@ MongoClient.connect(url)
                       continue;
                     }
 
-                    test = 0 ; 
+                    test = 0;
                     for (let ind in matcher) {
                       if(
-                        user.email === matcher[ind].email_1
+                        user.email === matcher[ind].email_1 && matches[attr].email === matcher[ind].email_2
                       ){                    
-                        test = 1 ; 
+                        test = 1;
                         break;
                       }
                     }
 
                     if (
-                      (getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) < 10)
-                      && test === 0
+                      test === 0 && 
+                      getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) < 10
                     ){
                       dist = { distance: getDistance(req.body.latitude, req.body.longitude, matches[attr].latitude, matches[attr].longitude) }
                       data[i] = Object.assign(matches[attr], dist);
@@ -258,14 +261,15 @@ MongoClient.connect(url)
                     }
                     
                   }
-      
+
                   const jsonAsArray = Object.keys(data).map(function (key) {
                     return data[key];
                   })
                   .sort(function (itemA, itemB) {
                     return itemA.distance < itemB.distance;
                   });
-                 
+
+                  console.log(jsonAsArray);
 
                   res.json(
                     {
