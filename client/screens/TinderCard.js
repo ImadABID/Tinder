@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useState} from 'react';
 import { View, ImageBackground, Modal, Text } from 'react-native';
 import { ActivityIndicator, Colors } from 'react-native-paper';
 import CardStack, { Card } from 'react-native-card-stack-swiper';
@@ -19,13 +19,14 @@ async function log_out(){
 
 var params2init = {first_time : 1};
 
+var datadb = [];
+
 const TinderCard = () => {
 
   const navigation = useNavigation();
   const [Swiper , setSwiper] = useState();
-  const [datadb, setDatadb] = useState([{}]);
   const [errorMsg, setErrorMsg] = useState(null);
-
+  const [datadbReady, setDatadbReady] = useState(false);
   const [gettingLocationPopUp, setGettingLocationPopUp] = useState(true);
   
   const send  = async (email,action ) => {
@@ -70,6 +71,7 @@ const TinderCard = () => {
       params2init.first_time = 0;
 
       setGettingLocationPopUp(true);
+      console.log('getting Location');
 
 
       let token = await SecureStore.getItemAsync('token');
@@ -106,14 +108,28 @@ const TinderCard = () => {
         fetch(linkLoc, reqLoc)
           .then((res) => { return res.json(); })
           .then(res => {
-            console.log(res);
+            // console.log(res);
             if ( res.msg!='0' )
             {
-              params2init.first_time = 0;
+              params2init.first_time = 1;
               navigation.navigate('CheckProfile');
             }
             else {
-              setDatadb(res.jsonAsArray);
+              datadb = res.jsonAsArray;
+              setDatadbReady(true);
+              console.log("--- 1 ---");
+              console.log(res);
+              console.log("--- 2 ---");
+              console.log(res.jsonAsArray);
+              console.log("--- 3 ---");
+              console.log(datadb);
+              console.log("--- 4 ---");
+              datadb.map(
+                (x, i)=>{
+                  console.log(x);
+                  return x;
+                }
+              )
             }
           }).catch(err => {
             console.log(err);
@@ -131,7 +147,7 @@ const TinderCard = () => {
 
   }
 
-  useEffect(
+  useFocusEffect(
     React.useCallback(() => {
       at_start_up();
       
@@ -173,26 +189,34 @@ const TinderCard = () => {
       </View>
 
       <CardStack
-        loop={true}
+        loop={false}
         verticalSwipe={false}
         renderNoMoreCards={() => null}
         ref={swiper => { setSwiper(swiper)  }}
       >
-        {datadb.map((item, index) => (
-          <Card key={index}
-              onSwipedLeft = {()=>send (item.email , "no" )  }
-              onSwipedRight ={()=>send (item.email , "yes")  }>
-            <CardItem
-              //image={ }
-              name={item.username}
-              description={item.description}
-              matches={(parseInt( item.distance )).toString()}
-              actions
-              onPressLeft={() =>{   Swiper.swipeLeft() } }
-              onPressRight={() => {  Swiper.swipeRight() } }
-            />
-          </Card>
-        ))}
+        {
+          datadbReady===true ?
+            datadb.map(
+              (item, index) => {
+                <Card key={index}
+                    onSwipedLeft = {()=>send (item.email , "no" )  }
+                    onSwipedRight ={()=>send (item.email , "yes")  }
+                >
+                  <CardItem
+                    //image={ }
+                    name={item.username}
+                    description={item.description}
+                    matches={(parseInt( item.distance )).toString()}
+                    actions
+                    onPressLeft={() =>{   Swiper.swipeLeft() } }
+                    onPressRight={() => {  Swiper.swipeRight() } }
+                  />
+                </Card>
+              }
+            )
+          :
+            <View></View>
+        }
       </CardStack>
     </View>
   );
