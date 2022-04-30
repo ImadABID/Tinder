@@ -67,12 +67,27 @@ MongoClient.connect(url)
         http://localhost:3000/users/profile
     */
 
+    const find_matcher = (email) => {
+      return new Promise(
+        (resolve, email) => {
+
+          db.collection("users").findOne(
+            {email : email},
+            (err, matcher_profile)=>{
+              resolve(matcher_profile);
+            }
+          );
+        }
+      )
+    }
+
 
     jwt.verify(req.body.token, token_sig, (err, user)=>{
       
-      db.collection("matches").find({ }).toArray(function (err, matches) {
+      db.collection("matches").find({ }).toArray(async(err, matches) => {
 
         let data = [];
+        let matcher;
         
         for(match_i in matches){
 
@@ -84,14 +99,13 @@ MongoClient.connect(url)
                 matches[mutual_match_i].email_1 === matches[match_i].email_2
               ){
 
-                db.collection("users").findOne(
-                  {email : matches[match_i].email_2},
-                  (err, matcher_profile)=>{
-                    data.push(matcher_profile);
-                  }
-                );
+                matcher = await find_matcher(matches[match_i].email_2);
+                data.push(matcher);
+
+                break;
 
               }
+
             }
 
           }
@@ -223,8 +237,7 @@ MongoClient.connect(url)
                     test = 0 ; 
                     for (let ind in matcher) {
                       if(
-                        ((matches[attr].email == matcher[ind].email_1) || (matches[attr].email == matcher[ind].email_2)) &&
-                        ((user.email == matcher[ind].email_1) || (user.email == matcher[ind].email_2))
+                        user.email === matcher[ind].email_1
                       ){                    
                         test = 1 ; 
                         break;
