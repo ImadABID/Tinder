@@ -3,7 +3,7 @@ import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import SignupScreen from './SignupScreen';
 import LoginScreen from './LoginScreen';
-import TinderMain from './TinderMain';
+import TinderCard from './TinderCard';
 import ProfileScreen from './ProfileScreen';
 import Matches from './Matches';
 import ProfileScreenVisitor from './ProfileScreenVisitor';
@@ -20,7 +20,7 @@ const StackNavigator = () => {
       <Stack.Group>
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="Matches" component={Matches} />
-        <Stack.Screen name="TinderMain" component={TinderMain} />
+        <Stack.Screen name="TinderCard" component={TinderCard} />
         <Stack.Screen name="CheckProfile" component={CheckProfile} />
         <Stack.Screen name="SignupScreen" component={SignupScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
