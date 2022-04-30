@@ -245,7 +245,12 @@ MongoClient.connect(url)
                     .sort(function (itemA, itemB) {
                       return itemA.distance < itemB.distance;
                     });
-                  res.json({ jsonAsArray })
+                  res.json(
+                    {
+                      msg : '0',
+                      jsonAsArray : jsonAsArray
+                    }
+                  )
                 });
               });
       

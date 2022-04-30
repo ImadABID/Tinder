@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, ImageBackground } from 'react-native';
+import { View, ImageBackground, Modal, Text } from 'react-native';
+import { ActivityIndicator, Colors } from 'react-native-paper';
 import CardStack, { Card } from 'react-native-card-stack-swiper';
 import CardItem from '../components/CardItem';
 import styles from '../assets/styles';
@@ -19,11 +20,13 @@ async function log_out(){
 var params2init = {first_time : 1};
 
 const TinderCard = () => {
-  const [state, setState] = useState({});
+
   const navigation = useNavigation();
   const [Swiper , setSwiper] = useState();
   const [datadb, setDatadb] = useState([{}]);
   const [errorMsg, setErrorMsg] = useState(null);
+
+  const [gettingLocationPopUp, setGettingLocationPopUp] = useState(true);
   
   const send  = async (email,action ) => {
 
@@ -66,6 +69,8 @@ const TinderCard = () => {
       
       params2init.first_time = 0;
 
+      setGettingLocationPopUp(true);
+
 
       let token = await SecureStore.getItemAsync('token');
       if (token) {
@@ -97,6 +102,7 @@ const TinderCard = () => {
           body: data
 
         };
+        setGettingLocationPopUp(false);
         fetch(linkLoc, reqLoc)
           .then((res) => { return res.json(); })
           .then(res => {
@@ -107,7 +113,7 @@ const TinderCard = () => {
               navigation.navigate('CheckProfile');
             }
             else {
-              setDatadb(res.jsonAsArray) 
+              setDatadb(res.jsonAsArray);
             }
           }).catch(err => {
             console.log(err);
@@ -135,6 +141,27 @@ const TinderCard = () => {
   return (
 
     <View style={styles.containerHome}>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={gettingLocationPopUp}
+      >
+        <View
+          style={
+            {
+              marginTop : 200,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }
+          }
+        >
+          <ActivityIndicator animating={true} color={Colors.red800} />
+          <Text>
+            Getting Location
+          </Text>
+        </View>
+      </Modal>
 
       <Header
         params2init={params2init}
