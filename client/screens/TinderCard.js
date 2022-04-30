@@ -23,6 +23,8 @@ var gps_first_time = 1;
 var latitude;
 var longitude;
 
+var host_name;
+
 var datadb_dom = [];
 
 const TinderCard = () => {
@@ -32,6 +34,10 @@ const TinderCard = () => {
   const [errorMsg, setErrorMsg] = useState(null);
   const [datadbReady, setDatadbReady] = useState(false);
   const [gettingLocationPopUp, setGettingLocationPopUp] = useState(true);
+
+  const [noCardMsg, setNoCardMsg] = useState('');
+
+  noCardMsg
   
   const send  = async (email,action ) => {
 
@@ -103,21 +109,19 @@ const TinderCard = () => {
           }
           setGettingLocationPopUp(false);
 
-        }
+          host_name = await ip_server.get_hostname();
 
-        let host_name = await ip_server.get_hostname();
+          let data = 'token=' + token;
+          data = data + '&latitude=' + latitude + '&longitude=' + longitude;
+          let linkLoc = 'http://' + host_name + '/users/setLocalisation';
+          let reqLoc = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },// this line is important, if this content-type is not set it wont work
+            body: data
 
-        let data = 'token=' + token;
-        data = data + '&latitude=' + latitude + '&longitude=' + longitude;
-        let linkLoc = 'http://' + host_name + '/users/setLocalisation';
-        let reqLoc = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },// this line is important, if this content-type is not set it wont work
-          body: data
+          };
 
-        };
-
-        fetch(linkLoc, reqLoc)
+          fetch(linkLoc, reqLoc)
           .then((res) => { return res.json(); })
           .then(res => {
             // console.log(res);
@@ -173,12 +177,95 @@ const TinderCard = () => {
               )
               setDatadbReady(true);
             }
-          }).catch(err => {
+          })
+          .catch(err => {
             console.log(err);
             params2init.first_time = 1;
             log_out();
             navigation.navigate('LoginScreen');
           });
+
+
+        }else{
+
+          host_name = await ip_server.get_hostname();
+
+          let data = 'token=' + token;
+          data = data + '&latitude=' + latitude + '&longitude=' + longitude;
+          let linkLoc = 'http://' + host_name + '/users/setLocalisation';
+          let reqLoc = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },// this line is important, if this content-type is not set it wont work
+            body: data
+
+          };
+
+          fetch(linkLoc, reqLoc)
+          .then((res) => { return res.json(); })
+          .then(res => {
+            // console.log(res);
+            if ( res.msg!='0' )
+            {
+              params2init.first_time = 1;
+              navigation.navigate('CheckProfile');
+            }
+            else {
+              
+              datadb_dom = [];
+              res.jsonAsArray.map(
+                (item, index)=>{
+                  if(item.hasOwnProperty('profileImage')){
+
+                    datadb_dom.push(
+                      <Card key={index}
+                      onSwipedLeft = {()=>send (item.email , "no" )  }
+                      onSwipedRight ={()=>send (item.email , "yes")  }
+                      >
+                        <CardItem
+                          image={'http://'+host_name+'/get_image?filename='+item.profileImage}
+                          name={item.username}
+                          description={item.description}
+                          matches={(parseInt( item.distance )).toString()}
+                          actions
+                          onPressLeft={() =>{   Swiper.swipeLeft() } }
+                          onPressRight={() => {  Swiper.swipeRight() } }
+                        />
+                      </Card>
+                    );
+
+                  }else{
+
+                    datadb_dom.push(
+                      <Card key={index}
+                      onSwipedLeft = {()=>send (item.email , "no" )  }
+                      onSwipedRight ={()=>send (item.email , "yes")  }
+                      >
+                        <CardItem
+                          name={item.username}
+                          description={item.description}
+                          matches={(parseInt( item.distance )).toString()}
+                          actions
+                          onPressLeft={() =>{   Swiper.swipeLeft() } }
+                          onPressRight={() => {  Swiper.swipeRight() } }
+                        />
+                      </Card>
+                    );
+
+                  }
+                }
+              )
+              setDatadbReady(true);
+            }
+          })
+          .catch(err => {
+            console.log(err);
+            params2init.first_time = 1;
+            log_out();
+            navigation.navigate('LoginScreen');
+          });
+
+        }
+      
       } else {
         params2init.first_time = 1;
         log_out();
@@ -226,19 +313,17 @@ const TinderCard = () => {
         navigation={navigation}
       />
 
-      <View style={styles.top}>
-
-      </View>
+      <Text style={{top : 200, left:80}}>{noCardMsg}</Text>
 
       <CardStack
         loop={false}
         verticalSwipe={false}
-        renderNoMoreCards={() => null}
+        renderNoMoreCards={() => setNoCardMsg('No profile left to match with.')}
         ref={swiper => { setSwiper(swiper)  }}
       >
         {
           datadbReady===true ?
-            datadb_dom
+              datadb_dom
           :
             <View></View>
         }
