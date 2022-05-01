@@ -36,6 +36,7 @@ const corsOptions = {
 app.use(cors(corsOptions)) // Use this after the variable declaration
 
 var fs = require('fs');
+const console = require("console");
 
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
@@ -67,12 +68,12 @@ MongoClient.connect(url)
         http://localhost:3000/users/profile
     */
 
-    const find_matcher = (email) => {
+    const find_matcher = (email_in) => {
       return new Promise(
         (resolve, email) => {
 
           db.collection("users").findOne(
-            {email : email},
+            {email : email_in},
             (err, matcher_profile)=>{
               resolve(matcher_profile);
             }
@@ -212,9 +213,6 @@ MongoClient.connect(url)
               //db.collection("matches").deleteMany({});
               db.collection("users").find({}).toArray(function (err, matches) {
                 db.collection("matches").find({ }).toArray(function (err, matcher) {
-      
-                  console.log(matches);
-                  console.log(matcher);
 
                   let data = {};
                   let dist;
@@ -268,8 +266,6 @@ MongoClient.connect(url)
                   .sort(function (itemA, itemB) {
                     return itemA.distance < itemB.distance;
                   });
-
-                  console.log(jsonAsArray);
 
                   res.json(
                     {
