@@ -23,6 +23,8 @@ const ProfileScreen = ({route}) => {
     const [description, setDescription] = useState('');
     const [passion, setPassion] = useState('');
 
+    const [profile, setProfile] = useState();
+
     const [profileImage, setProfileImage] = useState({uri : 'none'});
 
     const [image1, setImage1] = useState({uri : 'none'});
@@ -54,6 +56,9 @@ const ProfileScreen = ({route}) => {
                 fetch(link, myInit)
                 .then((res)=>{return res.json();})
                 .then( res =>{
+
+                    setProfile(res.client);
+
                     setUsername(res.client.username);
                     if(res.client.hasOwnProperty('age')){
                         setAge(res.client.age);
@@ -135,7 +140,19 @@ const ProfileScreen = ({route}) => {
                     {profileImage.uri == 'none' ? <Image source={require('../assets/default-img.jpg')} style={styles.image} resizeMode="center"></Image> : <Image source={{uri : profileImage.uri}} style={styles.image} resizeMode="center"></Image>}
                     </View>
                     <View style={styles.dm}>
-                        <MaterialIcons name="chat" size={20} color="#DFD8C8" onPress={() => navigation.navigate('ChatScreen')} ></MaterialIcons>
+                        <MaterialIcons
+                            name="chat" size={20} color="#DFD8C8"
+                            onPress={
+                                () => {
+                                    navigation.navigate(
+                                        'Chat',
+                                        {
+                                            record: profile
+                                        }
+                                    );
+                                }
+                            }
+                        ></MaterialIcons>
                     </View>
                 </View>
 
