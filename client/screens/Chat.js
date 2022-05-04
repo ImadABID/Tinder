@@ -55,7 +55,7 @@ const Chat = () => {
               .then(res => {
                 console.log("initiateSocketConnection")
                 // enter your websocket url
-                ws.current = new WebSocket('ws://192.168.153.124:' + res.respond + '/');
+                ws.current = new WebSocket('ws://192.168.153.254:' + res.respond + '/');
                 ws.current.onopen = () => {
                   console.log("connection establish open")
 

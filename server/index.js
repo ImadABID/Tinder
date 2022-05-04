@@ -66,7 +66,6 @@ MongoClient.connect(url)
         var port = 1044;
         port = port + index;
         var wss = new WebSocketServer({ port: port });
-        console.log(wss.clients.email)
         tab_wss.push(Object.assign({ 'wss': wss }, { 'email': user.email }));
         console.log(tab_wss[index].email)
         for (let ind = 0; ind < tab_wss.length; ind++) {
