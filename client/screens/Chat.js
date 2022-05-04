@@ -1,10 +1,4 @@
-/**
- * Sample React Native Chat
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+
  import React, { useState, useRef, useCallback, useEffect } from 'react';
  import { useFocusEffect } from '@react-navigation/native';
  import * as ip_server from './server_ip';
