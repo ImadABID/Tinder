@@ -1,0 +1,441 @@
+swagger: "2.0"
+info:
+  description: "\n Ceci est la documentation du projet Rasta Zulu ( Tindeirb ) qui illustre plus clairement toutes les fonctionnalités établis entre le client et le serveur via des requêtes post/get. \n"
+  version: "1.0.0"
+  title: "Rasta Zulu Tinder App Documentation"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "apiteam@swagger.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:3000"
+basePath: "/"
+tags:
+- name: "User"
+  description: "Everything about our User Functions"
+schemes:
+- "https"
+- "http"
+paths:
+  /users/register:
+    post:
+      tags:
+      - "User"
+      summary: "Add a new User to the Data Base"
+      description: "L'ajout d'un utilisateur à notre base de données Mongodb"
+      operationId: "/users/register"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Users object that needs to be added to the dB"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "405":
+          description: "Invalid input"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /users/login:
+    post:
+      tags:
+      - "User"
+      summary: "Login an existing User"
+      description: ""
+      operationId: "Login"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "User that needs to login in to the app"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "400":
+          description: "Invalid User Email"
+        "404":
+          description: "Validation exception"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /profile/update:
+    post:
+      tags:
+      - "User"
+      summary: "Update User Info"
+      description: "Multiple status values can be provided with comma separated strings"
+      operationId: "update"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "body"
+        type: "array"
+        in: "query"
+        description: ""
+        required: true
+        items:
+          type: "string"
+          enum:
+          - "username"
+          - "age"
+          - "description"
+          - "passion"
+          - "orientation"
+          - "targetedSex"
+        
+        collectionFormat: "multi"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+        "400":
+          description: "Invalid status value"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /users/setLocalisation:
+    post:
+      tags:
+        - "User"
+      summary: "Update Location of User in the dB"
+      description: ""
+      operationId: "updatePetWithForm"
+      consumes:
+      - "application/x-www-form-urlencoded"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "latitude"
+        in: "formData"
+        description: "Latitude of User"
+        required: true
+        type: "integer"
+        format: "int64"
+      - name: "longitude"
+        in: "formData"
+        description: "Longitude of User"
+        required: false
+        type: "integer"
+        format: "int64"
+    
+      responses:
+        "405":
+          description: "Invalid input"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /users/profile:
+    post:
+      tags:
+      - "User"
+      summary: " Profil from dB"
+      description: ""
+      operationId: "profil"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "token"
+        in: "body"
+        description: "token of current user log in"
+        required: true
+        schema:
+          type: string
+      responses:
+        "405":
+          description: "Invalid Input"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /upload_image:
+    post:
+      tags:
+      - "User"
+      summary: "Update User Images"
+      description: ""
+      operationId: "UploadImage"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "imageRole"
+        description: "Image that needs to be inserted into the app"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "400":
+          description: "Invalid img path"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /delete_image:
+    post:
+      tags:
+      - "User"
+      summary: "Delete User Images"
+      description: ""
+      operationId: "DelImage"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "imageRole"
+        description: "Image that needs to be inserted into the app"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "400":
+          description: "Invalid img path"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+
+  /matches/get:
+    post:
+      tags:
+      - "User"
+      summary: "Get Profil Matches"
+      description: ""
+      operationId: "getMatches"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "token"
+        in: "body"
+        description: "token of current user log in"
+        required: true
+        schema:
+          type: string
+      responses:
+        "405":
+          description: "Invalid Input"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /matches/set:
+    post:
+      tags:
+      - "User"
+      summary: " Set Profil Matches"
+      description: ""
+      operationId: "setMatches"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "token"
+        in: "body"
+        description: "token of current user log in"
+        required: true
+        
+        schema:
+          type: string
+      responses:
+        "405":
+          description: "Invalid Input"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"
+  /drop_db:
+    get:
+      tags:
+      - "DataBase"
+      summary: "Drop the current dataBase"
+      description: ""
+      operationId: "dropdB"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "405":
+          description: "DataBase Dropped"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+      security:
+      - petstore_auth:
+        - "write:pets"
+        - "read:pets"      
+securityDefinitions:
+  petstore_auth:
+    type: "oauth2"
+    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:pets: "modify pets in your account"
+      read:pets: "read your pets"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+  Order:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      petId:
+        type: "integer"
+        format: "int64"
+      quantity:
+        type: "integer"
+        format: "int32"
+      shipDate:
+        type: "string"
+        format: "date-time"
+      status:
+        type: "string"
+        description: "Order Status"
+        enum:
+        - "placed"
+        - "approved"
+        - "delivered"
+      complete:
+        type: "boolean"
+        default: false
+    xml:
+      name: "Order"
+  Category:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+    xml:
+      name: "Category"
+  User:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      username:
+        type: "string"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      email:
+        type: "string"
+      password:
+        type: "string"
+      phone:
+        type: "string"
+      userStatus:
+        type: "integer"
+        format: "int32"
+        description: "User Status"
+    xml:
+      name: "User"
+  Tag:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+    xml:
+      name: "Tag"
+  Pet:
+    type: "object"
+    required:
+    - "name"
+    - "photoUrls"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      category:
+        $ref: "#/definitions/Category"
+      name:
+        type: "string"
+        example: "doggie"
+      photoUrls:
+        type: "array"
+        xml:
+          name: "photoUrl"
+          wrapped: true
+        items:
+          type: "string"
+      tags:
+        type: "array"
+        xml:
+          name: "tag"
+          wrapped: true
+        items:
+          $ref: "#/definitions/Tag"
+      status:
+        type: "string"
+        description: "pet status in the store"
+        enum:
+        - "available"
+        - "pending"
+        - "sold"
+    xml:
+      name: "Pet"
+  ApiResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      type:
+        type: "string"
+      message:
+        type: "string"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
+  
