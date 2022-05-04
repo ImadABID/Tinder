@@ -29,7 +29,7 @@ class Header extends Component {
               if(this.props.hasOwnProperty('params2init')){
                 this.props.params2init.first_time = 1;
               }
-              this.props.navigation.navigate('ChatScreen');
+              this.props.navigation.navigate('User');
             }
           }
         />
