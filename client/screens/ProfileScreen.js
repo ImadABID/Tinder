@@ -136,7 +136,7 @@ const ProfileScreen = ({ }) => {
                     {profileImage.uri == 'none' ? <Image source={require('../assets/default-img.jpg')} style={styles.image} resizeMode="center"></Image> : <Image source={{uri : profileImage.uri}} style={styles.image} resizeMode="center"></Image>}
                     </View>
                     <View style={styles.dm}>
-                        <MaterialIcons name="chat" size={20} color="#DFD8C8" onPress={() => {params2init.first_time = 1; navigation.navigate('ChatScreen')}} ></MaterialIcons>
+                        <MaterialIcons name="chat" size={20} color="#DFD8C8" onPress={() => {params2init.first_time = 1; navigation.navigate('User')}} ></MaterialIcons>
                     </View>
                     <View style={styles.edit}>
                         <MaterialIcons name="build" size={20} color="#DFD8C8" onPress={() => {params2init.first_time = 1; navigation.navigate('EditProfile')}}
