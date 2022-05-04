@@ -21,9 +21,14 @@ import Header from './Header';
 
 var params2init = { first_time: 1 };
 
+var contactedProfile;
+
 const Chat = () => {
   const navigation = useNavigation()
   const route = useRoute();
+
+  contactedProfile = route.params.record;
+
   const [messages, setMessages] = useState([]);
   const [senderId, setSenderId] = useState(route.params.record.sender_id)
   const [receiverId, setReceiverId] = useState(route.params.record.receiver_id)
@@ -36,57 +41,58 @@ const Chat = () => {
 
   const startup = async() => {
 
-        
-          let token = await SecureStore.getItemAsync('token');
-          if (token) {
-            //
-            host_name = await ip_server.get_hostname();
+    let token = await SecureStore.getItemAsync('token');
+    if (token) {
+      //
+      host_name = await ip_server.get_hostname();
 
-            let data = 'token=' + token;
-            let linkLoc = 'http://' + host_name + '/socket';
-            let reqLoc = {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },// this line is important, if this content-type is not set it wont work
-              body: data
+      let data = 'token=' + token;
+      let linkLoc = 'http://' + host_name + '/socket';
+      let reqLoc = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },// this line is important, if this content-type is not set it wont work
+        body: data
 
-            };
-            fetch(linkLoc, reqLoc)
-              .then((res) => { return res.json(); })
-              .then(res => {
-                console.log("initiateSocketConnection")
-                // enter your websocket url
-                ws.current = new WebSocket('ws://192.168.153.254:' + res.respond + '/');
-                ws.current.onopen = () => {
-                  console.log("connection establish open")
+      };
+      fetch(linkLoc, reqLoc)
+        .then((res) => { return res.json(); })
+        .then(res => {
+          console.log("initiateSocketConnection")
+          
+          let host_name_and_port = host_name.split(':');
 
-                };
-                ws.current.onclose = () => {
-                  console.log("connection establish closed");
-                }
-                ws.current.onmessage = e => {
-                  const response = JSON.parse(e.data).msg1;
-                  console.log("onmessage=>", JSON.stringify(response));
-                  var sentMessages = {
-                    _id: Math.floor(Math.random() * 1000),
-                    text: response.message,
-                    createdAt: response.createdAt,
-                    user: {
-                      _id: response.senderId,
-                      name: name,
-                      avatar: image_path,
-                    },
-                  }
-                  setMessages(previousMessages => GiftedChat.append(previousMessages, sentMessages))
-                }
-              }).catch(err => {
+          ws.current = new WebSocket('http://'+host_name_and_port[0]+':'+ res.respond + '/');
+          ws.current.onopen = () => {
+            console.log("connection establish open")
 
-                console.log(err)
-
-              });
-
-          } else {
-            navigation.navigate('LoginScreen');
+          };
+          ws.current.onclose = () => {
+            console.log("connection establish closed");
           }
+          ws.current.onmessage = e => {
+            const response = JSON.parse(e.data).msg1;
+            console.log("onmessage=>", JSON.stringify(response));
+            var sentMessages = {
+              _id: Math.floor(Math.random() * 1000),
+              text: response.message,
+              createdAt: response.createdAt,
+              user: {
+                _id: response.senderId,
+                name: name,
+                avatar: image_path,
+              },
+            }
+            setMessages(previousMessages => GiftedChat.append(previousMessages, sentMessages))
+          }
+        }).catch(err => {
+
+          console.log(err)
+
+        });
+
+    } else {
+      navigation.navigate('LoginScreen');
+    }
   }
 
   useEffect(() => {
@@ -150,7 +156,9 @@ const Chat = () => {
           fontSize: 20,
           fontWeight: 'bold',
           color: "#fff"
-        }}>{`User name`}</Text>
+        }}>
+          {contactedProfile.username}
+        </Text>
       </View>
       <GiftedChat
         messages={messages}
