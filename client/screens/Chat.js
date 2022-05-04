@@ -34,11 +34,9 @@ const Chat = () => {
   const [tmp, setTmp] = useState();
 
 
-  const startup = async () => {
-    return new Promise(
-      async (resolve) => {
-        if (params2init.first_time === 1) {
-          params2init.first_time = 0;
+  const startup = async() => {
+
+        
           let token = await SecureStore.getItemAsync('token');
           if (token) {
             //
@@ -65,12 +63,21 @@ const Chat = () => {
                 ws.current.onclose = () => {
                   console.log("connection establish closed");
                 }
-                resolve(() => {
-                  ws.current.close();
-                });
-                // return () => {
-                //   ws.current.close();
-                // };
+                ws.current.onmessage = e => {
+                  const response = JSON.parse(e.data).msg1;
+                  console.log("onmessage=>", JSON.stringify(response));
+                  var sentMessages = {
+                    _id: Math.floor(Math.random() * 1000),
+                    text: response.message,
+                    createdAt: response.createdAt,
+                    user: {
+                      _id: response.senderId,
+                      name: name,
+                      avatar: image_path,
+                    },
+                  }
+                  setMessages(previousMessages => GiftedChat.append(previousMessages, sentMessages))
+                }
               }).catch(err => {
 
                 console.log(err)
@@ -80,48 +87,29 @@ const Chat = () => {
           } else {
             navigation.navigate('LoginScreen');
           }
-        }
-      }
-    )
-
   }
 
-  useEffect(
-    async () => {
-      return await startup();
+  useEffect(() => {
+       startup();
+      return () => {
+        ws.current.close();
+      };
     }
   );
 
 
-  useEffect(async () => {
-    ws.current.onmessage = e => {
-      const response = JSON.parse(e.data).msg1;
-      console.log("onmessage=>", JSON.stringify(response));
-      var sentMessages = {
-        _id: Math.floor(Math.random() * 1000),
-        text: response.message,
-        createdAt: response.createdAt,
-        user: {
-          _id: response.senderId,
-          name: name,
-          avatar: image_path,
-        },
-      }
-      setMessages(previousMessages => GiftedChat.append(previousMessages, sentMessages))
-    };
-
-  }, [])
 
   const onSend = useCallback(async (messages = []) => {
-
+    if ( ws.current!= null ){
     let obj = {
       "senderId": senderId,
       "receiverId": receiverId,
+      "receiverEmail" : "imad", 
       "message": messages[0].text,
       "action": "message"
     }
     ws.current.send(JSON.stringify(obj))
-  }, [])
+  }})
 
   return (
     <View style={styles.container}>
