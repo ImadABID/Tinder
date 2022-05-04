@@ -11,6 +11,11 @@ import {
   Image,
   TouchableOpacity
 } from 'react-native';
+
+import { useFocusEffect } from '@react-navigation/native';
+import * as SecureStore from 'expo-secure-store';
+import * as ip_server from './server_ip';
+
 import Header from './Header';
 
 import { useNavigation } from '@react-navigation/native';
@@ -18,22 +23,9 @@ import { useNavigation } from '@react-navigation/native';
 
 var params2init = { first_time: 1 };
 
-var userList = [
-  {
-    name: 'Rahul',
-    email: 'rahul@gmail.com',
-    image_path: 'https://www.beautifulhomes.com/content/dam/beautifulhomes/images/user-image-icon-11.jpg',
-    sender_id: '1',
-    receiver_id: '2',
-  },
-  {
-    name: 'Muskan',
-    email: 'muskan@gmail.com',
-    image_path: 'https://cdn1.iconfinder.com/data/icons/user-pictures/100/female1-512.png',
-    sender_id: "2",
-    receiver_id: '1'
-  }
-]
+var host_name;
+
+var userList;
 
 const User = () => {
 
@@ -61,7 +53,7 @@ const User = () => {
           .then((res) => { return res.json(); })
           .then(res => {
 
-            userList = res.userList;
+            userList = res.contactProfiles;
 
           }).catch(err => {
 

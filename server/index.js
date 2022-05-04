@@ -104,6 +104,65 @@ MongoClient.connect(url)
 
     });
 
+    app.post('/chat/contact_list',(req, res)=>{
+
+      const find_contact_profile = (email) => {
+        return new Promise(
+          (resolve, email) => {
+
+            db.collection("users").findOne(
+              { email: email },
+              (err, profile) => {
+                resolve(profile);
+              }
+            );
+          }
+        )
+      }
+
+
+      jwt.verify(req.body.token, token_sig, (err, user) => {
+
+        db.collection("chat").find({}).toArray(async (err, msgs) => {
+
+          let profiles = [];
+          let profileEmails = [];
+
+          let profile;
+          let profile_email;
+
+
+          for (msg_i in msgs) {
+
+            if (msgs[msg_i].senderEmail === user.email || msgs[msg_i].receiverEmail === user.email) {
+
+              if(msgs[msg_i].senderEmail === user.email){
+                profile_email = msgs[msg_i].receiverEmail;
+              }else{
+                profile_email = msgs[msg_i].senderEmail;
+              }
+
+              if(!profileEmails.includes(profile_email)){
+
+                profile = await find_contact_profile(profile_email);
+
+                profileEmails.push(profile_email);
+                profiles.push(profile);
+
+              }
+
+            }
+
+          }
+
+          res.json({ contactProfiles: profiles });
+
+        })
+
+      });
+
+    })
+
 
     app.post('/matches/get', (req, res) => {
 
