@@ -14,39 +14,85 @@ import {
 import Header from './Header';
 
 import { useNavigation } from '@react-navigation/native';
+
+
 var params2init = { first_time: 1 };
 
+var userList = [
+  {
+    name: 'Rahul',
+    email: 'rahul@gmail.com',
+    image_path: 'https://www.beautifulhomes.com/content/dam/beautifulhomes/images/user-image-icon-11.jpg',
+    sender_id: '1',
+    receiver_id: '2',
+  },
+  {
+    name: 'Muskan',
+    email: 'muskan@gmail.com',
+    image_path: 'https://cdn1.iconfinder.com/data/icons/user-pictures/100/female1-512.png',
+    sender_id: "2",
+    receiver_id: '1'
+  }
+]
 
 const User = () => {
+
   const navigation = useNavigation();
 
-  const [userList, setUserList] = useState([
-    {
-      name: 'Rahul',
-      email: 'rahul@gmail.com',
-      image_path: 'https://www.beautifulhomes.com/content/dam/beautifulhomes/images/user-image-icon-11.jpg',
-      sender_id: '1',
-      receiver_id: '2',
-    },
-    {
-      name: 'Muskan',
-      email: 'muskan@gmail.com',
-      image_path: 'https://cdn1.iconfinder.com/data/icons/user-pictures/100/female1-512.png',
-      sender_id: "2",
-      receiver_id: '1'
-    },
-  ])
+  const at_start_up = async () => {
+
+    if(params2init.first_time === 1){
+      params2init.first_time = 0;
+
+      let token = await SecureStore.getItemAsync('token');
+      if (token) {
+        //
+        host_name = await ip_server.get_hostname();
+
+        let data = 'token=' + token;
+        let link = 'http://' + host_name + '/chat/contact_list';
+        let init = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },// this line is important, if this content-type is not set it wont work
+          body: data
+
+        };
+        fetch(link, init)
+          .then((res) => { return res.json(); })
+          .then(res => {
+
+            userList = res.userList;
+
+          }).catch(err => {
+
+            console.log(err)
+
+          });
+      } else {
+        params2init.first_time = 1;
+        log_out();
+        navigation.navigate('LoginScreen');
+      }
+
+    }
+
+  }
+
+  useFocusEffect(
+    React.useCallback(() => {
+      at_start_up();
+    })
+  );
 
   
   return (
     <View style={styles.container}>
-    <Header
-      params2init={params2init}
-      navigation={navigation}    
-    />
-      <View >
 
-      </View>
+      <Header
+        params2init={params2init}
+        navigation={navigation}    
+      />
+
       <FlatList
         style={{
           marginHorizontal: 15,
@@ -84,7 +130,7 @@ const User = () => {
                 borderWidth: 0.5,
                 borderColor: '#ddd'
               }}
-              source={{ uri: item.image_path }}
+              source={{ uri: item.profileImage }}
               resizeMode='contain'
             />
             <Text
@@ -93,7 +139,9 @@ const User = () => {
                 marginLeft: 20,
                 fontWeight: '400'
               }}
-            >{item.name + `\n` + item.email} </Text>
+            >
+              {item.username + `\n` + item.email}
+            </Text>
           </TouchableOpacity>
         }
       />
