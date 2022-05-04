@@ -66,21 +66,34 @@ MongoClient.connect(url)
         var port = 1044;
         port = port + index;
         var wss = new WebSocketServer({ port: port });
-        console.log(wss.clients.email)
-        tab_wss[index] = Object.assign({ 'wss': wss }, { 'email': user.email });
+        tab_wss.push(Object.assign({ 'wss': wss }, { 'email': user.email }));
         console.log(tab_wss[index].email)
-        for (let index = 0; index < tab_wss.length; index++) {
-          tab_wss[index].wss.on('connection', (socket) => {
+        for (let ind = 0; ind < tab_wss.length; ind++) {
+          tab_wss[ind].wss.on('connection', (socket) => {
             socket.on('message', (msg) => {
               const msg1 = JSON.parse(msg);
               console.log(msg1)
-              if (tab_wss[index].wss.readyState == 1) {
-                tab_wss[index].wss.send(JSON.stringify({ msg1 }));
+              tab_wss[ind].wss.clients.forEach(function each(client) {
+                if (client.readyState == 1) {
+                  client.send(JSON.stringify({ msg1 }));
+                  // add chat message to DataBase
+                  tab_wss.forEach(element => {
+                    if (element.email == msg1.receiverEmail) {
+                      element.wss.clients.forEach(function each(client) {
+                        if (client.readyState == 1) {
+                          client.send(JSON.stringify({ msg1 }));
+                        }
+                      });
+                    }
+                  });
 
-              }
+                }
+              });
+
             });
             socket.on('close', (msg) => {
               console.log('closed')
+              tab_wss.splice(index, 1);
             });
           });
         }
