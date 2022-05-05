@@ -212,6 +212,7 @@ const Chat = () => {
             borderRadius: 10
           }}
           onPress={() => {
+            params2init.first_time = 1;
             navigation.goBack()
           }}
         >
