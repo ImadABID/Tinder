@@ -17,6 +17,9 @@ class Header extends Component {
             () => {
               if(this.props.hasOwnProperty('params2init')){
                 this.props.params2init.first_time = 1;
+                if(this.props.params2init.hasOwnProperty('gps_first_time')){
+                  this.props.params2init.gps_first_time = 1;
+                }
               }
               this.props.navigation.navigate('TinderCard');
             }
@@ -28,6 +31,9 @@ class Header extends Component {
             () => {
               if(this.props.hasOwnProperty('params2init')){
                 this.props.params2init.first_time = 1;
+                if(this.props.params2init.hasOwnProperty('gps_first_time')){
+                  this.props.params2init.gps_first_time = 1;
+                }
               }
               this.props.navigation.navigate('User');
             }
@@ -39,6 +45,9 @@ class Header extends Component {
             () => {
               if(this.props.hasOwnProperty('params2init')){
                 this.props.params2init.first_time = 1;
+                if(this.props.params2init.hasOwnProperty('gps_first_time')){
+                  this.props.params2init.gps_first_time = 1;
+                }
               }
               this.props.navigation.navigate('Matches');
             }
@@ -50,6 +59,9 @@ class Header extends Component {
             () => {
               if(this.props.hasOwnProperty('params2init')){
                 this.props.params2init.first_time = 1;
+                if(this.props.params2init.hasOwnProperty('gps_first_time')){
+                  this.props.params2init.gps_first_time = 1;
+                }
               }
               this.props.navigation.navigate('ProfileScreen');
             }

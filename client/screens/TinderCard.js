@@ -17,8 +17,7 @@ async function log_out(){
   await SecureStore.deleteItemAsync('token');
 }
 
-var params2init = {first_time : 1};
-var gps_first_time = 1;
+var params2init = {first_time : 1, gps_first_time : 1};
 
 var latitude;
 var longitude;
@@ -87,8 +86,9 @@ const TinderCard = () => {
       if (token) {
 
 
-        if(gps_first_time === 1){
-          gps_first_time = 0;
+        if(params2init.gps_first_time === 1){
+          
+          params2init.gps_first_time = 0;
 
           setGettingLocationPopUp(true);
 
