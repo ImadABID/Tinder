@@ -29,6 +29,65 @@ const upload = multer({ dest: 'uploads/' });
 var WebSocketServer = require('ws').Server;
 var tab_wss = [];
 
+//socket
+wss = new WebSocketServer({ port: 3005 });
+
+ws_list = [];
+const push_or_update_if_exist = (socket, email)=>{
+  
+  let found = false;
+
+  for(i in ws_list){
+    if(ws_list.email == email){
+      ws_list.socket.close();
+      ws_list.socket = socket;
+      found = true;
+      break
+    }
+  }
+
+  if(!found){
+    ws_list.push({email : email, socket : socket});
+  }
+
+}
+
+wss.on('connection', (socket)=>{
+  
+
+  socket.on('message', (msg)=>{
+
+    const msg_json = JSON.parse(msg);
+    console.log(msg_json);
+
+
+    if(msg_json.type == 'declaring_email'){ //setting socket email
+      
+      push_or_update_if_exist(msg_json.email);
+    
+    }else{ // normal msg
+
+      // send ack
+      socket.send(JSON.stringify({msg_json}));
+
+      // add to db
+
+      // forward
+      let receiver = get_web_socket_by_email(msg_json.receiverEmail);
+      if(receiver.wss != null){
+        receiver.wss.clients.forEach((client)=>{
+          if(client.readyState == 1){
+            client.send(JSON.stringify({msg_json}));
+          }
+        });
+      }
+
+    }
+
+  });
+
+});
+
 // --- Multer\ ----
 
 const bodyParser = require("body-parser");
