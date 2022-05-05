@@ -33,6 +33,7 @@ var tab_wss = [];
 wss = new WebSocketServer({ port: 3005 });
 
 ws_list = [];
+
 const push_or_update_if_exist = (socket, email)=>{
   
   let found = false;
@@ -51,6 +52,7 @@ const push_or_update_if_exist = (socket, email)=>{
   }
 
 }
+
 const get_socket_by_email = (email) => {
   for(i in ws_list){
     if(ws_list.email == email){
@@ -58,6 +60,16 @@ const get_socket_by_email = (email) => {
     }
   }
   return null;
+}
+
+const delete_socket = (email)=>{
+  for(i in ws_list){
+    if(ws_list.email == email){
+      ws_list.socket.close();
+      ws_list.splice(i, 1);
+      break;
+    }
+  }
 }
 
 wss.on('connection', (socket)=>{
@@ -83,7 +95,11 @@ wss.on('connection', (socket)=>{
       // forward
       let receiver_socket = get_socket_by_email(msg_json.receiverEmail);
       if(receiver_socket != null){
-        receiver_socket.send(JSON.stringify({msg_json}));
+        if(receiver_socket.readyState){
+          receiver_socket.send(JSON.stringify({msg_json}));
+        }else{
+          delete_socket(msg_json.receiverEmail);
+        }
       }
 
     }
