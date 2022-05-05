@@ -26,24 +26,22 @@ async function log_out() {
 
 var params2init = { first_time: 1 };
 
+var receiverProfile;
+var senderProfile;
 
 const Chat = () => {
 
   const navigation = useNavigation()
   const route = useRoute();
 
-  const [receiverProfile, setReceiverProfile] = useState(route.params.record);
-  const [senderProfile, setSenderProfile] = useState(null);
+  receiverProfile = route.params.record;
+  senderProfile;
+
+  const [senderProfileDefined, setSenderProfileDefined] = useState(false);
 
   const [messages, setMessages] = useState([]);
 
-  const [senderId, setSenderId] = useState(route.params.record.sender_id)
-  const [receiverId, setReceiverId] = useState(route.params.record.receiver_id)
-  const [name, setName] = useState(route.params.record.name)
-  const [image_path, setImage_path] = useState(route.params.record.image_path)
   const ws = useRef(null);
-  const [port, setPort] = useState("0");
-  const [tmp, setTmp] = useState();
 
   const startup = async () => {
 
@@ -51,114 +49,143 @@ const Chat = () => {
       
       params2init.first_time = 0;
 
-      let token = await SecureStore.getItemAsync('token');
-      if (token) {
+      const get_sender_profile = (token, host_name)=>{
 
-        host_name = await ip_server.get_hostname();
+        return new Promise(
+          (resolve)=>{
 
-        let link = 'http://' + host_name + '/users/profile';
-
-        let data = 'token=' + token;
-
-        let myInit = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, // this line is important, if this content-type is not set it wont work
-          body: data
-        };
-
-        fetch(link, myInit)
-          .then((res) => { return res.json(); })
-          .then(res => {
-
-            setSenderProfile(res.client);
-
-            // get_messages
+            let link = 'http://' + host_name + '/users/profile';
 
             let data = 'token=' + token;
 
-            let link = 'http://' + host_name + '/socket';
-            let init = {
+            let myInit = {
               method: 'POST',
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },// this line is important, if this content-type is not set it wont work
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, // this line is important, if this content-type is not set it wont work
               body: data
             };
 
-            fetch(link, init)
-              .then((res) => { return res.json(); })
-              .then(res => {
+            fetch(link, myInit)
+            .then((res)=>{return res.json()})
+            .then((res)=>{
+              console.log('before resolve');
+              console.log(res.client);
+              resolve(res.client);
+            })
+            .catch(err => {
+              params2init.first_time = 1;
+              log_out();
+              navigation.navigate('LoginScreen');
+            });
+          }
+        )
 
-                let host_name_and_port = host_name.split(':');
+      }
 
-                // getting already received msg
-                for (msg_i in res.messages_list) {
+      const get_socket_port_and_msg = (token, host_name) => {
 
-                  let user_profile;
-                  if (response.messages_list[i].senderEmail == senderProfile.email) {
-                    user_profile = senderProfile;
-                  } else {
-                    user_profile = receiverProfile;
-                  }
+        let data = 'token=' + token;
+        let link = 'http://' + host_name + '/socket';
+        let init = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },// this line is important, if this content-type is not set it wont work
+          body: data
+        };
 
-                  let sentMessages = {
-                    _id: Math.floor(Math.random() * 1000),
-                    text: res.messages_list[i].message,
-                    // createdAt: response.createdAt,
-                    user: {
-                      _id: user_profile.email,
-                      name: user_profile.username,
-                      avatar: user_profile.profileImage,
-                    },
-                  }
-
-                  setMessages(previousMessages => GiftedChat.append(previousMessages, sentMessages));
-
-                }
-
-                console.log("initiateSocketConnection");
-
-                ws.current = new WebSocket('http://' + host_name_and_port[0] + ':' + res.respond.port + '/');
-                ws.current.onopen = () => {
-                  console.log("connection establish open")
-                };
-                ws.current.onclose = () => {
-                  console.log("connection establish closed");
-                }
-                ws.current.onmessage = e => {
-                  const response = JSON.parse(e.data).msg1;
-                  console.log("onmessage=>", JSON.stringify(response));
-                  let sentMessages = {
-                    _id: Math.floor(Math.random() * 1000),
-                    text: response.message,
-                    createdAt: response.createdAt,
-                    user: {
-                      _id: response.senderId,
-                      name: name,
-                      avatar: image_path,
-                    },
-                  }
-                  setMessages(previousMessages => GiftedChat.append(previousMessages, sentMessages))
-                }
-
-              }).catch(err => {
-
-                console.log(err);
-
-              });
+        fetch(link, init)
+        .then((res) => { return res.json(); })
+        .then(async (res) => {
 
 
-          }).catch(err => {
-            params2init.first_time = 1;
-            log_out();
-            navigation.navigate('LoginScreen');
-          });
+          let host_name_and_port = host_name.split(':');
+
+          // getting already received msg
+          for (msg_i in res.messages_list) {
+
+            let user_profile;
+            if (response.messages_list[i].senderEmail == senderProfile.email) {
+              user_profile = senderProfile;
+            } else {
+              user_profile = receiverProfile;
+            }
+
+            let sentMessages = {
+              _id: Math.floor(Math.random() * 1000),
+              text: res.messages_list[i].message,
+              // createdAt: response.createdAt,
+              user: {
+                _id: user_profile.email,
+                name: user_profile.username,
+                avatar: user_profile.profileImage,
+              },
+            }
+
+            setMessages(previousMessages => GiftedChat.append(previousMessages, sentMessages));
+
+          }
+
+          console.log("initiateSocketConnection");
+
+          ws.current = new WebSocket('http://' + host_name_and_port[0] + ':' + res.respond.port + '/');
+          ws.current.onopen = () => {
+            console.log("connection establish open")
+          };
+          ws.current.onclose = () => {
+            console.log("connection establish closed");
+          }
+          ws.current.onmessage = e => {
+            const response = JSON.parse(e.data).msg_json;
+            console.log("onmessage=>", JSON.stringify(response));
+
+            let user_profile;
+            if (response.senderEmail === senderProfile.email) {
+              user_profile = senderProfile;
+            } else {
+              user_profile = receiverProfile;
+            }
+
+            let sentMessages = {
+              _id: Math.floor(Math.random() * 1000),
+              text: response.message,
+              // createdAt: response.createdAt,
+              user: {
+                _id: user_profile.email,
+                name: user_profile.username,
+                avatar: user_profile.profileImage,
+              },
+            }
+            setMessages(previousMessages => GiftedChat.append(previousMessages, sentMessages))
+          }
+        })
+        .catch(err => {
+          params2init.first_time = 1;
+          log_out();
+          navigation.navigate('LoginScreen');
+        });
+
+      }
+
+      let token = await SecureStore.getItemAsync('token');
+      if (token) {
+
+        let host_name = await ip_server.get_hostname();
+
+        // getting profile info
+        senderProfile = await get_sender_profile(token, host_name);
+        setSenderProfileDefined(true);
+        console.log('after resolve');
+        console.log(senderProfile);
+
+        get_socket_port_and_msg(token, host_name);
+
 
       } else {
+        params2init.first_time = 1;
+        log_out();
         navigation.navigate('LoginScreen');
       }
     
     }
-
-    
+ 
   }
 
   useEffect(() => {
@@ -173,16 +200,18 @@ const Chat = () => {
 
 
 
-  const onSend = useCallback(async (messages = [], senderEmail, receiverEmail) => {
+  const onSend = useCallback(async (messages = []) => {
 
     if (ws.current != null) {
 
-      let message_obj;
-      message_obj.senderEmail = senderEmail;
-      message_obj.receiverEmail = receiverEmail;
+      let message_obj = {};
+      message_obj.senderEmail = senderProfile.email;
+      message_obj.receiverEmail = receiverProfile.email;
       message_obj.message = messages[0].text;
 
-      ws.current.send(message_obj);
+      console.log(message_obj);
+
+      ws.current.send(JSON.stringify(message_obj));
 
     }
 
@@ -233,7 +262,7 @@ const Chat = () => {
         </Text>
       </View>
       {
-        senderProfile != null?
+        senderProfileDefined === true?    
         <GiftedChat
           messages={messages}
           onSend={messages => onSend(messages)}
@@ -242,7 +271,8 @@ const Chat = () => {
           }}
         />
         :
-        <View></View>
+        <View>
+        </View>
       }
     </View>
   );

@@ -114,7 +114,7 @@ MongoClient.connect(url)
               // forward
               let receiver = get_web_socket_by_email(msg_json.receiverEmail);
               if(receiver.wss != null){
-                receiverwss.clients.forEach((client)=>{
+                receiver.wss.clients.forEach((client)=>{
                   if(client.readyState == 1){
                     client.send(JSON.stringify({msg_json}));
                   }
