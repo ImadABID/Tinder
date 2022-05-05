@@ -24,12 +24,14 @@ var params2init = { first_time: 1 };
 var contactedProfile;
 
 const Chat = () => {
+
   const navigation = useNavigation()
   const route = useRoute();
 
   contactedProfile = route.params.record;
 
   const [messages, setMessages] = useState([]);
+
   const [senderId, setSenderId] = useState(route.params.record.sender_id)
   const [receiverId, setReceiverId] = useState(route.params.record.receiver_id)
   const [name, setName] = useState(route.params.record.name)
@@ -52,8 +54,8 @@ const Chat = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },// this line is important, if this content-type is not set it wont work
         body: data
-
       };
+
       fetch(linkLoc, reqLoc)
         .then((res) => { return res.json(); })
         .then(res => {
@@ -61,10 +63,25 @@ const Chat = () => {
           
           let host_name_and_port = host_name.split(':');
 
+          // getting already received msg
+          for( msg_i in res.messages_list){
+            let sentMessages = {
+              _id: Math.floor(Math.random() * 1000),
+              text: res.messages_list[i].message,
+              createdAt: response.createdAt,
+              user: {
+                _id: response.senderId,
+                name: name,
+                avatar: image_path,
+              },
+            }
+            setMessages(previousMessages => GiftedChat.append(previousMessages, sentMessages));
+          }
+
+
           ws.current = new WebSocket('http://'+host_name_and_port[0]+':'+ res.respond + '/');
           ws.current.onopen = () => {
             console.log("connection establish open")
-
           };
           ws.current.onclose = () => {
             console.log("connection establish closed");
@@ -72,7 +89,7 @@ const Chat = () => {
           ws.current.onmessage = e => {
             const response = JSON.parse(e.data).msg1;
             console.log("onmessage=>", JSON.stringify(response));
-            var sentMessages = {
+            let sentMessages = {
               _id: Math.floor(Math.random() * 1000),
               text: response.message,
               createdAt: response.createdAt,
@@ -84,9 +101,10 @@ const Chat = () => {
             }
             setMessages(previousMessages => GiftedChat.append(previousMessages, sentMessages))
           }
+
         }).catch(err => {
 
-          console.log(err)
+          console.log(err);
 
         });
 
@@ -105,17 +123,20 @@ const Chat = () => {
 
 
 
-  const onSend = useCallback(async (messages = []) => {
+  const onSend = useCallback(async (messages = [], senderEmail, receiverEmail) => {
+
     if ( ws.current!= null ){
-    let obj = {
-      "senderId": senderId,
-      "receiverId": receiverId,
-      "receiverEmail" : "imad", 
-      "message": messages[0].text,
-      "action": "message"
+
+      let message_obj;
+      message_obj.senderEmail = senderEmail;
+      message_obj.receiverEmail = receiverEmail;
+      message_obj.message = messages[0].text;
+    
+      ws.current.send(message_obj);
+
     }
-    ws.current.send(JSON.stringify(obj))
-  }})
+
+  });
 
   return (
     <View style={styles.container}>

@@ -24,7 +24,7 @@ const upload = multer({ dest: 'uploads/' });
 
 var WebSocketServer = require('ws').Server;
 var tab_wss = [];
-var index = 0;
+
 // --- Multer\ ----
 
 const bodyParser = require("body-parser");
@@ -40,6 +40,7 @@ app.use(cors(corsOptions)) // Use this after the variable declaration
 
 var fs = require('fs');
 const console = require("console");
+const { isWindows } = require("nodemon/lib/utils");
 
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
@@ -62,11 +63,27 @@ MongoClient.connect(url)
 
     app.post('/socket', (req, res) => {
 
+      const get_web_socket_by_email = (email_in)=>{
+        for(i in tab_wss){
+          if(tab_wss.email == email_in){
+            return {wss : tab_wss.wss, index : i};
+          }
+        }
+        return {wss : null, index : -1};
+      }
+
       jwt.verify(req.body.token, token_sig, (err, user) => {
-        var port = 1044;
-        port = port + index;
-        var wss;
         
+        let port = 1044;
+
+        let wss;
+        
+        // socket already opened
+        // let existing_socket = get_web_socket_by_email(user.email);
+        // if(existing_socket.index != -1){
+        //   tab_wss.splice(existing_socket.index, 1);
+        // }
+
         // dynamic port allocation
         let port_allocated = false;
         while(!port_allocated){
@@ -80,39 +97,68 @@ MongoClient.connect(url)
           }
         }
         console.log('allocating port : '+port);
-        
-        tab_wss.push(Object.assign({ 'wss': wss }, { 'email': user.email }));
-        
-        for (let ind = 0; ind < tab_wss.length; ind++) {
-          tab_wss[ind].wss.on('connection', (socket) => {
-            socket.on('message', (msg) => {
-              const msg1 = JSON.parse(msg);
-              console.log(msg1)
-              tab_wss[ind].wss.clients.forEach(function each(client) {
-                if (client.readyState == 1) {
-                  client.send(JSON.stringify({ msg1 }));
-                  // add chat message to DataBase
-                  tab_wss.forEach(element => {
-                    if (element.email == msg1.receiverEmail) {
-                      element.wss.clients.forEach(function each(client) {
-                        if (client.readyState == 1) {
-                          client.send(JSON.stringify({ msg1 }));
-                        }
-                      });
-                    }
-                  });
 
+        wss.on('connection', (socket)=>{
+          
+          socket.on('message', (msg)=>{
+
+            const msg_json = JSON.parse(msg);
+            console.log(msg_json);
+
+            // send ack
+            wss.clients.forEach((client)=>{
+              if(client.readyState == 1){
+                client.send(JSON.stringify({msg_json}));
+              }
+            });
+
+            // add to db
+
+            // forward
+            let receiver = get_web_socket_by_email(msg_json.receiverEmail);
+            if(receiver.wss != null){
+              receiverwss.clients.forEach((client)=>{
+                if(client.readyState == 1){
+                  client.send(JSON.stringify({msg_json}));
                 }
               });
+            }
 
-            });
-            socket.on('close', (msg) => {
-              console.log('closed')
-              tab_wss.splice(index, 1);
-            });
           });
-        }
-        index++;
+        
+        });
+
+        tab_wss.push(wss);
+ 
+        // for (let ind = 0; ind < tab_wss.length; ind++) {
+        //   tab_wss[ind].wss.on('connection', (socket) => {
+        //     socket.on('message', (msg) => {
+        //       const msg1 = JSON.parse(msg);
+        //       console.log(msg1)
+        //       tab_wss[ind].wss.clients.forEach(function each(client) {
+        //         if (client.readyState == 1) {
+        //           client.send(JSON.stringify({ msg1 }));
+        //           // add chat message to DataBase
+        //           tab_wss.forEach(element => {
+        //             if (element.email == msg1.receiverEmail) {
+        //               element.wss.clients.forEach(function each(client) {
+        //                 if (client.readyState == 1) {
+        //                   client.send(JSON.stringify({ msg1 }));
+        //                 }
+        //               });
+        //             }
+        //           });
+
+        //         }
+        //       });
+
+        //     });
+        //     socket.on('close', (msg) => {
+        //       console.log('closed')
+        //       tab_wss.splice(index, 1);
+        //     });
+        //   });
+        // }
 
         res.json({ respond: port });
       });
