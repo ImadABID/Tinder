@@ -34,11 +34,14 @@ const Matches = () => {
 
   // only to oblige refresh
   const [state, setState] = useState({});
+
+  const [dataUpdated, setDataupdated] = useState(false);
   
   
   const at_start_up = async () => {
 
     if(params2init.first_time === 1){
+
       params2init.first_time = 0;
 
       let token = await SecureStore.getItemAsync('token');
@@ -59,6 +62,7 @@ const Matches = () => {
           .then(res => {
 
             datadb = res.matchers;
+            setDataupdated(true);
 
           }).catch(err => {
 
@@ -107,7 +111,7 @@ const Matches = () => {
           </View>
 
           {
-            datadb.length > 0 ?
+            dataUpdated && datadb.length > 0 ?
             <FlatList
               numColumns={2}
               data={datadb}
@@ -140,7 +144,7 @@ const Matches = () => {
                 </TouchableOpacity>
               )}
             />
-            :<View></View>
+            :<View><Text>No element</Text></View>
             
           }
 
