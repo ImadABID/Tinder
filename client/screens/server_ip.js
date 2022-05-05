@@ -16,40 +16,48 @@ async function delete_port(){
     await SecureStore.deleteItemAsync('port');
 }
 
-export const verify = async (popup_set_state, ip, port) => {
+export const verify = (popup_set_state, ip, port) => {
 
-    let ip_db = await SecureStore.getItemAsync('ip');
-    let port_db = await SecureStore.getItemAsync('port');
+    new Promise(
+        async (resolve)=>{
 
-    if(ip ===''){
-        if(ip_db){
-            ip = ip_db;
-        }else{
-            ip = 'localhost';
-        }
-    }
-    if(port ===''){
-        if(port_db){
-            port = port_db;
-        }else{
-            port = '3000';
-        }
-    }
+            let ip_db = await SecureStore.getItemAsync('ip');
+            let port_db = await SecureStore.getItemAsync('port');
 
-    fetch('http://'+ip+':'+port+'/welcome')
-    .then(
-        (res)=>{
-            popup_set_state(false);
-            delete_ip();
-            delete_port();
-            save_ip(ip);
-            save_port(port);
-        }
-    ).catch(
-        (err)=>{
-            delete_ip();
-            delete_port();
-            popup_set_state(true);
+            if(ip ===''){
+                if(ip_db){
+                    ip = ip_db;
+                }else{
+                    ip = 'localhost';
+                }
+            }
+            if(port ===''){
+                if(port_db){
+                    port = port_db;
+                }else{
+                    port = '3000';
+                }
+            }
+
+            fetch('http://'+ip+':'+port+'/welcome')
+            .then(
+                (res)=>{
+                    popup_set_state(false);
+                    delete_ip();
+                    delete_port();
+                    save_ip(ip);
+                    save_port(port);
+                    resolve();
+                }
+            ).catch(
+                (err)=>{
+                    delete_ip();
+                    delete_port();
+                    popup_set_state(true);
+                    resolve();
+                }
+            )
+
         }
     )
 }

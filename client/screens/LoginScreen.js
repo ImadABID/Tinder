@@ -45,7 +45,7 @@ const LoginScreen = ({}) => {
   const at_start_up = async () => {
     if(popup_first_time){
       popup_first_time = false;
-      ip_server.verify(setModalVisible, serverIp_txt, serverPort_txt);
+      await ip_server.verify(setModalVisible, serverIp_txt, serverPort_txt);
     }
   
     // if connected
