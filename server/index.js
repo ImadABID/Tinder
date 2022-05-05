@@ -72,42 +72,6 @@ const delete_socket = (email)=>{
   }
 }
 
-wss.on('connection', (socket)=>{
-  
-
-  socket.on('message', (msg)=>{
-
-    const msg_json = JSON.parse(msg);
-    console.log(msg_json);
-
-
-    if(msg_json.type == 'declaring_email'){ //setting socket email
-      
-      push_or_update_if_exist(msg_json.email);
-    
-    }else{ // normal msg
-
-      // send ack
-      socket.send(JSON.stringify({msg_json}));
-
-      // add to db
-
-      // forward
-      let receiver_socket = get_socket_by_email(msg_json.receiverEmail);
-      if(receiver_socket != null){
-        if(receiver_socket.readyState){
-          receiver_socket.send(JSON.stringify({msg_json}));
-        }else{
-          delete_socket(msg_json.receiverEmail);
-        }
-      }
-
-    }
-
-  });
-
-});
-
 // --- Multer\ ----
 
 const bodyParser = require("body-parser");
@@ -136,6 +100,42 @@ MongoClient.connect(url)
     return client.db("tinderb");
   })
   .then((db) => {
+
+    wss.on('connection', (socket)=>{
+  
+
+      socket.on('message', (msg)=>{
+    
+        const msg_json = JSON.parse(msg);
+        console.log(msg_json);
+    
+    
+        if(msg_json.type == 'declaring_email'){ //setting socket email
+          
+          push_or_update_if_exist(msg_json.email);
+        
+        }else{ // normal msg
+    
+          // send ack
+          socket.send(JSON.stringify({msg_json}));
+    
+          // add to db
+    
+          // forward
+          let receiver_socket = get_socket_by_email(msg_json.receiverEmail);
+          if(receiver_socket != null){
+            if(receiver_socket.readyState){
+              receiver_socket.send(JSON.stringify({msg_json}));
+            }else{
+              delete_socket(msg_json.receiverEmail);
+            }
+          }
+    
+        }
+    
+      });
+    
+    });
 
     // Rajouter vos routes et les traitements
     // just for test in dev mode
