@@ -19,6 +19,10 @@ const storage = multer.diskStorage({
   },
 });
 
+// --- find port lib ---
+var fp = require("find-free-port");
+
+
 // const upload = multer({ storage });
 const upload = multer({ dest: 'uploads/' });
 
@@ -74,7 +78,7 @@ MongoClient.connect(url)
 
       jwt.verify(req.body.token, token_sig, (err, user) => {
         
-        let port = 1044;
+
 
         let wss;
         
@@ -85,82 +89,48 @@ MongoClient.connect(url)
         }
 
         // dynamic port allocation
-        let port_allocated = false;
-        while(!port_allocated){
-          try{
-            wss = new WebSocketServer({ port: port });
-            port_allocated = true;
-          }catch{
-            port_allocated = false;
-            port++;
-            port = port % 65000;
-          }
-        }
-        console.log('allocating port : '+port);
+        fp(1044, (err, port)=>{
 
-        wss.on('connection', (socket)=>{
-          
-          socket.on('message', (msg)=>{
+          wss = new WebSocketServer({ port: port });
 
-            const msg_json = JSON.parse(msg);
-            console.log(msg_json);
+          wss.on('connection', (socket)=>{
 
-            // send ack
-            wss.clients.forEach((client)=>{
-              if(client.readyState == 1){
-                client.send(JSON.stringify({msg_json}));
-              }
-            });
+            console.log('allocating port : '+port);
+            
+            socket.on('message', (msg)=>{
 
-            // add to db
+              const msg_json = JSON.parse(msg);
+              console.log(msg_json);
 
-            // forward
-            let receiver = get_web_socket_by_email(msg_json.receiverEmail);
-            if(receiver.wss != null){
-              receiverwss.clients.forEach((client)=>{
+              // send ack
+              wss.clients.forEach((client)=>{
                 if(client.readyState == 1){
                   client.send(JSON.stringify({msg_json}));
                 }
               });
-            }
 
+              // add to db
+
+              // forward
+              let receiver = get_web_socket_by_email(msg_json.receiverEmail);
+              if(receiver.wss != null){
+                receiverwss.clients.forEach((client)=>{
+                  if(client.readyState == 1){
+                    client.send(JSON.stringify({msg_json}));
+                  }
+                });
+              }
+
+            });
+          
           });
-        
+
+          tab_wss.push(wss);
+
+          res.json({ respond: {port : port, messages_list : []} });
+
         });
-
-        tab_wss.push(wss);
- 
-        // for (let ind = 0; ind < tab_wss.length; ind++) {
-        //   tab_wss[ind].wss.on('connection', (socket) => {
-        //     socket.on('message', (msg) => {
-        //       const msg1 = JSON.parse(msg);
-        //       console.log(msg1)
-        //       tab_wss[ind].wss.clients.forEach(function each(client) {
-        //         if (client.readyState == 1) {
-        //           client.send(JSON.stringify({ msg1 }));
-        //           // add chat message to DataBase
-        //           tab_wss.forEach(element => {
-        //             if (element.email == msg1.receiverEmail) {
-        //               element.wss.clients.forEach(function each(client) {
-        //                 if (client.readyState == 1) {
-        //                   client.send(JSON.stringify({ msg1 }));
-        //                 }
-        //               });
-        //             }
-        //           });
-
-        //         }
-        //       });
-
-        //     });
-        //     socket.on('close', (msg) => {
-        //       console.log('closed')
-        //       tab_wss.splice(index, 1);
-        //     });
-        //   });
-        // }
-
-        res.json({ respond: port });
+        
       });
 
     });
