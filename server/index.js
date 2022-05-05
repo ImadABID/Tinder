@@ -79,10 +79,10 @@ MongoClient.connect(url)
         let wss;
         
         // socket already opened
-        // let existing_socket = get_web_socket_by_email(user.email);
-        // if(existing_socket.index != -1){
-        //   tab_wss.splice(existing_socket.index, 1);
-        // }
+        let existing_socket = get_web_socket_by_email(user.email);
+        if(existing_socket.index != -1){
+          tab_wss.splice(existing_socket.index, 1);
+        }
 
         // dynamic port allocation
         let port_allocated = false;
