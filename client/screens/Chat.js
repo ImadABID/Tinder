@@ -67,8 +67,6 @@ const Chat = () => {
             fetch(link, myInit)
             .then((res)=>{return res.json()})
             .then((res)=>{
-              console.log('before resolve');
-              console.log(res.client);
               resolve(res.client);
             })
             .catch(err => {
@@ -172,8 +170,6 @@ const Chat = () => {
         // getting profile info
         senderProfile = await get_sender_profile(token, host_name);
         setSenderProfileDefined(true);
-        console.log('after resolve');
-        console.log(senderProfile);
 
         get_socket_port_and_msg(token, host_name);
 
