@@ -51,6 +51,14 @@ const push_or_update_if_exist = (socket, email)=>{
   }
 
 }
+const get_socket_by_email = (email) => {
+  for(i in ws_list){
+    if(ws_list.email == email){
+      return ws_list.socket;
+    }
+  }
+  return null;
+}
 
 wss.on('connection', (socket)=>{
   
@@ -73,13 +81,9 @@ wss.on('connection', (socket)=>{
       // add to db
 
       // forward
-      let receiver = get_web_socket_by_email(msg_json.receiverEmail);
-      if(receiver.wss != null){
-        receiver.wss.clients.forEach((client)=>{
-          if(client.readyState == 1){
-            client.send(JSON.stringify({msg_json}));
-          }
-        });
+      let receiver_socket = get_socket_by_email(msg_json.receiverEmail);
+      if(receiver_socket != null){
+        receiver_socket.send(JSON.stringify({msg_json}));
       }
 
     }
