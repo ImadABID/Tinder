@@ -65,9 +65,24 @@ MongoClient.connect(url)
       jwt.verify(req.body.token, token_sig, (err, user) => {
         var port = 1044;
         port = port + index;
-        var wss = new WebSocketServer({ port: port });
+        var wss;
+        
+        // dynamic port allocation
+        let port_allocated = false;
+        while(!port_allocated){
+          try{
+            wss = new WebSocketServer({ port: port });
+            port_allocated = true;
+          }catch{
+            port_allocated = false;
+            port++;
+            port = port % 65000;
+          }
+        }
+        console.log('allocating port : '+port);
+        
         tab_wss.push(Object.assign({ 'wss': wss }, { 'email': user.email }));
-        console.log(tab_wss[index].email)
+        
         for (let ind = 0; ind < tab_wss.length; ind++) {
           tab_wss[ind].wss.on('connection', (socket) => {
             socket.on('message', (msg) => {
