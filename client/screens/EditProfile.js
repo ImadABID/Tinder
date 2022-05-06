@@ -316,8 +316,8 @@ const EditProfile = ({ }) => {
                                 }
                             }
                         >
-                            <Picker.Item label="male" value="male"/>
-                            <Picker.Item label="female" value="female"/>
+                            <Picker.Item label="men" value="men"/>
+                            <Picker.Item label="women" value="women"/>
                         </Picker>
                     </View>
                 </View>

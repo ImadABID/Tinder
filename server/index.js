@@ -401,6 +401,13 @@ MongoClient.connect(url)
                           continue;
                         }
 
+                        if(
+                          (client.targetedSex!='na') &&
+                          client.targetedSex != matches[attr].orientation
+                        ){
+                          continue;
+                        }
+
                         test = 0;
                         for (let ind in matcher) {
                           if (
