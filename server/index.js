@@ -122,6 +122,7 @@ MongoClient.connect(url)
           socket.send(JSON.stringify({msg_json}));
     
           // add to db
+          db.collection('chat').insertOne(msg_json);
     
           // forward
           let receiver_socket = get_socket_by_email(msg_json.receiverEmail);
