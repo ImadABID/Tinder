@@ -139,8 +139,8 @@ const TinderCard = () => {
 
                     datadb_dom.push(
                       <Card key={index}
-                      onSwipedLeft = {()=>send (item.email , "no" )  }
-                      onSwipedRight ={()=>send (item.email , "yes")  }
+                      onSwipedLeft = {send (item.email , "no" )  }
+                      onSwipedRight ={send (item.email , "yes")  }
                       >
                         <TouchableOpacity
                           onPress={
@@ -167,8 +167,8 @@ const TinderCard = () => {
 
                     datadb_dom.push(
                       <Card key={index}
-                      onSwipedLeft = {()=>send (item.email , "no" )  }
-                      onSwipedRight ={()=>send (item.email , "yes")  }
+                      onSwipedLeft = {send (item.email , "no" )  }
+                      onSwipedRight ={send (item.email , "yes")  }
                       >
                         <TouchableOpacity
                           onPress={
