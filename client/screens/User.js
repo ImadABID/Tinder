@@ -29,6 +29,8 @@ var userList;
 
 const User = () => {
 
+  const [userListDefined, setUserListDefined] = useState(false);
+
   const navigation = useNavigation();
 
   const at_start_up = async () => {
@@ -54,6 +56,7 @@ const User = () => {
           .then(res => {
 
             userList = res.contactProfiles;
+            setUserListDefined(true);
 
           }).catch(err => {
 
@@ -85,7 +88,9 @@ const User = () => {
         navigation={navigation}    
       />
 
-      <FlatList
+      {
+        userListDefined?
+        <FlatList
         style={{
           marginHorizontal: 15,
           marginTop: 20
@@ -138,6 +143,13 @@ const User = () => {
           </TouchableOpacity>
         }
       />
+      :
+      <View>
+        <Text>
+          No message yet.
+        </Text>
+      </View>
+      }
     </View>
   );
 };
