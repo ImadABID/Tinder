@@ -39,8 +39,8 @@ const push_or_update_if_exist = (socket, email)=>{
   let found = false;
 
   for(i in ws_list){
-    if(ws_list.email == email){
-      ws_list.socket = socket;
+    if(ws_list[i].email == email){
+      ws_list[i].socket = socket;
       found = true;
       break
     }
@@ -54,8 +54,8 @@ const push_or_update_if_exist = (socket, email)=>{
 
 const get_socket_by_email = (email) => {
   for(i in ws_list){
-    if(ws_list.email == email){
-      return ws_list.socket;
+    if(ws_list[i].email === email){
+      return ws_list[i].socket;
     }
   }
   return null;
@@ -63,8 +63,8 @@ const get_socket_by_email = (email) => {
 
 const delete_socket = (email)=>{
   for(i in ws_list){
-    if(ws_list.email == email){
-      ws_list.socket.close();
+    if(ws_list[i].email == email){
+      ws_list[i].socket.close();
       ws_list.splice(i, 1);
       break;
     }
@@ -111,7 +111,7 @@ MongoClient.connect(url)
     
         if(msg_json.hasOwnProperty('type') && msg_json.type == 'declaring_email'){ //setting socket email
           
-          push_or_update_if_exist(msg_json.email);
+          push_or_update_if_exist(socket, msg_json.email);
         
         }else{ // normal msg
     
@@ -122,7 +122,11 @@ MongoClient.connect(url)
           db.collection('chat').insertOne(msg_json);
     
           // forward
+          console.log(ws_list)
+          console.log('searching for : '+msg_json.receiverEmail);
           let receiver_socket = get_socket_by_email(msg_json.receiverEmail);
+          console.log(receiver_socket)
+
           if(receiver_socket != null){
             if(receiver_socket.readyState){
               receiver_socket.send(JSON.stringify({msg_json}));
