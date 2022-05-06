@@ -209,7 +209,9 @@ const Chat = () => {
     };
     ws.onmessage = (e) => {
 
-      let msg_json = e.data;
+      let msg_json = JSON.parse(e.data).msg_json;
+
+      console.log('msg at receive :');
       console.log(msg_json);
       
       console.log(msg_json['message']);
@@ -223,7 +225,7 @@ const Chat = () => {
 
       let sentMessages = {
         _id: Math.floor(Math.random() * 1000),
-        text: 'msg_json.message',
+        text: msg_json.message,
         // createdAt: response.createdAt,
         user: {
           _id: user_profile.email,
