@@ -107,12 +107,9 @@ MongoClient.connect(url)
       socket.on('message', (msg)=>{
     
         const msg_json = JSON.parse(msg);
-        console.log(msg_json);
     
     
         if(msg_json.hasOwnProperty('type') && msg_json.type == 'declaring_email'){ //setting socket email
-          console.log('declaring_email');
-          console.log(msg_json);
           
           push_or_update_if_exist(msg_json.email);
         
@@ -177,8 +174,6 @@ MongoClient.connect(url)
 
           for (msg_i in msgs) {
 
-            console.log(msgs[msg_i]);
-
             if (msgs[msg_i].senderEmail === user.email || msgs[msg_i].receiverEmail === user.email) {
 
               if(msgs[msg_i].senderEmail === user.email){
@@ -206,8 +201,36 @@ MongoClient.connect(url)
 
       });
 
-    })
+    });
 
+    app.post('/chat/disscution',(req, res)=>{
+
+      jwt.verify(req.body.token, token_sig, (err, user) => {
+
+        db.collection("chat").find({}).toArray(async (err, msgs) => {
+
+
+          let msg_list = [];
+
+          for (msg_i in msgs) {
+
+            if (
+              (msgs[msg_i].senderEmail === user.email || msgs[msg_i].receiverEmail === user.email)
+              &&
+              (msgs[msg_i].senderEmail === req.body.otheremail || msgs[msg_i].receiverEmail === req.body.otheremail)
+            ) {
+              msg_list.push(msgs[msg_i]);
+            }
+
+          }
+
+          res.json({ discution: msg_list });
+
+        });
+
+      });
+
+    });
 
     app.post('/matches/get', (req, res) => {
 
@@ -281,24 +304,11 @@ MongoClient.connect(url)
           http://localhost:3000/users/profile
       */
 
-      /*jwt.verify(req.body.token, token_sig, (err, user)=>{
-        
-        db.collection("matches").findOne(
-          {"email_1" : user.email},
-          (err, client)=>{
-            console.log(client)
-          }
-        )
-        
-      })*/
-
       jwt.verify(req.body.token, token_sig, (err, user) => {
 
         var myobj = { 'email_1': user.email, 'email_2': req.body.email, 'action': req.body.action };
         db.collection("matches").insertOne(myobj, function (err, res) {
           if (err) throw err;
-          console.log("1 element inserted");
-
         });
 
       })

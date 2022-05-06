@@ -79,10 +79,10 @@ const Chat = () => {
 
       }
 
-      const get_socket_port_and_msg = (token, host_name) => {
+      const get_msg = (token, host_name) => {
 
-        let data = 'token=' + token;
-        let link = 'http://' + host_name + '/socket';
+        let data = 'token=' + token + '&otheremail=' + receiverProfile.email;
+        let link = 'http://' + host_name + '/chat/disscution';
         let init = {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },// this line is important, if this content-type is not set it wont work
@@ -93,14 +93,11 @@ const Chat = () => {
         .then((res) => { return res.json(); })
         .then(async (res) => {
 
-
-          let host_name_and_port = host_name.split(':');
-
           // getting already received msg
-          for (msg_i in res.messages_list) {
+          for (msg_i in res.discution) {
 
             let user_profile;
-            if (response.messages_list[i].senderEmail == senderProfile.email) {
+            if (res.discution[msg_i].senderEmail == senderProfile.email) {
               user_profile = senderProfile;
             } else {
               user_profile = receiverProfile;
@@ -108,7 +105,7 @@ const Chat = () => {
 
             let sentMessages = {
               _id: Math.floor(Math.random() * 1000),
-              text: res.messages_list[i].message,
+              text: res.discution[msg_i].message,
               // createdAt: response.createdAt,
               user: {
                 _id: user_profile.email,
@@ -121,38 +118,6 @@ const Chat = () => {
 
           }
 
-          console.log("initiateSocketConnection");
-
-          ws.current = new WebSocket('http://' + host_name_and_port[0] + ':' + res.respond.port + '/');
-          ws.current.onopen = () => {
-            console.log("connection establish open")
-          };
-          ws.current.onclose = () => {
-            console.log("connection establish closed");
-          }
-          ws.current.onmessage = e => {
-            const response = JSON.parse(e.data).msg_json;
-            console.log("onmessage=>", JSON.stringify(response));
-
-            let user_profile;
-            if (response.senderEmail === senderProfile.email) {
-              user_profile = senderProfile;
-            } else {
-              user_profile = receiverProfile;
-            }
-
-            let sentMessages = {
-              _id: Math.floor(Math.random() * 1000),
-              text: response.message,
-              // createdAt: response.createdAt,
-              user: {
-                _id: user_profile.email,
-                name: user_profile.username,
-                avatar: user_profile.profileImage,
-              },
-            }
-            setMessages(previousMessages => GiftedChat.append(previousMessages, sentMessages))
-          }
         })
         .catch(err => {
           params2init.first_time = 1;
@@ -171,10 +136,8 @@ const Chat = () => {
         ws.send(JSON.stringify(msg));
         setSenderProfileDefined(true);
 
-        // get_msg(token, host_name);
-
-        // openning socket
-
+        // getting old messages
+        get_msg(token, host_name);
 
       } else {
         params2init.first_time = 1;
@@ -199,10 +162,10 @@ const Chat = () => {
   React.useEffect(() => {
 
     ws.onopen = () => {
-      setServerState('Connected to the server');
+      
     };
     ws.onclose = (e) => {
-      setServerState('Disconnected. Check internet or server.')
+      
     };
     ws.onerror = (e) => {
       
@@ -210,11 +173,6 @@ const Chat = () => {
     ws.onmessage = (e) => {
 
       let msg_json = JSON.parse(e.data).msg_json;
-
-      console.log('msg at receive :');
-      console.log(msg_json);
-      
-      console.log(msg_json['message']);
 
       let user_profile;
       if (msg_json.senderEmail === senderProfile.email) {
@@ -233,7 +191,6 @@ const Chat = () => {
           avatar: user_profile.profileImage,
         }
       }
-      console.log(sentMessages);
       setMessages(previousMessages => GiftedChat.append(previousMessages, sentMessages));
     };
   }, []);
@@ -248,8 +205,6 @@ const Chat = () => {
       message_obj.senderEmail = senderProfile.email;
       message_obj.receiverEmail = receiverProfile.email;
       message_obj.message = messages[0].text;
-
-      console.log(message_obj);
 
       ws.send(JSON.stringify(message_obj));
 
