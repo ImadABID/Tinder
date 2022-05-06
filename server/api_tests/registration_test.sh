@@ -2,7 +2,9 @@
 
 printf "\n reseting db : ";
 curl -X POST -d 'username=lora' -d 'email=lora17@yml.fr' -d 'password=kona75mi:-)' http://localhost:3000/users/register;
-curl -X GET http://localhost:3000/drop_db;
+curl -X GET http://localhost:3000/drop_db/users;
+curl -X GET http://localhost:3000/drop_db/matches;
+curl -X GET http://localhost:3000/drop_db/chat;
 
 printf "\n adding lora : "
 curl -X POST -d 'username=lora' -d 'email=lora17@yml.fr' -d 'password=kona75mi:-)' http://localhost:3000/users/register;
