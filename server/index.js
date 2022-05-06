@@ -785,9 +785,18 @@ MongoClient.connect(url)
     })
 
     // just for test in dev mode
-    app.get('/drop_db', (req, res) => {
+    app.get('/drop_db/users', (req, res) => {
       db.collection('users').drop();
+      res.send("drop_db");
+    });
+
+    app.get('/drop_db/matches', (req, res) => {
       db.collection('matches').drop();
+      res.send("drop_db");
+    });
+
+    app.get('/drop_db/chat', (req, res) => {
+      db.collection('chat').drop();
       res.send("drop_db");
     });
 
