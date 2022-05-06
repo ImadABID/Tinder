@@ -28,7 +28,7 @@ const EditProfile = ({ }) => {
     const navigation = useNavigation();
 
     const [username, setUsername] = useState('');
-    const [age, setAge] = useState();
+    const [age, setAge] = useState('');
     const [description, setDescription] = useState('');
     const [passion, setPassion] = useState('');
     const [orientation, setOrientation] = useState('male');
@@ -46,6 +46,8 @@ const EditProfile = ({ }) => {
     const [image4, setImage4] = useState({uri : 'none'});
     const [image5, setImage5] = useState({uri : 'none'});
     const imageSetters = [setImage1, setImage2, setImage3, setImage4, setImage5];
+
+    const [checkMsg, setCheckMsg] = useState('');
 
     const removeItem = (index) => {
         setData(Demo.filter((o, i) => index !== i));
@@ -478,6 +480,10 @@ const EditProfile = ({ }) => {
                     </ScrollView>
                 </View>
 
+                <Text style={{textAlign : 'center', color : 'red'}}>
+                    {checkMsg}
+                </Text>
+
                 <View style={{ alignItems: "center" }}>
                     <View style={styles.infoContainer}>
                         <FormButton
@@ -485,71 +491,85 @@ const EditProfile = ({ }) => {
                             onPress = {
                                 async ()=>{
 
-                                    setSaveButtonTitle('Saving ...');
-
-                                    first_time = 1;
-
-                                    let token = await SecureStore.getItemAsync('token');
-                                    if (token) {
-
-                                        let host_name = await ip_server.get_hostname();
-                                        let link = 'http://'+host_name+'/profile/update';
-
-                                        nbr_element_not_uploaded_yet = 7;
-
-                                        let data = 'token='+token+'&username='+username+'&age='+age+'&orientation='+orientation+'&targetedSex='+targetedSex+'&description='+description+'&passion='+passion;
-
-                                        console.log(data);
-
-                                        let myInit = {
-                                            method: 'POST',
-                                            headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
-                                            body: data
-                                        };
-
-                                        fetch(link, myInit)
-                                        .then((res)=>{return res.json();})
-                                        .then(res =>{
-
-
-                                            if(res.msg === '0'){
-                                                //
-                                            }else{
-                                                //setErrorMsg(res.msg);
-                                            }
-                                            nbr_element_not_uploaded_yet--;
-                                            if(nbr_element_not_uploaded_yet===0){
-                                                first_time = 1;
-                                                navigation.navigate('ProfileScreen');
-                                            }
-
-                                        })
-                                        .catch(err =>{
-                                            console.log(err);
-                                            nbr_element_not_uploaded_yet--;
-                                            if(nbr_element_not_uploaded_yet===0){
-                                                first_time = 1;
-                                                navigation.navigate('ProfileScreen');
-                                            }
-                                        })
-                                        .finally(()=>{
-
-                                        });
-
-                                        // sending profile pic
-                                        handleUploadPhoto(profileImage, host_name, token, 'profileImage');
-
-                                        //sending other 5 images
-                                        handleUploadPhoto(image1, host_name, token, 'image1');
-                                        handleUploadPhoto(image2, host_name, token, 'image2');
-                                        handleUploadPhoto(image3, host_name, token, 'image3');
-                                        handleUploadPhoto(image4, host_name, token, 'image4');
-                                        handleUploadPhoto(image5, host_name, token, 'image5');
-
+                                    if(
+                                        profileImage.uri ===  'none'
+                                        || username === ''
+                                        || age === ''
+                                        || description === ''
+                                        || passion === ''
+                                    ){
+                                        setCheckMsg('Set all information');
                                     }else{
+                                     
+                                        setCheckMsg('');
+
+                                        setSaveButtonTitle('Saving ...');
+
                                         first_time = 1;
-                                        log_out();
-                                        navigation.navigate('LoginScreen');
+
+                                        let token = await SecureStore.getItemAsync('token');
+                                        if (token) {
+
+                                            let host_name = await ip_server.get_hostname();
+                                            let link = 'http://'+host_name+'/profile/update';
+
+                                            nbr_element_not_uploaded_yet = 7;
+
+                                            let data = 'token='+token+'&username='+username+'&age='+age+'&orientation='+orientation+'&targetedSex='+targetedSex+'&description='+description+'&passion='+passion;
+
+                                            console.log(data);
+
+                                            let myInit = {
+                                                method: 'POST',
+                                                headers: {'Content-Type':'application/x-www-form-urlencoded'}, // this line is important, if this content-type is not set it wont work
+                                                body: data
+                                            };
+
+                                            fetch(link, myInit)
+                                            .then((res)=>{return res.json();})
+                                            .then(res =>{
+
+
+                                                if(res.msg === '0'){
+                                                    //
+                                                }else{
+                                                    //setErrorMsg(res.msg);
+                                                }
+                                                nbr_element_not_uploaded_yet--;
+                                                if(nbr_element_not_uploaded_yet===0){
+                                                    first_time = 1;
+                                                    navigation.navigate('ProfileScreen');
+                                                }
+
+                                            })
+                                            .catch(err =>{
+                                                console.log(err);
+                                                nbr_element_not_uploaded_yet--;
+                                                if(nbr_element_not_uploaded_yet===0){
+                                                    first_time = 1;
+                                                    navigation.navigate('ProfileScreen');
+                                                }
+                                            })
+                                            .finally(()=>{
+
+                                            });
+
+                                            // sending profile pic
+                                            handleUploadPhoto(profileImage, host_name, token, 'profileImage');
+
+                                            //sending other 5 images
+                                            handleUploadPhoto(image1, host_name, token, 'image1');
+                                            handleUploadPhoto(image2, host_name, token, 'image2');
+                                            handleUploadPhoto(image3, host_name, token, 'image3');
+                                            handleUploadPhoto(image4, host_name, token, 'image4');
+                                            handleUploadPhoto(image5, host_name, token, 'image5');
+
+                                        }else{
+                                            first_time = 1;
+                                            log_out();
+                                            navigation.navigate('LoginScreen');
+                                        }
+                                        
                                     }
 
                                 }
