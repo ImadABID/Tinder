@@ -149,12 +149,12 @@ MongoClient.connect(url)
 
     app.post('/chat/contact_list',(req, res)=>{
 
-      const find_contact_profile = (email) => {
+      const find_contact_profile = (email_in) => {
         return new Promise(
-          (resolve, email) => {
+          (resolve) => {
 
             db.collection("users").findOne(
-              { email: email },
+              { email: email_in },
               (err, profile) => {
                 resolve(profile);
               }
@@ -176,6 +176,8 @@ MongoClient.connect(url)
 
 
           for (msg_i in msgs) {
+
+            console.log(msgs[msg_i]);
 
             if (msgs[msg_i].senderEmail === user.email || msgs[msg_i].receiverEmail === user.email) {
 
