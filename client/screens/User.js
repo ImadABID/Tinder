@@ -109,7 +109,8 @@ const User = () => {
             onPress={() => {
               navigation.push('Chat',
                 {
-                  record: item
+                  record: item,
+                  host_name : host_name
                 }
               )
             }}

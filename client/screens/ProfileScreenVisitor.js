@@ -13,6 +13,8 @@ async function log_out(){
 
 var params2init = {first_time : 1};
 
+var host_name;
+
 const ProfileScreen = ({route}) => {
     const navigation = useNavigation();
 
@@ -42,7 +44,7 @@ const ProfileScreen = ({route}) => {
             let token = await SecureStore.getItemAsync('token');
             if (token) {
                 
-                let host_name = await ip_server.get_hostname();
+                host_name = await ip_server.get_hostname();
                 let link = 'http://'+host_name+'/users/profile/visit';
 
                 let data = 'token='+token+'&email='+visited_user_email;
@@ -147,7 +149,8 @@ const ProfileScreen = ({route}) => {
                                     navigation.navigate(
                                         'Chat',
                                         {
-                                            record: profile
+                                            record: profile,
+                                            host_name : host_name
                                         }
                                     );
                                 }

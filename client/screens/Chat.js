@@ -29,19 +29,19 @@ var params2init = { first_time: 1 };
 var receiverProfile;
 var senderProfile;
 
+var host_name;
+
 const Chat = () => {
 
   const navigation = useNavigation()
   const route = useRoute();
 
   receiverProfile = route.params.record;
-  senderProfile;
+  host_name = route.params.host_name;
 
   const [senderProfileDefined, setSenderProfileDefined] = useState(false);
 
   const [messages, setMessages] = useState([]);
-
-  const ws = useRef(null);
 
   const startup = async () => {
 
@@ -165,13 +165,13 @@ const Chat = () => {
       let token = await SecureStore.getItemAsync('token');
       if (token) {
 
-        let host_name = await ip_server.get_hostname();
-
         // getting profile info
         senderProfile = await get_sender_profile(token, host_name);
         setSenderProfileDefined(true);
 
-        get_socket_port_and_msg(token, host_name);
+        // get_msg(token, host_name);
+
+        // openning socket
 
 
       } else {
@@ -184,21 +184,40 @@ const Chat = () => {
  
   }
 
-  useEffect(() => {
+  useFocusEffect(() => {
     startup();
-    return () => {
-      if (ws.current != null) {
-        ws.current.close();
-      }
+  });
+
+  // --- web socket ---
+
+  let hots_and_port = host_name.split(':');
+  let just_host_name  = hots_and_port[0];
+  var ws = React.useRef(new WebSocket('ws://'+just_host_name+':3005')).current;
+
+  React.useEffect(() => {
+
+    ws.onopen = () => {
+      setServerState('Connected to the server')
+      setDisableButton(false);
     };
-  }
-  );
+    ws.onclose = (e) => {
+      setServerState('Disconnected. Check internet or server.')
+    };
+    ws.onerror = (e) => {
+      
+    };
+    ws.onmessage = (e) => {
+      console.log(e.data);
+      // serverMessagesList.push(e.data);
+      // setServerMessages([...serverMessagesList])
+    };
+  }, []);
 
 
 
   const onSend = useCallback(async (messages = []) => {
 
-    if (ws.current != null) {
+    if (ws != null) {
 
       let message_obj = {};
       message_obj.senderEmail = senderProfile.email;
@@ -207,7 +226,7 @@ const Chat = () => {
 
       console.log(message_obj);
 
-      ws.current.send(JSON.stringify(message_obj));
+      ws.send(JSON.stringify(message_obj));
 
     }
 
