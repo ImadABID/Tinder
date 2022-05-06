@@ -40,7 +40,6 @@ const push_or_update_if_exist = (socket, email)=>{
 
   for(i in ws_list){
     if(ws_list.email == email){
-      ws_list.socket.close();
       ws_list.socket = socket;
       found = true;
       break
@@ -88,6 +87,7 @@ app.use(cors(corsOptions)) // Use this after the variable declaration
 var fs = require('fs');
 const console = require("console");
 const { isWindows } = require("nodemon/lib/utils");
+const { off } = require("process");
 
 const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
@@ -110,7 +110,9 @@ MongoClient.connect(url)
         console.log(msg_json);
     
     
-        if(msg_json.type == 'declaring_email'){ //setting socket email
+        if(msg_json.hasOwnProperty('type') && msg_json.type == 'declaring_email'){ //setting socket email
+          console.log('declaring_email');
+          console.log(msg_json);
           
           push_or_update_if_exist(msg_json.email);
         
