@@ -167,6 +167,8 @@ const Chat = () => {
 
         // getting profile info
         senderProfile = await get_sender_profile(token, host_name);
+        let msg = {type : "declaring_email", email : senderProfile.email}
+        ws.send(JSON.stringify(msg));
         setSenderProfileDefined(true);
 
         // get_msg(token, host_name);
@@ -197,8 +199,7 @@ const Chat = () => {
   React.useEffect(() => {
 
     ws.onopen = () => {
-      setServerState('Connected to the server')
-      setDisableButton(false);
+      setServerState('Connected to the server');
     };
     ws.onclose = (e) => {
       setServerState('Disconnected. Check internet or server.')
@@ -207,9 +208,31 @@ const Chat = () => {
       
     };
     ws.onmessage = (e) => {
-      console.log(e.data);
-      // serverMessagesList.push(e.data);
-      // setServerMessages([...serverMessagesList])
+
+      let msg_json = e.data;
+      console.log(msg_json);
+      
+      console.log(msg_json['message']);
+
+      let user_profile;
+      if (msg_json.senderEmail === senderProfile.email) {
+        user_profile = senderProfile;
+      } else {
+        user_profile = receiverProfile;
+      }
+
+      let sentMessages = {
+        _id: Math.floor(Math.random() * 1000),
+        text: 'msg_json.message',
+        // createdAt: response.createdAt,
+        user: {
+          _id: user_profile.email,
+          name: user_profile.username,
+          avatar: user_profile.profileImage,
+        }
+      }
+      console.log(sentMessages);
+      setMessages(previousMessages => GiftedChat.append(previousMessages, sentMessages));
     };
   }, []);
 
