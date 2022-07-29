@@ -31,7 +31,7 @@ const EditProfile = ({ }) => {
     const [age, setAge] = useState('');
     const [description, setDescription] = useState('');
     const [passion, setPassion] = useState('');
-    const [orientation, setOrientation] = useState('male');
+    const [orientation, setOrientation] = useState('men');
     const [targetedSex, setTargetedSex] = useState('na');
 
     const [saveButtonTitle, setSaveButtonTitle] = useState('Save');
@@ -319,6 +319,7 @@ const EditProfile = ({ }) => {
                             <Picker.Item label="men" value="men"/>
                             <Picker.Item label="women" value="women"/>
                         </Picker>
+
                     </View>
                 </View>
                 <Text style={[styles.subText, styles.recent]}>Interessed in</Text>
